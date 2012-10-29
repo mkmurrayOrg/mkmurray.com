@@ -1,0 +1,13 @@
+---
+layout: post
+title: "Virtual Machine Converter Tool"
+date: 2008-07-22T16:02:00-06:00
+categories:
+ - New Technology
+ - Error
+ - VMWare
+ - Virtual Machine
+---
+
+<div class='post'>
+<p><a href="http://www.vmware.com/">VMWare</a> provides a free utility that can clone physical machines into a VMWare virtual machine; it can also convert other vendors' VM formats into the VMWare format.&#160; I can think of so many uses for this very handy tool.&#160; It has a very simple and easy user interface that walks you through the steps.&#160; Here is a link to the product:</p>  <p><a title="http://www.vmware.com/products/converter/" href="http://www.vmware.com/products/converter/">http://www.vmware.com/products/converter/</a></p>  <p><u>One important note</u>:&#160; When you are specifying the name and destination of the resultant VM image, the location must be in UNC format (i.e., <font face="Courier New">\\machinename\share</font>).&#160; The thing that got me, though, was that it will give you an uninformative error if you leave a trailing backslash ('\') at the end of the UNC path, saying something like it couldn't connect to the share for some reason.&#160; Just remove the last slash and you'll be good to go.</p>  </div>

@@ -1,0 +1,23 @@
+---
+layout: post
+title: "Custom Setup Bootstrappers"
+date: 2009-11-11T15:03:00-07:00
+categories:
+ - MSI
+ - .NET
+ - Build
+ - Windows
+ - C#
+ - Prerequisites
+ - Microsoft
+ - Deployment and Installers
+ - Bootstrapper
+ - MSBuild
+ - Visual Studio
+ - C/C++
+ - Registry
+ - Launch Condition
+---
+
+<div class='post'>
+<p>At work, we have a line of desktop products for one of clients installed on the user’s Windows machine via MSI installers.&#160; We use Visual Studio Setup Projects to create the MSI installers.&#160; Visual Studio also provides the ability to create setup bootstrappers to make sure the user has all the prerequisites needed for the MSI install technology and any dependencies required by your desktop product.&#160; These bootstrappers are unmanaged code, because you can’t always depend on the .NET framework already being there (at least not until everyone is off of XP and lower).&#160; I have developed a solution that has worked for the last year or more, but has felt clumsy and slapped together.&#160; Recently I found the <a href="http://dotnetinstaller.codeplex.com/">open source project called dotNetInstaller</a> which has better provided me with the control and flexibility I need for custom logic during bootstrap and install time.&#160; I’ll first introduce you to my “hack” solution.</p> <span class="fullpost">   <p>It has been difficult for me to find ways to tie into the bootstrapper logic workflow to add in custom logic during installs, and Visual Studio is very rigid in its flexibility and basic in its configuration options in this regard.&#160; Until recently, I had settled on writing managed, C# code for this custom logic meant to run before or after the MSI installer, and then creating another unmanaged <font face="Courier New">setup.exe</font> bootstrapper to ensure the .NET framework was installed just so that executable could run.&#160; So the user would run this new unmanaged <font face="Courier New">setup.exe</font> bootstrapper (making sure .NET framework was installed), which would then call my managed custom logic executable, which would then call the MSI installer’s unmanaged, Visual Studio-generated <font face="Courier New">setup.exe</font> bootstrapper (ensuring more prerequisites were installed), which would then finally install the MSI, and which would then lastly return to my managed custom logic executable for any post-install, clean up logic.&#160; I describe this solution in full (and how to generate the same bootstrappers that Visual Studio creates using MSBuild outside the IDE) in a StackOverflow.com answer that I submitted:</p>    <p><a title="http://stackoverflow.com/questions/1106768/how-can-i-reverse-engineer-an-installer-that-was-written-with-ghost-installer/1121846#1121846" href="http://stackoverflow.com/questions/1106768/how-can-i-reverse-engineer-an-installer-that-was-written-with-ghost-installer/1121846#1121846">http://stackoverflow.com/questions/1106768/how-can-i-reverse-engineer-an-installer-that-was-written-with-ghost-installer/1121846#1121846</a></p>    <p>Well, recently I found the <a href="http://dotnetinstaller.codeplex.com/">dotNetInstaller project on CodePlex.com</a> and have found it to be the control and flexibility I need for custom logic when bootstrapping installers.&#160; Not only does it give you great control over prerequisite install order, it also gives you the ability to run code after MSI install and to also filter on CPU architecture types, OS versions, and other registry or file system conditions.&#160; I have currently setup branching scenarios for the prerequisites based on if the user has a 32-bit (x86) or 64-bit (x64) OS.&#160; This utility will even let you brand the bootstrapper with a banner and icon, which is a change of pace from the plain and unlabeled bootstrapper that Visual Studio and MSBuild produce.</p>    <p>If you have custom bootstrapping needs, I have to highly recommend you give dotNetInstaller a look.&#160; Hopefully it will prove as flexible and powerful for your needs as it has for mine.</p> </span>  </div>

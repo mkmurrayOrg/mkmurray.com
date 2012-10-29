@@ -1,0 +1,80 @@
+---
+layout: post
+title: "F# Pipeline Operator in C#?"
+date: 2010-09-06T20:22:00-06:00
+categories:
+ - New Technology
+ - Functional Programming
+ - .NET
+ - F#
+ - C#
+ - Visual Studio
+ - Microsoft
+ - LINQ
+ - Code Organization
+ - Algorithms
+ - SOLID
+---
+
+<div class='post'>
+<p>I am currently reading the <a href="http://www.manning.com/petricek/" target="_blank">Real-World Functional Programming</a> book from <a href="http://www.manning.com/" target="_blank">Manning Publications</a>. It’s mostly an exercise in learning F#, but also to improve my C# code as well. I finally learned what the F# pipelining operator (<font face="Courier New">|&gt;</font>) is all about, and I was so impressed I thought I would try to figure out how to bring it into C# if possible.</p> <span class="fullpost">   <h3>Introducing the F# Pipeline Operator</h3>    <p>Here is some F# code that defines a list of integers and a pair of functions.&#160; They are then used in a few “higher-order” functions (functions that utilize other functions as parameters or return values, according to my book).&#160; <font face="courier new">List.filter</font> is equivalent to the LINQ <font face="Courier New">IEnumerable.Where()</font> extension method, and <font face="Courier New">List.map</font> is equivalent to <font face="Courier New">IEnumerable.Select()</font>.</p>    <pre class="brush: csharp">let numbers = [ 1 .. 10 ]
+let isOdd(n) = n % 2 = 1
+let square(n) = n * n
+
+List.filter isOdd numbers
+List.map square (List.filter isOdd numbers)</pre>
+
+  <p>The interesting part is the last line of code, where it is argued that you lose a little bit of code readability because the function that is actually executed first (<font face="Courier New">List.filter</font>) is found second in the expression statement.&#160; Enter the F# pipelining operator:</p>
+
+  <pre class="brush: csharp">let squared =
+  numbers
+  |&gt; List.filter isOdd
+  |&gt; List.map square</pre>
+
+  <p>Even though we’re no longer a compact, one-liner expression, I think we’ve gained some code readability.&#160; It says to take the list <font face="Courier New">numbers</font> and perform the following manipulations in the exact order listed.&#160; Cool stuff, if I say so myself.</p>
+
+  <h3>“There is No Charge for Awesomeness…or Attractiveness”</h3>
+
+  <p>(Sorry, I’ve been watching the movie <a href="http://www.imdb.com/title/tt0441773/" target="_blank">Kung Fu Panda</a> a lot with my kids lately.&#160; Funny stuff.)&#160; So can this awesomeness be brought over into C#?&#160; I opened up Visual Studio and tried to see if I could figure out how to define my own operator or reuse one of the existing ones.</p>
+
+  <p>I realize C# is a pretty tough language to flip keywords and operators around and invent new syntax with (ok, it’s impossible), but I tried anyway.&#160; The type of code readability issue I wanted to remedy is the same as with the F# code snippet above.&#160; I thought it would be nice to make C# code like the following statement more readable and digestible (especially the execution order):</p>
+
+  <pre class="brush: csharp">Convert.ToInt32(Context.Request[“requestParam”].Trim());</pre>
+
+  <p>As I started to (unsuccessfully) beat out some pretty rough code, I ran into problems with trying to make extension methods that are operator definition overloads and errors saying “<font face="Courier New">One of the parameters of a binary operator must be the containing type.</font>”&#160; It just wasn’t working and then I began to realize that C# already has a pipelining syntax, even if only in one small subset of the .NET API.&#160; You can find a decent pipelining syntax with the <a href="http://en.wikipedia.org/wiki/Fluent_interface" target="_blank">Fluent Interface</a> used for the LINQ extension methods.&#160; Its power is in the fact that the functions return the object type that was passed in and acted upon, so that more functions can be chained on afterward in a composable manner.&#160; The ability to do things like <font face="Courier New">collection.Where().Select().OrderBy()</font> is a much more declarative and functional solution to imperative <font face="Courier New">for</font> loops (and it makes it more readable and intention revealing in my opinion).&#160; It’s a difference in describing more <u><em>what</em></u> you want to be accomplished rather than <em><u>how</u></em> it is to be accomplished (especially when the <u><em>how</em></u> in programming languages is more readable to a computer than it is a human).</p>
+
+  <p>So the good news is that you indeed can have a nice pipelining syntax in C#, especially for APIs that are designed with Fluent Interfaces like LINQ.&#160; However, it doesn’t solve code readability issues with code snippets like the C# fragment I showed above.&#160; For those regular, non-fluent method calls in the rest of the .NET API, you must use old-fashioned Object-Oriented Programming practices of breaking code up into meaningful, atomic units of statements and naming and encapsulating functions cohesively in order to get more readable code.</p>
+</span>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Jonas Elfström</div>
+<div class='content'>
+This looks a whole lot like the Thrush Combinator.<br /><a href="http://alicebobandmallory.com/articles/2009/10/06/the-thrush-combinator-in-c" rel="nofollow">I implemented</a> that one in C# a while ago</div>
+</div>
+<div class='comment'>
+<div class='author'>Richard Beauchamp</div>
+<div class='content'>
+This comment has been removed by the author.</div>
+</div>
+<div class='comment'>
+<div class='author'>Mike Murray</div>
+<div class='content'>
+Funny you should mention the Maybe Monad, as I&#39;ve been looking into Monads off and on for several months trying to figure out how I could use them in everyday code.  I likely will be posting something on this in the somewhat near future.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>
+Just a small hint from someone who uses something like this in productive code on a day-to-day basis:<br /><br />Take your time and extend the static methods a bit. It won&#39;t hurt to build something like a maybe-monad in there.<br /><br />You know - check if the input is null and return null if so.<br /><br />For this you need either:<br />- &quot;where U : class&quot;<br />- use Equals<br /><br />For the same reason I give somethink like a &quot;DefaultValue&quot; Funktion that checks the input for null and responses with the default-value if so, if not it will give the original value.</div>
+</div>
+<div class='comment'>
+<div class='author'>Mike Murray</div>
+<div class='content'>
+Very intriguing! Man I wish I had thought about that.  I suppose I&#39;m still new to designing APIs that pass around Funcs.<br /><br />I was able to make the following code work with the type inference (and without having to specify the types to the Then method):<br /><br />var blah = &quot;576 &quot;<br />.Then(x =&gt; x.Trim())<br />.Then(x =&gt; Convert.ToInt32(x));<br /><br />Not too bad really.  A little too much C# syntax though, but I&#39;d argue it might be more readable than what we started with, the code everyone writes.  It appears my code snippet doesn&#39;t even need the second extension method.<br /><br />Thanks for sharing!</div>
+</div>
+<div class='comment'>
+<div class='author'>Yusuf Motara</div>
+<div class='content'>
+You could try this:<br /><br />static class Extn {<br />    public static U Then&lt;T,U&gt;(this T o, Func&lt;T, U&gt; f) { return f(o); }<br />    public static U Then&lt;T, U&gt;(this T o, Func&lt;T, Func&lt;U&gt;&gt; fe) { return fe(o)(); }<br />}<br /><br />... which lets you write the more-readable:<br /><br />var blah = &quot;576  &quot;<br />   .Then&lt;string,string&gt;(x =&gt; x.Trim)<br />   .Then(Convert.ToInt32);<br /><br />Unfortunately, it seems that you need to make the generic parameters explicit; C#&#39;s type inference is nowhere near as good as F#&#39;s.</div>
+</div>
+</div>

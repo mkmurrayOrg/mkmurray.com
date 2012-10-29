@@ -1,0 +1,13 @@
+---
+layout: post
+title: "Microsoft/Windows Update Fails on Every Update"
+date: 2008-08-20T09:51:00-06:00
+categories:
+ - Error
+ - Windows
+ - Patching/Updating
+ - Microsoft
+---
+
+<div class='post'>
+<p>Occasionally, Windows Update (or Microsoft Update) will see all of the updates you need (and possibly even download them) but will immediately fail all of the updates when trying to install them.&#160; Sometimes I have seen Windows Update error off after the green progress bar and before it can show me if there are any updates at all.</p>  <p>Every time this happens, I end up Googling the error code and finding the same fix every time (since I forget what the fix is each time).&#160; The error code I get is <font face="Courier New">0x80004002</font>.&#160; If you are unable to find the error code through the UI, you can check the Windows Update log at <font face="Courier New">%WINDIR%\WindowsUpdate.log</font> (which in my case, <font face="Courier New">%WINDIR%</font> translated to <font face="Courier New">C:\WINDOWS\</font>); you can even just type <font face="Courier New">%WINDIR%\WindowsUpdate.log</font> right into the &quot;<font face="Courier New">Run...</font>&quot; dialog.&#160; You can find the error code near the bottom of the log; just find the lines of text that have the same timestamp as when you unsuccessfully ran Windows Update.</p>  <p>Well, anyway, here's the fix; run the following commands in a Command Prompt window (type <font face="Courier New">cmd</font> in the &quot;<font face="Courier New">Run...</font>&quot; dialog):</p>  <p><font face="Courier New">net stop wuauserv     <br />regsvr32 wups2.dll      <br />net start wuauserv</font></p>  <p>That's all there is to it!&#160; It has worked every time for me.&#160; It may even be helpful to put these commands in a batch script (copy and paste the commands into <font face="Courier New">Notepad</font> and then save the text file with a <font face="Courier New">.bat</font> file extension) and keep the file in a place where you can easily find it again.</p>  </div>

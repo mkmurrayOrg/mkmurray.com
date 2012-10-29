@@ -1,0 +1,63 @@
+---
+layout: post
+title: "Maybe Monad Extensions"
+date: 2010-09-30T17:35:00-06:00
+categories:
+ - New Technology
+ - Monads
+ - Functional Programming
+ - .NET
+ - C#
+ - Visual Studio
+ - Maybe Monad
+ - Microsoft
+ - Code Organization
+ - Algorithms
+---
+
+<div class='post'>
+<p>I learned a lot from <a href="http://murrayon.net/2010/09/maybe-from-murray-monads.html" target="_blank">my last foray into implementing my own Maybe Monad</a>.&#160; Apparently, it got noticed by and was actually useful to <a href="http://www.lostechies.com/members/derick.bailey/default.aspx" target="_blank">Derick Bailey</a>, as it was one of the resources he used in <a href="http://www.lostechies.com/blogs/derickbailey/archive/2010/09/29/monads-in-c-which-part-is-the-monad.aspx" target="_blank">his own personal exploration into Monads</a>.&#160; Of course, Derick did the topic a bit more justice, as he has a propensity to do.</p>  <p>Nonetheless, I have done as I said I would and reworked my Murray Monads into a cleaner, more concise implementation using extension methods, much like the implementation I introduced from Dmitri Nesteruk in the last post.&#160; So without further ado, I’d like to introduce you to the MaybeMonadExtensions.</p> <span class="fullpost">   <h4>Monads 2.0 - <a href="http://www.youtube.com/watch?v=ll7rWiY5obI&amp;t=1m19s" target="_blank">“These Go To Eleven”</a></h4>    <p>If you want to get an introduction to what Monads are and how I got to where I am today with this little library, then you really should check out <a href="http://murrayon.net/2010/09/maybe-from-murray-monads.html" target="_blank">the previous post on this topic</a>.&#160; I will however give a few brief code samples to show you what it can do to tidy up all those null checks using the Maybe Monad.</p>    <p>Here is code we tend to write all the time:</p>    <pre class="brush: csharp">string postCode;
+if (person != null)
+{
+  if (HasMedicalRecord(person) &amp;&amp; person.Address != null)
+  {
+    CheckAddress(person.Address);
+    if (person.Address.PostCode != null)
+      postCode = person.Address.PostCode.ToString();
+    else
+      postCode = &quot;UNKNOWN&quot;;
+  }
+}</pre>
+
+  <p>It can look like this with some Maybe Monad love:</p>
+
+  <pre class="brush: csharp">string postalCode = person.If(HasMedicalRecord)
+  .Access(p =&gt; p.Address)
+  .Apply(CheckAddress)
+  .Access(a =&gt; a.PostCode)
+  .Convert(pc =&gt; pc.ToString(), &quot;UNKNOWN&quot;);</pre>
+
+  <p>I know!&#160; Groovy, huh?!</p>
+
+  <p>The source can be found here:&#160; <a href="http://bitbucket.org/murrayondotnet/maybemonadextensions/">http://bitbucket.org/murrayondotnet/maybemonadextensions/</a></p>
+
+  <p>Let me know if you put this to good use!</p>
+</span>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Omer Mor</div>
+<div class='content'>
+I see your point.<br />However, even Rx is sharing many LINQ operators with its IObservable &amp; IQbservable monads.<br />So we already have 4 different monads (IEnumerable, IQueryable, IObservable, IQbservable) using those operators. I don&#39;t think any more would hurt :-)</div>
+</div>
+<div class='comment'>
+<div class='author'>Mike Murray</div>
+<div class='content'>
+Great question. I suppose I could have used those names and it would likely be a familiar vernacular for .NET developers. I guess my only hesitation would be that I wouldn&#39;t necessarily want to confuse others who read the code into thinking that they are LINQ extension methods. My first thought when I saw your code was that somehow person was an IQueryable or IEnumerable, just because of those familiar method names.<br /><br />Great point though, and it does make me second guess my chosen names a bit. I did like Derick&#39;s method names too (especially just plain old &quot;Get&quot;). Thanks for posting!</div>
+</div>
+<div class='comment'>
+<div class='author'>Omer Mor</div>
+<div class='content'>
+Nice.<br /><br />Why didn&#39;t you choose the Linq terminology here?<br />I&#39;d write your example as this (Linq + Rx&#39;s Do operator):<br /><br /><br />string postalCode = person.Where(HasMedicalRecord)<br />  .Select(p =&gt; p.Address)<br />  .Do(CheckAddress)<br />  .Select(a =&gt; a.PostCode)<br />  .Select(pc =&gt; pc.ToString(), &quot;UNKNOWN&quot;);</div>
+</div>
+</div>

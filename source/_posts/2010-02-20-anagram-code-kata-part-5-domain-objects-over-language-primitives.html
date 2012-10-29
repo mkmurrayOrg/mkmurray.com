@@ -1,0 +1,80 @@
+---
+layout: post
+title: "Anagram Code Kata Part 5 – Domain Objects Over Language Primitives"
+date: 2010-02-20T17:55:00-07:00
+categories:
+ - BDD
+ - .NET
+ - C#
+ - MSpec
+ - Code Organization
+ - Microsoft
+ - New Technology
+ - Testing
+ - Anagram Code Kata Series
+ - Mocking
+ - Visual Studio
+ - SOLID
+---
+
+<div class='post'>
+<p>This post is part of a <a href="http://murrayon.net/2009/11/anagram-code-kata-bdd-mspec.html">series on coding Kata, BDD, MSpec, and SOLID principles</a>.&#160; Feel free to visit the above link which points to the introductory post, also containing an index of all posts in the series.</p>  <p>In this post, we will discuss some reasons why you might want to avoid using language primitives directly in place of domain objects.&#160; Specifically, I have been using <font face="Courier New">String</font> variables and objects to represent words up to this point.&#160; <a href="http://adotnetdude.blogspot.com/">Esteban</a> suggested I create a <font face="Courier New">Word</font> class for a few good reasons which I’ll layout for you.&#160; Out of sheer luck and good timing, <a href="http://codebetter.com/blogs/dru.sellers/default.aspx">Dru Sellers</a> of <a href="http://codebetter.com/">CodeBetter.com</a> also wrote on this subject shortly afterward and confirmed Esteban’s reasoning.</p> <span class="fullpost">   <h3>Use <font face="Courier New">String</font> Class or Create <font face="Courier New">Word</font> Domain Object?</h3>    <p>I mentioned in the previous post that Esteban had suggested creating a <font face="Courier New">Word</font> class instead of just passing around strings everywhere through my application.&#160; One good reason is that we don’t own the <font face="Courier New">String</font> class and so further modification to our string-based implementation is difficult because the logic is scattered throughout the application, instead of centralized under the responsibility and definition of one domain class.&#160; It is much more difficult to refactor the word-specific logic with its behaviors and attributes spread throughout the code.&#160; Even if your <font face="Courier New">Word</font> class doesn’t grow any more beyond a seemingly unnecessary wrapper of the <font face="Courier New">String</font> class, the code is more cohesive and ready for change should the need arise.</p>    <p>But more importantly, you designed the code thinking in a true object-oriented mindset.&#160; You have to keep in mind that the <font face="Courier New">String</font> class is someone else’s implementation, and is hardly ever sufficient in and of itself as a domain object within your solution.&#160; Think about it, the behaviors that a string object performs are so generic and multipurpose that you likely don’t need two-thirds of the class as defined (and there’s likely a few behaviors you really need that aren’t there).&#160; Of course nearly every application on earth makes use of the <font face="Courier New">String</font> class; but because of this fact, it has no meaning in and of itself within any given application.&#160; You would have to look at how the stings are actually used within the code in order to understand its unique application within the app’s context.&#160; Of course that task of research is much easier for everyone (including the original author of the code) if it’s all encapsulated within a dedicated domain object class.&#160; True object-orientation means describing in code form the properties, behaviors, and interactions/relationships of real world objects within your problem domain.</p>    <p>Esteban gave me a great example to illustrate these points.&#160; He said that you can always represent money as a decimal (and even when you use a domain object, it’s got to have a decimal language primitive underneath the covers).&#160; However, what happens when you need to attach metadata to the amount (like currency denomination), or if you need to change decimal precision?&#160; You would have to go through all of the code and make sure your use of decimal language primitives is modified uniformly in order to retain consistency.&#160; Also, mathematic operations involving money are hardly ever the same as their counterparts involving standard decimals, because currency deals with discrete values to a certain decimal precision.&#160; Typically when the behaviors and properties within our system begin to get complex, we are cognizant enough to create domain objects in order to bring it all under one class.&#160; We definitely don’t want to over-architect features and interactions before we need them, but I think there is power in this principle of abstracting away language primitives and instead encapsulating their use within domain objects located in just one place in your codebase.&#160; I believe it is one thing we can keep in mind to help guide us to better object-oriented thinking, and avoid language-oriented coding.</p>    <p>As mentioned above, Esteban’s thoughts were confirmed nearly verbatim by <a href="http://codebetter.com/blogs/dru.sellers/default.aspx">Dru Sellers</a> of <a href="http://codebetter.com/">CodeBetter.com</a> in his blog post that he wrote just a few days after I had the conversation with Esteban.&#160; A great coincidence no doubt, and worth a read; here’s the link:</p>    <p><a href="http://codebetter.com/blogs/dru.sellers/archive/2010/01/27/business-primitives-1-2.aspx">Business Primitives (1/2)</a>&#160;</p>    <h3><font face="Courier New">Word</font> Class Implementation</h3>    <p>So basically I created the following class implementation and then replaced string with a reference to this new class, <font face="Courier new">Word</font>:</p>    <pre class="brush: csharp">public class Word
+{
+    private string wordStr = string.Empty;
+
+    public Word(string wordStr)
+    {
+        this.wordStr = wordStr;
+    }
+
+    public override string ToString()
+    {
+        return wordStr;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return wordStr == ((Word)obj).ToString();
+    }
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
+
+    public int GetCanonicalHashCode()
+    {
+        char[] letters = wordStr.ToCharArray();
+        Array.Sort&lt;char&gt;(letters);
+        return new string(letters).GetHashCode();
+    }
+}</pre>
+
+  <p>I have defined an overridden implementation for <font face="Courier New">Equals(object)</font> (so that the test assertions and other <font face="Courier New">IEnumerable.Contains()</font> queries work) and <font face="Courier New">GetHashCode()</font> (solely to satisfy a compiler warning).&#160; I also moved the <font face="Courier New">GetCanoncialHashCode()</font> method from <font face="Courier New">AnagramGrouper</font>, in order to better encapsulate it as a behavior a Word knows how to do innately.</p>
+
+  <p>One other change I had to make was to convert strings into <font face="Courier New">Word</font> objects in our <font face="Courier New">NewlineFileParser</font>, which I accomplished by using an <font face="Courier New">IEnumberable.Select()</font> call as shown below:</p>
+
+  <pre class="brush: csharp">return File.ReadAllLines(filePath).Select&lt;string, Word&gt;(x =&gt; new Word(x));</pre>
+
+  <p></p>
+
+  <h3>Let’s Revisit <font face="Courier New">AssertWasCalled</font> One More Time</h3>
+
+  <p>Trust me, I am groaning with you, even as I wrote that heading text.&#160; The last thing we need is for me to rehash the topic again and flip flop my stance yet another time.&#160; Yes, that’s right I’ve changed my mind again.&#160; First I couldn’t understand what utility asserting methods were called would have under normal test scenarios.&#160; Then I changed my mind that perhaps using it would help my test specifications have clearer intent of what I am asserting.&#160; After an email conversation with <a href="http://www.davesquared.net/">David Tchepak</a>, I think I’m now back to my original stance.&#160; Here is what Dave said that had me reconsidering, and I think it’s pretty sound reasoning (emphasis added by me):</p>
+
+  <blockquote>
+    <p>…</p>
+
+    <p>“But seeing as you asked for it, here goes. :)</p>
+
+    <p>“I try and avoid <font face="Courier New">AssertWasCalled</font> like the plague. Generally I don't care that some method was called, I care that my class does the work it needs to. If that involves calling a dependency then great, but that is not my class' reason for existence.</p>
+
+    <p>“I prefer your original approach of stubbing out everything in the setup and having that tested indirectly. One reason I prefer this is I find it makes it easier to refactor: the assertions in my test don't change, the class still does the same thing. However I can add or change dependencies by changing some wiring in the setup, and then make sure I haven't stuffed anything up as my assertions still pass. <strong>I prefer that my tests specify what I want, not how it does it.</strong> To me, <font face="Courier New">AssertWasCalled</font> reeks of over-specification. The one exception is where I hit the external boundaries of my code, so where I want to send an email or something without side effects that I can test. Then the core of the behaviour is the call itself, so I'm happy to assert on that then.”</p>
+  </blockquote>
+
+  <p>And with that I’ll promise to never bring this up again…unless of course I get swayed by someone else. :)&#160; In all seriousness, I think this is an interesting discussion and so if you have insight, please share via comment below.</p>
+
+  <h3>Summary</h3>
+
+  <p>Please leave your thoughts in the comments below in regard to creating domain objects over using language primitives (or heaven forbid, the <font face="Courier New">AssertWasCalled</font> debate).&#160; As far as this coding kata exercise, I need to take a high-level look at where this should go next.&#160; Perhaps the next post will tie up loose ends and see how our code performs on large text files as input.&#160; It may be that we will need to refactor our architecture to achieve better runtimes.&#160; If not, maybe we can still discuss where would could have headed if it had been necessary.</p>
+</span>  </div>

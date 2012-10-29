@@ -1,0 +1,35 @@
+---
+layout: post
+title: "Trying Out SyntaxHighlighter"
+date: 2009-10-23T19:54:00-06:00
+categories:
+
+---
+
+<div class='post'>
+<p>This is just a test post to see if I'm smart enough to add the javascript <a href="http://alexgorbatchev.com/wiki/SyntaxHighlighter:Demo">SyntaxHighlighter</a> to my blog. ;)</p>
+
+<pre class="brush: csharp">
+public int ScoreDice(int[] selectedDice)
+{
+    int score = 0;
+
+    foreach (IScoringCombo scoreCombo in ScoringCombos)
+    {
+        IEnumerable&lt;int&gt; satisfyingIndices = scoreCombo.SatisfiedBy(selectedDice);
+
+        if (satisfyingIndices.Count() &gt; 0)
+        {
+            score += scoreCombo.ScoreDice(selectedDice);
+
+            // Remove the dice at satisfyingIndices from selectedDice collection so not double-scored
+            selectedDice = selectedDice
+                .Select((value, index) =&gt; index)
+                .Except(satisfyingIndices)
+                .ToArray();
+        }
+    }
+
+    return score;
+}
+</pre></div>

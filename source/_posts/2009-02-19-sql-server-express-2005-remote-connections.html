@@ -1,0 +1,15 @@
+---
+layout: post
+title: "SQL Server Express 2005 Remote Connections"
+date: 2009-02-19T10:36:00-07:00
+categories:
+ - Error
+ - .NET
+ - ASP.NET
+ - Database
+ - SQL
+ - Microsoft
+---
+
+<div class='post'>
+<p>I developed an ASP.NET site connecting to a local SQL Server Express 2005 instance on my development box.&#160; To further my informal testing, I wanted to host the site under IIS 7 on a Windows Server 2008 box, but I wanted to just use the same database remotely.&#160; I got the following error message when the site tried to hit the database:</p>  <blockquote>   <p>&quot;An error has occurred while establishing a connection to the server.&#160; When connecting to SQL Server 2005, this failure may be caused by the fact that under the default settings SQL Server does not allow remote connections.&#160; (provider: Named Pipes Provider, error: 40 - Could not open connection to SQL Server)&quot;</p> </blockquote>  <p>Apparently SQL Server Express 2005 is not automatically configured for remote access during installation (which really isn't surprising as it is the Express version).&#160; Remote connections can be enabled though with a few relatively painless steps.&#160; See the following link for the procedure:</p>  <ul>   <li><a href="http://www.datamasker.com/SSE2005_NetworkCfg.htm">Configuring SQL Server Express 2005 for Remote Access when SQL Server does not allow remote connections</a></li> </ul>  <p>Hope this is helpful.</p>  </div>

@@ -1,0 +1,26 @@
+---
+layout: post
+title: "ASP.NET Providers - Getting Started"
+date: 2009-01-30T14:20:00-07:00
+categories:
+ - Security
+ - Encryption
+ - .NET
+ - ASP.NET Providers Series
+ - ASP.NET
+ - Database
+ - Visual Studio
+ - SQL
+ - Microsoft
+---
+
+<div class='post'>
+<p>This blog post is part of a series about the ASP.NET Providers (namely Membership, Role Management, and Profile).&#160; The introductory post in the series can be found at the following link, which introduces the <a href="http://en.wikipedia.org/wiki/Provider_model" target="_blank">Provider Model pattern</a> and gives a personal example of an implementation I have been working on:</p>  <ul>   <li><a href="http://murrayon.net/2009/01/aspnet-providers-membership-role-and.html">ASP.NET Providers - Membership, Role, and Profile</a> </li> </ul>  <p>This post will deal with getting started using the ASP.NET Providers by setting up a database.</p> <span class='fullpost'> <h3>Database Setup</h3>  <p>First, you will need to configure a database to securely store all of the site's user data and activity info.&#160; You'll most likely be content with the already provided SQL Providers (such as the <font face="Courier New">SqlMembershipProvider</font><font face="Verdan">), but Microsoft also provides you with other options in many cases.&#160; For example in the case of Membership, </font>you also have the option of having your site use the <font face="Courier New">ActiveDirectoryMembershipProvider</font> or you can even roll your own <font face="Courier New">MembershipProvider</font>.&#160; The nice thing about using any of these Microsoft Providers is that they are already set up to store sensitive data like passwords in an encrypted format in the database.</p>  <p>There are two tools you can use to automatically generate the necessary database tables needed for the SQL implementation.&#160; The first tool is a web-based configuration tool launched from Visual Studio called the <font face="Courier New">ASP.NET Website Administration Tool</font>. It can not only create the database tables, but can also configure authorization rules, user roles, user accounts, and many other settings that go right into your <font face="Courier New">Web.config</font>.&#160; It is launched by selecting the <font face="Courier New">ASP.NET Configuration</font> menu option in the <font face="Courier New">Project</font> menu (or <font face="Courier New">Website</font> menu, depending on which version of Visual Studio you have or the project template you selected).&#160; However, this tool will create the database in a SQL Server file named <font face="Courier New">ASPNETDB.mdf</font> placed in the site's <font face="Courier New">App_Data</font> folder.&#160; If you would prefer to create the database schema in an already existing install of SQL Server (likely on a different box), you need to use the <font face="Courier New">aspnet_regsql.exe</font> command-line tool.&#160; The command-line tool's graphical interface can be launched by typing the name of the executable in a <font face="Courier New">Visual Studio Command Prompt</font> (located in the Start Menu under <font face="Courier new">Visual Studio | Visual Studio Tools</font>).</p>  <p>The only other thing you need now is the connection string to this newly populated database.&#160; I will show you where in your <font face="Courier New">Web.config</font> to put the connection string in the next post of this series.</p>  <h3>Read On!</h3>  <p>Continue onward by reading the next blog post in this series found at the following link:</p>  <ul>   <li><a href="http://murrayon.net/2009/01/aspnet-providers-membership.html">ASP.NET Providers - Membership</a> </li> </ul> </span>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Alan Blake</div>
+<div class='content'>
+I needed to use the built-in authentication handling for only a single page and a single user (very simple).  Therefore, I used the "location"<br />tag and the "credentials" tag to then add a user to my web.config you should consider adding this approach as well.</div>
+</div>
+</div>
