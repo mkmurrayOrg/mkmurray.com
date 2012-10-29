@@ -1,0 +1,136 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>BeginInvoke Methods and OneWay Attribute - Mike Murray</title>
+	<meta name="author" content="Mike Murray">
+
+	
+	<meta name="description" content="In a previous post I talked about Windows Forms UI Threading using delegates.&#160; Recently I needed to replicate what I had learned, and I &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="http://feeds.feedburner.com/mkmurray/" rel="alternate" title="Mike Murray" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	
+</head>
+
+<body>
+	<div class="container">
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post">
+	<h1 class="title">BeginInvoke Methods and OneWay Attribute</h1>
+	<div class="entry-content"><div class='post'>
+<p>In a previous post I talked about <a href="http://murrayon.net/2008/01/windows-forms-ui-threading.html">Windows Forms UI Threading</a> using delegates.&#160; Recently I needed to replicate what I had learned, and I happened to do so without reviewing my notes in the former blog post.&#160; Apparently I didn’t remember everything I had learned and became confused over thread invocation techniques, introducing a bug into my thread messaging.&#160; The UI thread was blocking while the background worker thread was processing.</p>  <p>The cause was related to figuring out which <font face="Courier New">BeginInvoke</font> method to call when kicking off the worker thread, the <font face="Courier New">BeginInvoke</font> of the <font face="Courier New">Form</font> object or the <font face="Courier New">BeginInvoke</font> of the delegate.&#160; The answer is the <font face="Courier New">BeginInvoke</font> method of the delegate.&#160; All of the examples linked to in the previous post had it right, but I got it mixed up with making <font face="Courier New">Invoke</font> or <font face="Courier New">BeginInvoke</font> calls from the background thread using the <font face="Courier New">Form</font> object’s version of these methods.&#160; If you don’t care whether your messaging from the background thread is synchronous or asynchronous, then you can use either methods and you can use the ones from the <font face="Courier New">Form</font> object.</p>  <p>The problem is using these <font face="Courier New">Form</font> object methods in order to kick off your background worker thread.&#160; The description of the <font face="Courier New">BeginInvoke</font> method on the <font face="Courier New">Form</font> object states that it <font face="Courier New">“executes the specified delegate asynchronously on the thread that the control’s underlying handle was created on.”</font>&#160; I translate this to mean that calling your <font face="Courier New">Form</font> object’s <font face="Courier New">BeginInvoke</font> will process on your UI thread.&#160; Apparently the delegate <font face="Courier New">BeginInvoke</font> method has no such wording in its description.</p> <span class='fullpost'> <p>Rereading <a title="Safe, Simple Multithreading in Windows Forms, Part 1" href="http://msdn.microsoft.com/en-us/library/ms951089.aspx">this MSDN article</a> from the former post and reading the <font face="Courier New">Form</font> object’s <font face="Courier New">BeginInvoke</font> method description which I quoted above set me straight and got rid of my blocking UI problem (again).</p>  <p>During this research session, I came across another informative resource when trying to figure out what was meant by potential resource leaks when using <font face="Courier New">BeginInvoke</font> with out later calling <font face="Courier New">EndInvoke</font>.&#160; From reading the article, I gather you can substitute the <font face="Courier New">EndInvoke</font> call with the <a title="OneWayAttribute Class" href="http://msdn.microsoft.com/en-us/library/system.runtime.remoting.messaging.onewayattribute.aspx"><font face="Courier New">OneWay</font> attribute</a><font face="Courier New"><font color="#333333"><font face="Verdana"></font></font></font> on the method being invoked, as long as it has a <font face="Courier New">void</font> return signature and no <font face="Courier New">ref</font> nor <font face="Courier New">out</font> parameters.&#160; Please let me know if my interpretation is wrong.&#160; I added the attribute to my code in the applicable spots and have seen no side effects of doing so.&#160; Here is the article on read mentioning this attribute:</p>  <p><a href="http://weblogs.asp.net/rosherove/pages/DefensiveEventPublishing.aspx">Defensive Event Publishing in .NET – Part I</a></p> </span>  </div>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2012
+
+    Mike Murray
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a>
+</footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'mkmurray';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+		</div>
+		<div class="left-col">
+			<header id="header" class="inner"><div class="profilepic">	
+	<img src="/images/mkmurray.jpg" alt="Profile Picture">
+</div>
+<h1><a href="/">Mike Murray</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<br/>
+<h3 class="alignleft">please code responsibly</h3>
+<br/>
+<br/>
+<br/>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		<a class="facebook" href="http://www.facebook.com/mkmurray" title="Facebook">Facebook</a>
+		
+		
+		<a class="google" href="https://plus.google.com/109073345657761090655?rel=author" title="Google+">Google+</a>
+		
+		
+		<a class="twitter" href="http://twitter.com/mkmurray" title="Twitter">Twitter</a>
+		
+		
+		<a class="github" href="https://github.com/mkmurray" title="GitHub">GitHub</a>
+		
+		
+		<a class="linkedin" href="http://www.linkedin.com/in/mkmurray">LinkedIn</a>
+		
+		
+		
+		
+		<a class="rss" href="http://feeds.feedburner.com/mkmurray/" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+
+</header>				
+		</div>	
+	</div>
+</body>
+</html>

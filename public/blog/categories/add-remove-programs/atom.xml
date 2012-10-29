@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Add/Remove Programs | Mike Murray]]></title>
+  <link href="http://mkmurray.com/blog/categories/add-remove-programs/atom.xml" rel="self"/>
+  <link href="http://mkmurray.com/"/>
+  <updated>2012-10-29T14:47:08-06:00</updated>
+  <id>http://mkmurray.com/</id>
+  <author>
+    <name><![CDATA[Mike Murray]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Display Name in Add/Remove Programs, MSI-Installed Products, and Compressed GUIDs]]></title>
+    <link href="http://mkmurray.com/blog/2008/06/12/display-name-in-add-remove-programs-msi-installed-products-and-compressed-guids/"/>
+    <updated>2008-06-12T15:52:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2008/06/12/display-name-in-add-remove-programs-msi-installed-products-and-compressed-guids</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>I was trying to rename a product's display name found in its ARP (Add/Remove Programs) entry.&#160; There is a registry key that lists just about every product installed on your machine:</p>  <p><font face="Courier New">HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall</font></p>  <p>Most (if not all) MSI-installed products have an entry under this key that is the <font face="Courier New">ProductCode</font> GUID.&#160; Every product under this key seems to have a <font face="Courier New">DisplayName</font> value, some of which you can modify and it will show the change in ARP.&#160; However, it appeared any product installed via MSI did not work this way.&#160; So I went registry hunting for any other entries the MSI installers might create.&#160; I found the following location:</p>  <p><font face="Courier New">HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Installer</font></p>  <p>This key has many helpful sub-keys (including <font face="Courier New">Assemblies</font>, <font face="Courier New">Components</font>, <font face="Courier New">Features</font>, <font face="Courier New">Patches</font>, <font face="Courier New">Products</font>, and <font face="Courier New">UpgradeCodes</font>); the <font face="Courier New">Products</font> sub-key is the most important to me at the moment.&#160; Under this sub-key there are many entries (not as many as the first location I mentioned; these appear to MSI only products) that appear to be GUIDs without hyphens and braces.&#160; However, the key that represented the product I was interested in didn't match the <font face="Courier New">ProductCode</font> I had.&#160; But in one of the values, there was a <font face="Courier New">PackageCode</font> that was indeed the correct package GUID (different than <font face="Courier New">ProductCode</font>) and the <font face="Courier New">ProductName</font> matched as well.&#160; Turns out for MSI-installed products I could change this <font face="Courier New">ProductName</font> value and it would make the change to its ARP entry.</p> <span class='fullpost'> <p>But I was puzzled how I would know which entry to pick for any given product under this <font face="Courier New">Products</font> sub-key.&#160; I ended up coming across this blog post that explained what these different GUIDs are (called <font face="Courier New">Compressed GUIDs</font>); focus on the &quot;<strong>UPDATE</strong>&quot; section by John Walker:</p>  <p><a title="http://www.hanselman.com/blog/BATCHFILEVOODOODetermineIfMultipleAndWhichVersionsOfAnMSIinstalledProductAreInstalledUsingUpgradeCode.aspx" href="http://www.hanselman.com/blog/BATCHFILEVOODOODetermineIfMultipleAndWhichVersionsOfAnMSIinstalledProductAreInstalledUsingUpgradeCode.aspx">http://www.hanselman.com/blog/BATCHFILEVOODOODeterm.....UsingUpgradeCode.aspx</a></p>  <p>And then John Walker's update mentions this link that explains how to convert back and forth between regular and Compressed GUIDs:</p>  <p><a title="http://www.appdeploy.com/messageboards/tm.asp?m=11996&amp;mpage=1⼅" href="http://www.appdeploy.com/messageboards/tm.asp?m=11996&amp;mpage=1⼅">http://www.appdeploy.com/messageboards/tm.asp?m=11996&amp;mpage=1&amp;#12037</a></p>  <p>Basically you break up the GUID into groupings and reverse them.&#160; See below:</p>  <ul>   <li><u>Original GUID</u>:&#160; {abcdefgh-ijkl-mnop-qrst-uvwxyz123456} </li>    <li><u>Groupings</u>:&#160; abcdefgh ijkl mnop qr st uv wx yz 12 34 56 </li>    <li><u>Reversed Groupings</u>:&#160; hgfedcba lkji ponm rq ts vu xw zy 21 43 65 </li>    <li><u>Compressed GUID</u>:&#160; hgfedcbalkjiponmrqtsvuxwzy214365 </li> </ul>  <p>Don't know why Microsoft chose to butcher up GUIDs like this, but it's nice to know.</p> </span>  </div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Launching MSIExec.exe From C#]]></title>
+    <link href="http://mkmurray.com/blog/2008/06/12/launching-msiexec-exe-from-c/"/>
+    <updated>2008-06-12T13:21:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2008/06/12/launching-msiexec-exe-from-c</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>I ran into a problem with trying to spawn off a process to launch an <font face="Courier New">MSIExec.exe</font> command from C#.&#160; I wanted to launch the process and then wait for it to finish before proceeding; however,&#160; it was always returned immediately before the install or uninstall was really finished.&#160; I confirmed this behavior with this blog entry:&#160; <a title="http://blogs.msdn.com/heaths/archive/2005/11/15/493236.aspx" href="http://blogs.msdn.com/heaths/archive/2005/11/15/493236.aspx">http://blogs.msdn.com/heaths/archive/2005/11/15/493236.aspx</a></p>  <p>The author suggests &quot;<font face="Courier New">start /wait</font>&quot; which works from the command line or a batch file.&#160; I did verify it works launching a batch file or two from C#, but I preferred to keep in C# as much as possible.&#160; Also, I was trying to accomplish a silent background process running the <font face="Courier New">MSIExec</font> commands.&#160; However, C# can't just start a process calling &quot;<font face="Courier New">start</font>,&quot; which is an internal command to the Command Prompt I guess.</p>  <p>Someone reminded me on a message board that you can start a process using <font face="Courier New">CMD.exe</font>, calling &quot;<font face="Courier New">start</font>&quot; like this:</p> <span class='fullpost'> <p><pre class="code"><span style="color: #2b91af">ProcessStartInfo </span>startInfo = <span style="color: blue">new </span><span style="color: #2b91af">ProcessStartInfo</span>(
+    <span style="color: #a31515">&quot;cmd.exe&quot;</span>,
+    <span style="color: blue">string</span>.Format(<span style="color: #a31515">&quot;/c start /MIN /wait msiexec.exe /x {0} /quiet&quot;</span>, guid));
+startInfo.WindowStyle = <span style="color: #2b91af">ProcessWindowStyle</span>.Hidden;
+
+<span style="color: #2b91af">Process </span>process = <span style="color: #2b91af">Process</span>.Start(startInfo);
+process.WaitForExit();</pre></p> <p>It works like a charm.&#160; I don't think you even need the &quot;<font face="Courier New">/MIN</font>&quot; flag for &quot;<font face="Courier New">start</font>&quot; anyway.</p>
+</span>  </div>
+
+
+<h2>Comments</h2>
+
+
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Tyler Collier</div>
+<div class='content'>
+Thanks for this.  Great idea.  Worked for me.</div>
+</div>
+<div class='comment'>
+<div class='author'>chavakiran</div>
+<div class='content'>
+You could use process.WaitForExit() isn&#39;t it?</div>
+</div>
+</div>
+
+]]></content>
+  </entry>
+  
+</feed>

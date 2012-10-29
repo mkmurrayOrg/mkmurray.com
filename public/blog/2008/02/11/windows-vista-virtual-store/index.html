@@ -1,0 +1,136 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Windows Vista Virtual Store - Mike Murray</title>
+	<meta name="author" content="Mike Murray">
+
+	
+	<meta name="description" content="Vista has a security &quot;feature&quot; that locks down certain system folders (for instance Program Files) from programmatic modifications.&#160; &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="http://feeds.feedburner.com/mkmurray/" rel="alternate" title="Mike Murray" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	
+</head>
+
+<body>
+	<div class="container">
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post">
+	<h1 class="title">Windows Vista Virtual Store</h1>
+	<div class="entry-content"><div class='post'>
+<p>Vista has a security &quot;feature&quot; that locks down certain system folders (for instance <font face="Courier New">Program Files</font>) from programmatic modifications.&#160; However, it doesn&#8217;t just deny your IO requests; instead it <u>may or may not</u> redirect it to some virtual store elsewhere on the file system (it&#8217;s per-user too, so that could further screw your code up if you were writing out something global or machine-wide).&#160; The best part is you don&#8217;t know if you were redirected or not.&#160; I&#8217;ve had it where I was being redirected to the virtualized location for writes and then when I attempted to read later, it wouldn&#8217;t redirect me and I would be reading from the real <font face="Courier New">Program Files</font>.&#160; Another odd thing is that it appeared to always read and write from the real <font face="Courier New">Program Files</font> location if the context was that of a locally-hosted web site.</p> <span class='fullpost'> <p>Here&#8217;s another blogger&#8217;s discovery of it for further information:&#160; <a title="http://www.hanselman.com/blog/VistasShowCompatibilityFilesAndTheScrumptiousWonderThatIsFileVirtualization.aspx" href="http://www.hanselman.com/blog/VistasShowCompatibilityFilesAndTheScrumptiousWonderThatIsFileVirtualization.aspx">http://www.hanselman.com/blog/VistasShowCompatibilityFilesAndTheScrumptiousWonderThatIsFileVirtualization.aspx</a></p>  <p>I don&#8217;t know why I didn&#8217;t know anything about this until now, but I quickly learned about .NET&#8217;s Isolated Storage APIs.&#160; Pretty useful for persisting configurations and such.&#160; It was the solution to my problem in this case.&#160; Here is a good article on it:&#160; <a title="http://www.developer.com/net/net/article.php/3430541" href="http://www.developer.com/net/net/article.php/3430541">http://www.developer.com/net/net/article.php/3430541</a></p>  <p>I will warn you though that you should try to do the reading and writing from the same assembly from within the same application; otherwise, you end up getting different isolated storage stores for each call.&#160; According to the many documents I read there is a way to call into a certain store even if .NET doesn&#8217;t normally map your assembly and/or application to that location (you have to provide something called <font face="Courier New">Evidence</font>).&#160; I couldn&#8217;t get it to work and was running short on time.</p> </span>  </div>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2012
+
+    Mike Murray
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a>
+</footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'mkmurray';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+		</div>
+		<div class="left-col">
+			<header id="header" class="inner"><div class="profilepic">	
+	<img src="/images/mkmurray.jpg" alt="Profile Picture">
+</div>
+<h1><a href="/">Mike Murray</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<br/>
+<h3 class="alignleft">please code responsibly</h3>
+<br/>
+<br/>
+<br/>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		<a class="facebook" href="http://www.facebook.com/mkmurray" title="Facebook">Facebook</a>
+		
+		
+		<a class="google" href="https://plus.google.com/109073345657761090655?rel=author" title="Google+">Google+</a>
+		
+		
+		<a class="twitter" href="http://twitter.com/mkmurray" title="Twitter">Twitter</a>
+		
+		
+		<a class="github" href="https://github.com/mkmurray" title="GitHub">GitHub</a>
+		
+		
+		<a class="linkedin" href="http://www.linkedin.com/in/mkmurray">LinkedIn</a>
+		
+		
+		
+		
+		<a class="rss" href="http://feeds.feedburner.com/mkmurray/" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+
+</header>				
+		</div>	
+	</div>
+</body>
+</html>

@@ -1,0 +1,144 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Build Problems with a Very Large Visual Studio Deployment Project - Mike Murray</title>
+	<meta name="author" content="Mike Murray">
+
+	
+	<meta name="description" content="So I have been tackling a build problem with some humongous deployment builds in Visual Studio.&#160; In reality, VS Deployment Projects are not &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="http://feeds.feedburner.com/mkmurray/" rel="alternate" title="Mike Murray" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	
+</head>
+
+<body>
+	<div class="container">
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post">
+	<h1 class="title">Build Problems With a Very Large Visual Studio Deployment Project</h1>
+	<div class="entry-content"><div class='post'>
+<p>So I have been tackling a build problem with some humongous deployment builds in Visual Studio.&#160; In reality, VS Deployment Projects are not ideal for even slightly sophisticated MSI installers; but we&#8217;ve gone far enough down this path that we can&#8217;t make the switch at the moment.&#160; So please choose something with more control like the <a href="http://wix.sourceforge.net/">Microsoft-sponsored open-source project WiX</a> or a well-established, paid product like <a href="http://www.acresso.com/products/installation/installshield.htm">InstallShield</a>.</p>  <p>So the error I kept getting was &quot;<font face="Courier New">Not enough storage is available to complete this operation</font>&quot; and it would list some file (not the same every time).&#160; It appears the error means the build process ran out of virtual memory or something.&#160; So I found something interesting about default limit of 2 GB for any Windows process and how to raise that limit.&#160; That process is discussed in this post:&#160; <a title="http://murrayon.net/2007/12/building-monster-vs-2005-or-2008.html" href="http://murrayon.net/2007/12/building-monster-vs-2005-or-2008.html">http://murrayon.net/2007/12/building-monster-vs-2005-or-2008.html</a></p> <span class='fullpost'> <p>Well, it has worked on one guy&#8217;s laptop this whole time and it only worked for about 2 days on my machine (then it started getting an error that said &quot;<font face="Courier New">Unrecoverable build error</font>&quot; and was accompanied with a &quot;<font face="Courier New">Send Error Report</font>&quot; dialog).&#160; I also tried the fix on like 3 other machines without any success at all (in fact many of the machines become highly unstable with the <font face="Courier New">3GB</font> Windows boot switch).&#160; So for 6 months, I couldn&#8217;t figure out why it would work on that one machine and none of the others.&#160; Well, just recently that guy&#8217;s laptop joined the domain and started using a domain user account (I have no clue why he wasn&#8217;t from the beginning, but I digress).&#160; His machine didn&#8217;t become unstable, but it did quit building our monster deployment build.&#160; We thought we were up a creek with no box to build the MSI installer and a deadline fast approaching.&#160; We got it working on his laptop by going back to a local user account.</p>  <p>Well, that got me thinking about how we could get another PC to be able to do the darn build.&#160; I tried the build on my PC with just a local user account, but that didn&#8217;t work because I don&#8217;t currently have the other fix named above.&#160; So I created a virtual machine (in case things got unstable again) and didn&#8217;t add it to the domain, just to be safe.&#160; I did the fix named above, and am now able to successfully build this MSI install consistently under a local user account without getting the &quot;<font face="Courier New">Not enough storage is available</font>&quot; error message.&#160; The details of this adventure are discussed in this post:&#160; <a title="http://murrayon.net/2007/12/build-error-when-building-very-large-vs.html" href="http://murrayon.net/2007/12/build-error-when-building-very-large-vs.html">http://murrayon.net/2007/12/build-error-when-building-very-large-vs.html</a></p>  <p>Maybe in a few months we&#8217;ll move this installer build process to WiX and avoid the inflexibility we are running into with Visual Studio Deployment Projects.</p> </span>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>
+I was running into the same &#8216;Unrecoverable build error&#8217; when trying to build a VS2008 deployment project. Tried all of the fixes you mentioned - regsrv32, MSDN knowledge base fixes, etc. Nothing worked. Then just on a hunch I went into the $User\AppData\Local\Temp directory and noticed that there were about 6GB of temp files there. Deleted those, and bingo - working build!</div>
+</div>
+</div>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2012
+
+    Mike Murray
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a>
+</footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'mkmurray';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+		</div>
+		<div class="left-col">
+			<header id="header" class="inner"><div class="profilepic">	
+	<img src="/images/mkmurray.jpg" alt="Profile Picture">
+</div>
+<h1><a href="/">Mike Murray</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<br/>
+<h3 class="alignleft">please code responsibly</h3>
+<br/>
+<br/>
+<br/>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		<a class="facebook" href="http://www.facebook.com/mkmurray" title="Facebook">Facebook</a>
+		
+		
+		<a class="google" href="https://plus.google.com/109073345657761090655?rel=author" title="Google+">Google+</a>
+		
+		
+		<a class="twitter" href="http://twitter.com/mkmurray" title="Twitter">Twitter</a>
+		
+		
+		<a class="github" href="https://github.com/mkmurray" title="GitHub">GitHub</a>
+		
+		
+		<a class="linkedin" href="http://www.linkedin.com/in/mkmurray">LinkedIn</a>
+		
+		
+		
+		
+		<a class="rss" href="http://feeds.feedburner.com/mkmurray/" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+
+</header>				
+		</div>	
+	</div>
+</body>
+</html>

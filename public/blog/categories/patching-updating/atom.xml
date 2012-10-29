@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Patching/Updating | Mike Murray]]></title>
+  <link href="http://mkmurray.com/blog/categories/patching-updating/atom.xml" rel="self"/>
+  <link href="http://mkmurray.com/"/>
+  <updated>2012-10-29T14:47:08-06:00</updated>
+  <id>http://mkmurray.com/</id>
+  <author>
+    <name><![CDATA[Mike Murray]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Microsoft/Windows Update Fails on Every Update]]></title>
+    <link href="http://mkmurray.com/blog/2008/08/20/microsoft-windows-update-fails-on-every-update/"/>
+    <updated>2008-08-20T09:51:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2008/08/20/microsoft-windows-update-fails-on-every-update</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>Occasionally, Windows Update (or Microsoft Update) will see all of the updates you need (and possibly even download them) but will immediately fail all of the updates when trying to install them.&#160; Sometimes I have seen Windows Update error off after the green progress bar and before it can show me if there are any updates at all.</p>  <p>Every time this happens, I end up Googling the error code and finding the same fix every time (since I forget what the fix is each time).&#160; The error code I get is <font face="Courier New">0x80004002</font>.&#160; If you are unable to find the error code through the UI, you can check the Windows Update log at <font face="Courier New">%WINDIR%\WindowsUpdate.log</font> (which in my case, <font face="Courier New">%WINDIR%</font> translated to <font face="Courier New">C:\WINDOWS\</font>); you can even just type <font face="Courier New">%WINDIR%\WindowsUpdate.log</font> right into the &quot;<font face="Courier New">Run...</font>&quot; dialog.&#160; You can find the error code near the bottom of the log; just find the lines of text that have the same timestamp as when you unsuccessfully ran Windows Update.</p>  <p>Well, anyway, here's the fix; run the following commands in a Command Prompt window (type <font face="Courier New">cmd</font> in the &quot;<font face="Courier New">Run...</font>&quot; dialog):</p>  <p><font face="Courier New">net stop wuauserv     <br />regsvr32 wups2.dll      <br />net start wuauserv</font></p>  <p>That's all there is to it!&#160; It has worked every time for me.&#160; It may even be helpful to put these commands in a batch script (copy and paste the commands into <font face="Courier New">Notepad</font> and then save the text file with a <font face="Courier New">.bat</font> file extension) and keep the file in a place where you can easily find it again.</p>  </div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Display Name in Add/Remove Programs, MSI-Installed Products, and Compressed GUIDs]]></title>
+    <link href="http://mkmurray.com/blog/2008/06/12/display-name-in-add-remove-programs-msi-installed-products-and-compressed-guids/"/>
+    <updated>2008-06-12T15:52:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2008/06/12/display-name-in-add-remove-programs-msi-installed-products-and-compressed-guids</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>I was trying to rename a product's display name found in its ARP (Add/Remove Programs) entry.&#160; There is a registry key that lists just about every product installed on your machine:</p>  <p><font face="Courier New">HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall</font></p>  <p>Most (if not all) MSI-installed products have an entry under this key that is the <font face="Courier New">ProductCode</font> GUID.&#160; Every product under this key seems to have a <font face="Courier New">DisplayName</font> value, some of which you can modify and it will show the change in ARP.&#160; However, it appeared any product installed via MSI did not work this way.&#160; So I went registry hunting for any other entries the MSI installers might create.&#160; I found the following location:</p>  <p><font face="Courier New">HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Installer</font></p>  <p>This key has many helpful sub-keys (including <font face="Courier New">Assemblies</font>, <font face="Courier New">Components</font>, <font face="Courier New">Features</font>, <font face="Courier New">Patches</font>, <font face="Courier New">Products</font>, and <font face="Courier New">UpgradeCodes</font>); the <font face="Courier New">Products</font> sub-key is the most important to me at the moment.&#160; Under this sub-key there are many entries (not as many as the first location I mentioned; these appear to MSI only products) that appear to be GUIDs without hyphens and braces.&#160; However, the key that represented the product I was interested in didn't match the <font face="Courier New">ProductCode</font> I had.&#160; But in one of the values, there was a <font face="Courier New">PackageCode</font> that was indeed the correct package GUID (different than <font face="Courier New">ProductCode</font>) and the <font face="Courier New">ProductName</font> matched as well.&#160; Turns out for MSI-installed products I could change this <font face="Courier New">ProductName</font> value and it would make the change to its ARP entry.</p> <span class='fullpost'> <p>But I was puzzled how I would know which entry to pick for any given product under this <font face="Courier New">Products</font> sub-key.&#160; I ended up coming across this blog post that explained what these different GUIDs are (called <font face="Courier New">Compressed GUIDs</font>); focus on the &quot;<strong>UPDATE</strong>&quot; section by John Walker:</p>  <p><a title="http://www.hanselman.com/blog/BATCHFILEVOODOODetermineIfMultipleAndWhichVersionsOfAnMSIinstalledProductAreInstalledUsingUpgradeCode.aspx" href="http://www.hanselman.com/blog/BATCHFILEVOODOODetermineIfMultipleAndWhichVersionsOfAnMSIinstalledProductAreInstalledUsingUpgradeCode.aspx">http://www.hanselman.com/blog/BATCHFILEVOODOODeterm.....UsingUpgradeCode.aspx</a></p>  <p>And then John Walker's update mentions this link that explains how to convert back and forth between regular and Compressed GUIDs:</p>  <p><a title="http://www.appdeploy.com/messageboards/tm.asp?m=11996&amp;mpage=1⼅" href="http://www.appdeploy.com/messageboards/tm.asp?m=11996&amp;mpage=1⼅">http://www.appdeploy.com/messageboards/tm.asp?m=11996&amp;mpage=1&amp;#12037</a></p>  <p>Basically you break up the GUID into groupings and reverse them.&#160; See below:</p>  <ul>   <li><u>Original GUID</u>:&#160; {abcdefgh-ijkl-mnop-qrst-uvwxyz123456} </li>    <li><u>Groupings</u>:&#160; abcdefgh ijkl mnop qr st uv wx yz 12 34 56 </li>    <li><u>Reversed Groupings</u>:&#160; hgfedcba lkji ponm rq ts vu xw zy 21 43 65 </li>    <li><u>Compressed GUID</u>:&#160; hgfedcbalkjiponmrqtsvuxwzy214365 </li> </ul>  <p>Don't know why Microsoft chose to butcher up GUIDs like this, but it's nice to know.</p> </span>  </div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Launching MSIExec.exe From C#]]></title>
+    <link href="http://mkmurray.com/blog/2008/06/12/launching-msiexec-exe-from-c/"/>
+    <updated>2008-06-12T13:21:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2008/06/12/launching-msiexec-exe-from-c</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>I ran into a problem with trying to spawn off a process to launch an <font face="Courier New">MSIExec.exe</font> command from C#.&#160; I wanted to launch the process and then wait for it to finish before proceeding; however,&#160; it was always returned immediately before the install or uninstall was really finished.&#160; I confirmed this behavior with this blog entry:&#160; <a title="http://blogs.msdn.com/heaths/archive/2005/11/15/493236.aspx" href="http://blogs.msdn.com/heaths/archive/2005/11/15/493236.aspx">http://blogs.msdn.com/heaths/archive/2005/11/15/493236.aspx</a></p>  <p>The author suggests &quot;<font face="Courier New">start /wait</font>&quot; which works from the command line or a batch file.&#160; I did verify it works launching a batch file or two from C#, but I preferred to keep in C# as much as possible.&#160; Also, I was trying to accomplish a silent background process running the <font face="Courier New">MSIExec</font> commands.&#160; However, C# can't just start a process calling &quot;<font face="Courier New">start</font>,&quot; which is an internal command to the Command Prompt I guess.</p>  <p>Someone reminded me on a message board that you can start a process using <font face="Courier New">CMD.exe</font>, calling &quot;<font face="Courier New">start</font>&quot; like this:</p> <span class='fullpost'> <p><pre class="code"><span style="color: #2b91af">ProcessStartInfo </span>startInfo = <span style="color: blue">new </span><span style="color: #2b91af">ProcessStartInfo</span>(
+    <span style="color: #a31515">&quot;cmd.exe&quot;</span>,
+    <span style="color: blue">string</span>.Format(<span style="color: #a31515">&quot;/c start /MIN /wait msiexec.exe /x {0} /quiet&quot;</span>, guid));
+startInfo.WindowStyle = <span style="color: #2b91af">ProcessWindowStyle</span>.Hidden;
+
+<span style="color: #2b91af">Process </span>process = <span style="color: #2b91af">Process</span>.Start(startInfo);
+process.WaitForExit();</pre></p> <p>It works like a charm.&#160; I don't think you even need the &quot;<font face="Courier New">/MIN</font>&quot; flag for &quot;<font face="Courier New">start</font>&quot; anyway.</p>
+</span>  </div>
+
+
+<h2>Comments</h2>
+
+
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Tyler Collier</div>
+<div class='content'>
+Thanks for this.  Great idea.  Worked for me.</div>
+</div>
+<div class='comment'>
+<div class='author'>chavakiran</div>
+<div class='content'>
+You could use process.WaitForExit() isn&#39;t it?</div>
+</div>
+</div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Creating Patch Installers]]></title>
+    <link href="http://mkmurray.com/blog/2008/03/24/creating-patch-installers/"/>
+    <updated>2008-03-24T12:48:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2008/03/24/creating-patch-installers</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>Windows Installer Technology allows for MSP Patch installers, which compliment your MSI installers really well.&#160; However, Visual Studio doesn't support the creation of them from within the IDE.&#160; In fact, you have to download the Windows SDK Toolkit and use a utility called <font face="Courier New">MSIMSP</font>.&#160; For this process, you will also need a utility called <font face="Courier New">Orca</font> from the same SDK; when you download the SDK, inside the Bin folder is an <font face="Courier New">Orca.msi</font> installer.</p>  <p>What you do is build the original version of your MSI installer; then you make the necessary changes and/or fixes to your product and recreate another MSI installer representing the new version of your product.&#160; Then you pass these two MSI installers to the <font face="Courier New">MSIMSP</font> utility and it creates an MSP patch installer for you by automatically detecting the binary differences between the two MSI installers.</p> <span class='fullpost'> <p>I used this article as a guide:&#160; <a title="http://www.codeproject.com/KB/install/dotnetpatching.aspx" href="http://www.codeproject.com/KB/install/dotnetpatching.aspx">http://www.codeproject.com/KB/install/dotnetpatching.aspx</a></p>  <p>However, the Platform SDK link in the article is broken, so use this one instead:&#160; <a title="http://www.microsoft.com/downloads/details.aspx?FamilyId=A55B6B43-E24F-4EA3-A93E-40C0EC4F68E5&amp;displaylang=en" href="http://www.microsoft.com/downloads/details.aspx?FamilyId=A55B6B43-E24F-4EA3-A93E-40C0EC4F68E5&amp;displaylang=en">http://www.microsoft.com/downloads/details.aspx?FamilyId=A55B6B43-E24F-4EA3-A93E-40C0EC4F68E5&amp;displaylang=en</a></p>  <p>This isn't the most up-to-date Windows SDK, but the batch script in the CodeProject article relies on this specific versions folder structure (it has everything you need to create the MSP patch installer nicely in one folder, whereas the newest SDK does not).</p>  <p>I did run into a few of the same hiccups that others did (found down below in the comments of the CodeProject article).&#160; Here are links to my posts with the solutions (you'll have to click around each thread to see the problems posted before my posts):</p>  <ul>   <li>These two are in the same thread:      <ul>       <li><a title="http://www.codeproject.com/KB/install/dotnetpatching.aspx?fid=209224&amp;df=90&amp;mpp=25&amp;noise=3&amp;sort=Position&amp;view=Quick&amp;fr=26&amp;select=2473656#xx2473656xx" href="http://www.codeproject.com/KB/install/dotnetpatching.aspx?fid=209224&amp;df=90&amp;mpp=25&amp;noise=3&amp;sort=Position&amp;view=Quick&amp;fr=26&amp;select=2473656#xx2473656xx">http://www.codeproject.com/KB/install/dotnetpatching.aspx?fid=209224&amp;df=90&amp;mpp=25&amp;noise=3&amp;sort=Position&amp;view=Quick&amp;fr=26&amp;select=2473656#xx2473656xx</a> </li>        <li><a title="http://www.codeproject.com/KB/install/dotnetpatching.aspx?fid=209224&amp;df=90&amp;mpp=25&amp;noise=3&amp;sort=Position&amp;view=Quick&amp;fr=26&amp;select=2474912#xx2474912xx" href="http://www.codeproject.com/KB/install/dotnetpatching.aspx?fid=209224&amp;df=90&amp;mpp=25&amp;noise=3&amp;sort=Position&amp;view=Quick&amp;fr=26&amp;select=2474912#xx2474912xx">http://www.codeproject.com/KB/install/dotnetpatching.aspx?fid=209224&amp;df=90&amp;mpp=25&amp;noise=3&amp;sort=Position&amp;view=Quick&amp;fr=26&amp;select=2474912#xx2474912xx</a> </li>     </ul>   </li>    <li><a title="http://www.codeproject.com/KB/install/dotnetpatching.aspx?fid=209224&amp;select=2475101#xx2475101xx" href="http://www.codeproject.com/KB/install/dotnetpatching.aspx?fid=209224&amp;select=2475101#xx2475101xx">http://www.codeproject.com/KB/install/dotnetpatching.aspx?fid=209224&amp;select=2475101#xx2475101xx</a> </li> </ul>  <p>Also, I had to modify his <font face="Courier New">patch.cmd</font> batch file slightly; a copy of it is pasted below.</p>  <p>This process isn't as effective as it should be if you are trying to difference two Visual Studio created MSI installers.&#160; The <font face="Courier New">MSIMSP</font> utility is very thorough in its comparison of file names, locations, sizes, versions, and every byte of data contained in the files.&#160; It can create a binary difference between the two files in order to minimize as much as possible the patch installer's size and speed.&#160; It even compares the <a href="http://en.wikipedia.org/wiki/8.3_filename">8.3 short filename</a> of every file.&#160; Unfortunately, Visual Studio can be very inconsistent in its assignment of short filenames with the tilde-numbering system (i.e., &quot;<font face="Courier New">FILENA~3.TXT</font>&quot;) if you add, rename, move, or delete even a couple of files from your project.&#160; I often had to manually edit the short filenames in the second MSI using the <font face="Courier New">Orca</font> utility to make the names be consistent between the two versions of the Visual Studio created installers; otherwise, the <font face="Courier New">MSIMSP</font> utility would just blindly include the whole file for patching and inflate the overall size of the MSP patcher.</p>  <p>Good luck and enjoy not having to figure out what the deltas are between the versions of your products!</p>  <div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; overflow: auto; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 750px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4">   <pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; overflow: visible; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; white-space: nowrap; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #0000ff">if</span> <span style="color: #006080">&quot;%1&quot;</span>==<span style="color: #006080">&quot;&quot;</span> %0 Debug Release Done <br /><br />@SETLOCAL <br />@set path=%path%;<span style="color: #006080">&quot;C:\Program Files\Microsoft Platform SDK\Samples\SysMgmt\Msi\Patching&quot;</span><br />@set PatchTmp=C:\VSTemp<br /><br />:loop <br /><span style="color: #0000ff">if</span> <span style="color: #006080">&quot;%1&quot;</span>==<span style="color: #006080">&quot;Done&quot;</span> goto <span style="color: #0000ff">end</span> <br /><br /><span style="color: #0000ff">if</span> not exist %1\*.msi goto nopatch <br /><span style="color: #0000ff">if</span> not exist TargetImage\%1\*.msi goto nopatch <br /><br />:ok <br />rmdir /s /q %PatchTmp% <br />mkdir %PatchTmp% <br />mkdir %PatchTmp%\TargetImage <br />mkdir %PatchTmp%\UpgradedImage <br />mkdir %PatchTmp%\Patch <br /><br /><span style="color: #0000ff">for</span> %%a <span style="color: #0000ff">in</span> (TargetImage\%1\*.msi) do copy %%a %PatchTmp%\setup.msi <br />msiexec /qb /a %PatchTmp%\setup.msi TARGETDIR=%PatchTmp%\TargetImage /L*v %PatchTmp%\TargetImage\setup.log <br />del %PatchTmp%\setup.msi <br /><br /><span style="color: #0000ff">for</span> %%a <span style="color: #0000ff">in</span> (%1\*.msi) do copy %%a %PatchTmp%\setup.msi <br />msiexec /qb /a %PatchTmp%\setup.msi TARGETDIR=%PatchTmp%\UpgradedImage /L*v %PatchTmp%\UpgradedImage\setup.log <br />del %PatchTmp%\setup.msi <br /><br />copy patch.pcp %PatchTmp% <br />set PatchDir=%CD% <br />chdir %PatchTmp% <br />msimsp -s patch.pcp -p Patch\patch.msp -l Patch\patch.log -f %PatchTmp%\Tmp -d <br /><br />rmdir /s /q %PatchTmp%\TargetImage <br />rmdir /s /q %PatchTmp%\UpgradedImage <br />rmdir /s /q %PatchTmp%\Tmp <br />chdir %PatchDir% <br /><br />mkdir Patch <br />mkdir Patch\%1 <br />copy %PatchTmp%\Patch\*.* Patch\%1\*.* <br />rmdir /s /q %PatchTmp% <br /><br />:nopatch <br />shift <br />goto loop <br /><br />:<span style="color: #0000ff">end</span> <br />pause</pre>
+</div>
+</span>  </div>
+
+
+<h2>Comments</h2>
+
+
+<div class='comments'>
+<div class='comment'>
+<div class='author'>pavan</div>
+<div class='content'>
+if u run the above cmd file,it is going into an infinite loop.</div>
+</div>
+<div class='comment'>
+<div class='author'>pavan</div>
+<div class='content'>
+ERROR: PatchGUID property is missing from the Properties table of the .pcp file. This is a required property</div>
+</div>
+<div class='comment'>
+<div class='author'>ravish</div>
+<div class='content'>
+Found the solution...<br />i was missing &quot;/D&quot; option for chdir in my .cmd file</div>
+</div>
+<div class='comment'>
+<div class='author'>ravish</div>
+<div class='content'>
+Hi Mike,<br />Thanks for the very useful article.<br />While prepating a patch as described above, i am getting following error<br />Failed to create patch.  Error code: 0xC00E5198<br /><br />any idea what can be the problem ?</div>
+</div>
+<div class='comment'>
+<div class='author'>Baburaj</div>
+<div class='content'>
+Hi I'm getting this error while patching:<BR/><BR/>  ERROR: UpgradedImages.MsiPath 'C:\VSTemp\UpgradedImage\ERP.msi' does not exist.<BR/><BR/><BR/>What could be the reason? I used your patch.cmd file.</div>
+</div>
+<div class='comment'>
+<div class='author'>Mike Murray</div>
+<div class='content'>
+I think you will find the following link helpful:<BR/><BR/><A HREF="http://forum.installsite.net/index.php?showtopic=15237" REL="nofollow">http://forum.installsite.net/index.php?showtopic=15237</A><BR/><BR/>I think you will find the whole website InstallSite.net to be a helpful resource for all questions about installers, especially MSI and MSP installers.</div>
+</div>
+<div class='comment'>
+<div class='author'>daniju</div>
+<div class='content'>
+Hi michael, thanks for your post is very interesting.<BR/><BR/>I´m trying release step to step, but my problem is the next:<BR/><BR/>***** Log starting: 2008-10-29 10:24:54 *****<BR/><BR/>Input-PCP path                     = 'patch.pcp'<BR/>Patch-MSP path                     = 'Patch\patch.msp'<BR/>Temp Folder                        = 'C:\VSTemp\Tmp\'<BR/>Patch GUID                         = '{91FF215B-112C-42B9-8862-FEE08663EC9C}'<BR/>ListOfPatchGUIDsToReplace          = "none"<BR/>ListOfTargetProductCodes           = '*'<BR/>PatchSourceList                    = 'PatchSourceList'<BR/>AllowProductCodeMismatches         = '1'<BR/>AllowProductVersionMajorMismatches = '1'<BR/>OptimizePatchSizeForLargeFiles     = 'blank'<BR/>ApiPatchingSymbolFlags             = '0x00000000'<BR/>MsiFileToUseToCreatePatchTables    = 'blank'<BR/>SqlCmdToCreatePatchTable           = 'blank'<BR/>SqlCmdToCreatePatchPackageTable    = 'blank'<BR/>SqlCmdToCreateMsiPatchHeadersTable = 'blank'<BR/>DontRemoveTempFolderWhenFinished   = '1'<BR/>IncludeWholeFilesOnly              = '0'<BR/>MinimumRequiredMsiVersion          = '200'<BR/>SEQUENCE_DATA_GENERATION_DISABLED  = 'blank'<BR/>AllowRemoval                       = 'blank'<BR/><BR/>Using internal SQL cmd to create 'Patch' table.<BR/>Using internal SQL cmd to create 'PatchPackage' table.<BR/>Using internal SQL cmd to create 'MsiPatchHeaders' table.<BR/><BR/>     Files differ: 'C:\VSTemp\UpgradedImage\.\AlbumFotos.dll',<BR/>                   'C:\VSTemp\TargetImage\.\AlbumFotos.dll'.<BR/>  Patch file created: FTK=_0E2D0A15B23B989808E6FD64A243497B; temp location=fam1\00002.HDR.<BR/>     Files differ: 'C:\VSTemp\UpgradedImage\.\PruebasPictureBox.dll',<BR/>                   'C:\VSTemp\TargetImage\.\PruebasPictureBox.dll'.<BR/>  Patch file created: FTK=_24E4033462F0482C9B569672F8337663; temp location=fam1\00003.HDR.<BR/>     Files differ: 'C:\VSTemp\UpgradedImage\.\DermaDatos.dll',<BR/>                   'C:\VSTemp\TargetImage\.\DermaDatos.dll'.<BR/>  Patch file created: FTK=_294ABD0349756E66C6CB0D11001752CE; temp location=fam1\00004.HDR.<BR/>     Files differ: 'C:\VSTemp\UpgradedImage\.\CapturaImagenesPruebas.dll',<BR/>                   'C:\VSTemp\TargetImage\.\CapturaImagenesPruebas.dll'.<BR/>  Patch file created: FTK=_5E58F544E2DC940F4F3139031A15DE72; temp location=fam1\00005.HDR.<BR/>     Files differ: 'C:\VSTemp\UpgradedImage\.\PruebasInforme.exe',<BR/>                   'C:\VSTemp\TargetImage\.\PruebasInforme.exe'.<BR/>  Patch file created: FTK=_7328B00680B1965AF0370EF0DE389DBE; temp location=fam1\00006.HDR.<BR/>     Files differ: 'C:\VSTemp\UpgradedImage\.\MotorAlertas.dll',<BR/>                   'C:\VSTemp\TargetImage\.\MotorAlertas.dll'.<BR/>  Patch file created: FTK=_7FBC6D05562B82F2CDC2F1BDBE476432; temp location=fam1\00007.HDR.<BR/>     Files differ: 'C:\VSTemp\UpgradedImage\.\ModoDiapositiva.dll',<BR/>                   'C:\VSTemp\TargetImage\.\ModoDiapositiva.dll'.<BR/>  Patch file created: FTK=_8FEA4D552741B28293ABC797812149CD; temp location=fam1\00008.HDR.<BR/>     Files differ: 'C:\VSTemp\UpgradedImage\.\Derma.exe',<BR/>                   'C:\VSTemp\TargetImage\.\Derma.exe'.<BR/>  Patch file created: FTK=_5260684262CA164CEF0A33F5A94CAC55; temp location=fam1\00009.HDR.<BR/>  ERROR: Since MSI 3.0 will block installation of major upgrade patches with sequencing information, creation of such patches is blocked.<BR/><BR/>***** Log finishing: 2008-10-29 10:25:05 *****<BR/><BR/>What is my problem?? Can you help me, please???<BR/><BR/>Thank you very much</div>
+</div>
+</div>
+
+]]></content>
+  </entry>
+  
+</feed>

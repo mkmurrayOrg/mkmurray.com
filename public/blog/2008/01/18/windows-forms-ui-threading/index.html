@@ -1,0 +1,136 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Windows Forms UI Threading - Mike Murray</title>
+	<meta name="author" content="Mike Murray">
+
+	
+	<meta name="description" content="I fixed a UI issue we were having where some work was being done and it was updating a progress bar, but it wasn&#8217;t correctly painting the rest &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="http://feeds.feedburner.com/mkmurray/" rel="alternate" title="Mike Murray" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	
+</head>
+
+<body>
+	<div class="container">
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post">
+	<h1 class="title">Windows Forms UI Threading</h1>
+	<div class="entry-content"><div class='post'>
+<p>I fixed a UI issue we were having where some work was being done and it was updating a progress bar, but it wasn&#8217;t correctly painting the rest of the labels and other static UI elements.&#160; It&#8217;s best to let the UI do it&#8217;s thing on the main thread, and then spawn off a worker thread in the background, allowing them to communicate with each other through delegates.</p> <span class='fullpost'> <p>Here is a very nicely done, informative article about delegates that I should have read (I probably would have gotten to my solution quicker and surpassed my trial and error issues):&#160; <a title="http://www.ondotnet.com/pub/a/dotnet/2002/11/04/delegates.htm" href="http://www.ondotnet.com/pub/a/dotnet/2002/11/04/delegates.htm">http://www.ondotnet.com/pub/a/dotnet/2002/11/04/delegates.htm</a></p>  <p>I used the following two articles as a basis for my fix:</p>  <ul>   <li><a title="http://msdn2.microsoft.com/en-us/library/ms951089.aspx" href="http://msdn2.microsoft.com/en-us/library/ms951089.aspx">http://msdn2.microsoft.com/en-us/library/ms951089.aspx</a> </li>    <li><a title="http://www.ondotnet.com/pub/a/dotnet/2003/02/24/asyncdelegates.html?page=1" href="http://www.ondotnet.com/pub/a/dotnet/2003/02/24/asyncdelegates.html?page=1">http://www.ondotnet.com/pub/a/dotnet/2003/02/24/asyncdelegates.html?page=1</a> </li> </ul>  <p>However, I didn&#8217;t end up using the <font face="Courier New">MulticastDelegate</font> class at all in my solution.&#160; It&#8217;s not really necessary, and I couldn&#8217;t get it to work when I tried to extend or inherit from it.&#160; The following article says you can&#8217;t anyway, unless you are a compiler or some similar tool:&#160; <a title="http://msdn2.microsoft.com/en-us/library/system.multicastdelegate.aspx" href="http://msdn2.microsoft.com/en-us/library/system.multicastdelegate.aspx">http://msdn2.microsoft.com/en-us/library/system.multicastdelegate.aspx</a></p>  <p>This link has a cool helper class for asynchronous delegates, though I didn&#8217;t use it:&#160; <a title="http://peach.ease.lsoft.com/scripts/wa.exe?A2=ind0302B&amp;L=ADVANCED-DOTNET&amp;T=0&amp;F=&amp;S=&amp;P=31992" href="http://peach.ease.lsoft.com/scripts/wa.exe?A2=ind0302B&amp;L=ADVANCED-DOTNET&amp;T=0&amp;F=&amp;S=&amp;P=31992">http://peach.ease.lsoft.com/scripts/wa.exe?A2=ind0302B&amp;L=ADVANCED-DOTNET&amp;T=0&amp;F=&amp;S=&amp;P=31992</a></p>  <p>Good luck.</p>  <p><strong><u>FOLLOWUP (05/21/09)</u>:&#160; </strong>I have some further clarifications about how to properly invoke delegates to a new background thread in this post:</p>  <p><a href="http://murrayon.net/2009/05/begininvoke-methods-and-oneway.html">BeginInvoke Methods and OneWay Attribute</a></p> </span>  </div>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2012
+
+    Mike Murray
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a>
+</footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'mkmurray';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+		</div>
+		<div class="left-col">
+			<header id="header" class="inner"><div class="profilepic">	
+	<img src="/images/mkmurray.jpg" alt="Profile Picture">
+</div>
+<h1><a href="/">Mike Murray</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<br/>
+<h3 class="alignleft">please code responsibly</h3>
+<br/>
+<br/>
+<br/>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		<a class="facebook" href="http://www.facebook.com/mkmurray" title="Facebook">Facebook</a>
+		
+		
+		<a class="google" href="https://plus.google.com/109073345657761090655?rel=author" title="Google+">Google+</a>
+		
+		
+		<a class="twitter" href="http://twitter.com/mkmurray" title="Twitter">Twitter</a>
+		
+		
+		<a class="github" href="https://github.com/mkmurray" title="GitHub">GitHub</a>
+		
+		
+		<a class="linkedin" href="http://www.linkedin.com/in/mkmurray">LinkedIn</a>
+		
+		
+		
+		
+		<a class="rss" href="http://feeds.feedburner.com/mkmurray/" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+
+</header>				
+		</div>	
+	</div>
+</body>
+</html>

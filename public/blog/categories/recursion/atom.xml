@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Recursion | Mike Murray]]></title>
+  <link href="http://mkmurray.com/blog/categories/recursion/atom.xml" rel="self"/>
+  <link href="http://mkmurray.com/"/>
+  <updated>2012-10-29T14:47:08-06:00</updated>
+  <id>http://mkmurray.com/</id>
+  <author>
+    <name><![CDATA[Mike Murray]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Recursion Quote]]></title>
+    <link href="http://mkmurray.com/blog/2008/09/03/recursion-quote/"/>
+    <updated>2008-09-03T15:29:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2008/09/03/recursion-quote</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>I saw this quote on a message board in someone's signature and thought it was just hilarious:</p>  <blockquote>   <p>&quot;In order to understand recursion, one must first understand recursion.&quot;</p> </blockquote>  <p>I can't seem to find who originally said it.</p>  </div>
+
+
+<h2>Comments</h2>
+
+
+<div class='comments'>
+<div class='comment'>
+<div class='author'>dave</div>
+<div class='content'>
+That was my email signature for many, many years, starting around 1991 ... but I got it from some BBS&#39;s random tagline generator, so I can&#39;t take credit for it.</div>
+</div>
+</div>
+
+]]></content>
+  </entry>
+  
+</feed>

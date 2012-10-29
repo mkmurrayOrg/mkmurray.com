@@ -1,0 +1,149 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Migrating from VS 2005 to 2008 - Mike Murray</title>
+	<meta name="author" content="Mike Murray">
+
+	
+	<meta name="description" content="So I just finished migrating a whole slew of our large solutions and projects from Visual Studio 2005 to Visual Studio 2008.&#160; The conversion &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="http://feeds.feedburner.com/mkmurray/" rel="alternate" title="Mike Murray" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	
+</head>
+
+<body>
+	<div class="container">
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post">
+	<h1 class="title">Migrating From vs 2005 to 2008</h1>
+	<div class="entry-content"><div class='post'>
+<p>So I just finished migrating a whole slew of our large solutions and projects from Visual Studio 2005 to Visual Studio 2008.&#160; The conversion process itself was really simple and painless (and not too time consuming).&#160; There were a few gotchas with our Setup (AKA Deployment) Projects however:</p> <span class='fullpost'> <ol>   <li>It appears that Microsoft moved the location of it&#8217;s prerequisite packages for the BootStrapper for VS 2008.&#160; Microsoft used to keep them at <font face="Courier New">C:\Program Files\Microsoft Visual Studio 8\SDK\v2.0\BootStrapper\Packages</font>, but now in 2008 it looks they have moved them to a more isolated and common location.&#160; The new location is <font face="Courier New">C:\Program Files\Microsoft SDKs\Windows\v6.0A\Bootstrapper\Packages</font>.&#160; When I converted our setup projects to VS 2008 format, some of the prerequisites couldn&#8217;t be found because of this.&#160; I just went to the old VS 2005 BootStrapper location and copied the folders of the packages I needed to the new VS 2008 location (for example, the <font face="Courier New">MDAC</font> package is under a folder called <font face="Courier New">MDAC28</font>, and it is not in VS 2008&#8217;s list of packages by default anymore). </li>    <li>We had a folder structure into which we were dropping the <font face="Courier New">Primary Output</font> of a web application in our setup projects.&#160; For a web application project, the <font face="Courier New">Primary Output</font> is the DLL libraries in the <font face="Courier New">bin</font> directory of the web site.&#160; In VS 2005, you would create a <font face="Courier New">bin</font> folder at the root level of the web site and put the <font face="Courier New">Primary Output</font> down a level in the <font face="Courier New">bin</font> folder.&#160; Well, now in VS 2008, it appears that wherever you put the <font face="Courier New">Project Output</font>, the setup project will create a <font face="Courier New">bin</font> folder at that location and put the DLL libraries in that <font face="Courier New">bin</font> folder one level down from where you put the <font face="Courier New">Project Output</font>.&#160; So I had to go back through our setup projects and move the location of those <font face="Courier New">Primary Outputs</font> one level up (or else it would create a <font face="Courier New">bin </font>folder inside of the <font face="Courier New">bin</font> folder). </li> </ol>  <p>One nice thing about the migration to VS 2008 is that it looks like Microsoft has a new version of the <font face="Courier New">Visual C++ Runtime Libraries</font> prerequisite (I don&#8217;t know if the libraries are actually any different, but at least the redistributable package and logic are improved).&#160; We have a set of products that have this package as a prerequisite during install.&#160; Every time you ran the installer it would reinstall the package.&#160; It was almost as if it wasn&#8217;t doing any logic to detect if it already had the package installed.&#160; The following link might be the explanation of why we were seeing this odd behavior (even though it references the <font face="Courier New">MDAC</font> package):&#160; <a title="http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=339044&amp;SiteID=1" href="http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=339044&amp;SiteID=1">http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=339044&amp;SiteID=1</a></p>  <p>Well, the new <font face="Courier New">Visual C++ Runtime Libraries</font> package works great and doesn&#8217;t keep reinstalling itself as a prerequisite with every install or update of one of our products that depend on it.</p>  <p><strong><u>FOLLOWUP (06/19/08)</u></strong>:&#160; Actually, we ended it up having to revert back to the <font face="Courier New">Visual C++ Runtime Libraries</font> from Visual Studio 2005, as another prerequisite we were using (<a href="http://www.dtsearch.com/">DTSearch</a>) wasn&#8217;t compatible with the new C++ libraries with VS 2008.&#160; We&#8217;ll check again next year.</p> </span>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>
+This is extraordinary!  As per comment your post 2, folder structure.<br /><br />I am actually moving straight from 2005 to 2010, and had come across just this problem.  I hadn&#39;t thought it might actually emanate from 2008 in the first place.  And this was the only thread I could find covering just this.  I am in process of moving the POs one level up&#8230;</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>
+Your number 2 post regarding folder structure was the first I&#39;ve seen of its kind.  I was particularly confused since each converted solution I tried gave a Parser error.  I&#39;ve been researching this issue for days why our 2005 solutions haven&#39;t been converted to 2008 successfully.  Thanks so much for posting this info!</div>
+</div>
+</div>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2012
+
+    Mike Murray
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a>
+</footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'mkmurray';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+		</div>
+		<div class="left-col">
+			<header id="header" class="inner"><div class="profilepic">	
+	<img src="/images/mkmurray.jpg" alt="Profile Picture">
+</div>
+<h1><a href="/">Mike Murray</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<br/>
+<h3 class="alignleft">please code responsibly</h3>
+<br/>
+<br/>
+<br/>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		<a class="facebook" href="http://www.facebook.com/mkmurray" title="Facebook">Facebook</a>
+		
+		
+		<a class="google" href="https://plus.google.com/109073345657761090655?rel=author" title="Google+">Google+</a>
+		
+		
+		<a class="twitter" href="http://twitter.com/mkmurray" title="Twitter">Twitter</a>
+		
+		
+		<a class="github" href="https://github.com/mkmurray" title="GitHub">GitHub</a>
+		
+		
+		<a class="linkedin" href="http://www.linkedin.com/in/mkmurray">LinkedIn</a>
+		
+		
+		
+		
+		<a class="rss" href="http://feeds.feedburner.com/mkmurray/" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+
+</header>				
+		</div>	
+	</div>
+</body>
+</html>

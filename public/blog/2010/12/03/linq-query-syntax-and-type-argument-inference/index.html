@@ -1,0 +1,241 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>LINQ Query Syntax and Type Argument Inference - Mike Murray</title>
+	<meta name="author" content="Mike Murray">
+
+	
+	<meta name="description" content="In LINQ, you can query in-memory data collections using Method Syntax (the IEnumerable extension methods) or Query Syntax (the SQL-like, declarative &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="http://feeds.feedburner.com/mkmurray/" rel="alternate" title="Mike Murray" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	
+</head>
+
+<body>
+	<div class="container">
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post">
+	<h1 class="title">LINQ Query Syntax and Type Argument Inference</h1>
+	<div class="entry-content"><div class='post'>
+<p>In LINQ, you can query in-memory data collections using <a href="http://msdn.microsoft.com/en-us/library/bb397947.aspx">Method Syntax (the <font face="Courier New">IEnumerable</font> extension methods) or Query Syntax (the SQL-like, declarative syntactic sugar on top of the underlying method calls)</a>.&#160; I was using the query syntax to join a few in-memory collections and then project (like a SQL <font face="Courier New">SELECT</font>) the denormalized data into a new object that only contained a few pieces of information from each of the separate data collections.&#160; The code could look similar to this (we&#8217;ll go with a shopping example in honor of the upcoming holiday season):</p>  <pre class="brush: csharp">var shoppingLists =
+    from person in people
+    join wishlist in wishlists on person.Id equals wishlist.personId
+    join store in stores on store.Id equals wishlist.storeId
+    select new
+    {
+        PersonName = person.Name,
+        StoreName = store.Name,
+        NumItems = wishlist.Items.Count
+    };</pre>
+
+<p>However, I ran into the following intellisense red squiggly error in the Visual Studio C# code editor on the second <font face="Courier New">join</font> statement:</p>
+
+<blockquote>
+  <p><font face="Courier New">The type arguments for method &#8216;IEnumerable&lt;TResult&gt; System.Linq.Enumerable.Join&lt;TOuter,TInner,TKey,TResult&gt;(this IEnumerable&lt;TOuter&gt;, IEnumerable&lt;TInner&gt;, Func&lt;TOuter,TKey&gt;, Func&lt;TInner,TKey&gt;, Func&lt;TOuter,TInner,TResult&gt;)&#8217; cannot be inferred from the query.</font></p>
+</blockquote>
+
+<p>The error might also end with a statement that says &quot;<font face="Courier New">Try specifiying the type arguments explicitly</font>.&quot;</p>
+<span class="fullpost">
+  <h3>Let’s Take a Closer Look…</h3>
+
+  <p>The underlying problem is best understood by examining the method signature of the <a href="http://msdn.microsoft.com/en-us/library/bb534675.aspx">LINQ <font face="Courier New">Join</font> extension method</a> and how the LINQ query syntax for the keyword <font face="Courier New">join</font> maps to that method call in the compiler.&#160; The type signature for the extension method is as follows:</p>
+
+  <pre class="brush: csharp">public static IEnumerable&lt;TResult&gt; Join&lt;TOuter,TInner,TKey,TResult&gt;(
+    this IEnumerable&lt;TOuter&gt; outer,
+    IEnumerable&lt;TInner&gt; inner,
+    Func&lt;TOuter,TKey&gt; outerKeySelector,
+    Func&lt;TInner,TKey&gt; innerKeySelector,
+    Func&lt;TOuter,TInner,TResult&gt; resultSelector)</pre>
+
+  <p>Consistent with all <a href="http://msdn.microsoft.com/en-us/library/bb383977.aspx">extension methods</a>, it is <font face="Courier New">public static</font> and has a <font face="Courier New">this</font> keyword in front of the first method parameter, allowing you to call the <font face="Courier New">Join</font> method as if it had been declared in the original definition of the <font face="Courier New">IEnumerable&lt;&gt;</font> class or one of its inheriting children classes.</p>
+
+  <p>The first two parameters are the two data collections being joined, and in the case of my LINQ query above, they would be the joined collection of <font face="Courier New">people</font> &amp; <font face="Courier New">wishlists</font> and then the <font face="Courier New">stores</font> collection, respectively.</p>
+
+  <p>The next two method parameters take delegates or lambda expressions that select the key value from each collection participating in the join, <font face="Courier New">outer</font> collection key selector first and then the <font face="Courier New">inner</font> key selector second.&#160; The key values of each item in each collection will compared to each other for equality.&#160; It will use the normal definition of the <font face="Courier New">Equals</font> method for your object type (or if you specified a custom one in your class definition), or there is another <font face="Courier New">Join</font> extension method signature that takes in another method parameter that an object that conforms to the <font face="Courier New"><a href="http://msdn.microsoft.com/en-us/library/ms132151.aspx">IEqualityComparer&lt;TKey&gt; <font face="Arial">interface</font></a></font>.&#160; The key selectors from our LINQ query sample would be the two member access expressions in the &quot;<font face="Courier New">on store.Id equals wishlist.storeId</font><font face="Arial">&quot; statement.</font></p>
+
+  <p>The last parameter is a delegate or lambda expression that takes in a item from each participating data collection and projects the items into a new form (like the <font face="Courier New">Select</font> LINQ query method and its SQL equivalent).&#160; The two items being passed into the <font face="Courier New">Func</font> have passed the equality comparison of each item’s key value, exactly the same as how rows from two tables match up in an <font face="Courier New">inner join</font> statement in SQL.</p>
+
+  <p>As for the <a href="http://msdn.microsoft.com/en-us/library/0zk36dx2.aspx">generic type parameters</a> in this extension method definition, <font face="Courier New">TOuter</font> and <font face="Courier New">TInner</font> are the types from the two collections participating in the join.&#160; <font face="Courier New">TKey</font> is the type returned by the key selectors; notice that in order to compare the equality of each key selected, they need to be of the same type.&#160; In our example, <font face="Courier New">TKey</font> is likely <font face="Courier New">int</font> or <font face="Courier New">long</font> (or maybe <font face="Courier New">Guid</font>) since we’re dealing with <font face="Courier New">Id</font> properties of all of our objects.&#160; <font face="Courier New">TResult</font> is the type returned by the projection <font face="Courier New">Func&lt;TOuter,TInner,TResult&gt; resultSelector</font>; in our case, we returned an <a href="http://msdn.microsoft.com/en-us/library/bb397696.aspx">anonymous type</a> consisting of three properties (<font face="Courier New">PersonName</font>, <font face="Courier New">StoreName</font>, and <font face="Courier New">NumItems</font>).</p>
+
+  <h3>Ok, So Where Did I Screw Up Then?</h3>
+
+  <p>To answer this, let’s take a look one more time at my LINQ query syntax, how it would map to LINQ method syntax, and the <font face="Courier New">Join</font> method signature again all side-by-side:</p>
+
+  <pre class="brush: csharp; highlight: [4,19,20]">var shoppingLists =
+    from person in people
+    join wishlist in wishlists on person.Id equals wishlist.personId
+    join store in stores on store.Id equals wishlist.storeId
+    select new
+    {
+        PersonName = person.Name,
+        StoreName = store.Name,
+        NumItems = wishlist.Items.Count
+    };
+
+// Equivalent LINQ method syntax
+var shoppingLists2 = people
+    .Join(wishlists,
+        person =&gt; person.Id,
+        wishlist =&gt; wishlist.personId,
+        (person, wishlist) =&gt; new { person, wishlist })
+    .Join(stores,
+        store =&gt; store.Id,
+        something =&gt; something.wishlist.storeId,
+        (obj, store) =&gt; new
+        {
+            PersonName = obj.person.Name,
+            StoreName = store.Name,
+            NumItems = obj.wishlist.Items.Count
+        });
+
+public static IEnumerable&lt;TResult&gt; Join&lt;TOuter,TInner,TKey,TResult&gt;(
+    this IEnumerable&lt;TOuter&gt; outer,
+    IEnumerable&lt;TInner&gt; inner,
+    Func&lt;TOuter,TKey&gt; outerKeySelector,
+    Func&lt;TInner,TKey&gt; innerKeySelector,
+    Func&lt;TOuter,TInner,TResult&gt; resultSelector)</pre>
+
+  <p>The issue is lines 19 and 20 above; they need to be switched.&#160; The compiler can’t properly infer the generic type parameters because we have our key selectors out of order in the argument list when invoking the <font face="Courier New">Join</font> method.&#160; If you wanted to be explicit about your generic type parameters assignments, then <font face="Courier New">Join&lt;TOuter, TInner, TKey, TResult&gt;</font> would be <font face="Courier New">Join&lt;Temp1, Store, int, Temp2&gt;</font>, where <font face="Courier New">Temp1</font> and <font face="Courier New">Temp2</font> represent the magical type definitions that the compiler creates underneath the covers when you use anonymous types in your C# code.&#160; Notice the <font face="Courier New">outerKeySelector</font> needs to come before the <font face="Courier New">innerKeySelector</font>.&#160; It appears the &quot;<font face="Courier New">on store.Id equals wishlist.storeId</font><font face="Arial">&quot; syntax is not a </font><a href="http://en.wikipedia.org/wiki/Commutativity">commutative operation</a>.</p>
+
+  <p>One last thing, I just realized that the error(s) given in Visual Studio when you actually compile the code are different than the intellisense red squiggly error message.&#160; It appears an actual build of the code is able to be a little more omniscient than the quick compile that intellisense does as you type.&#160; The error (and intelligent suggestion) the compiler offers says something like this:</p>
+
+  <blockquote>
+    <p><font face="Courier New">The name &#8216;store&#8217; is not in scope on the left side of &#8216;equals&#8217;.&#160; Consider swapping the expressions on either side of &#8216;equals&#8217;.</font></p>
+  </blockquote>
+
+  <h3>Additional Info</h3>
+
+  <p>While reading the <a href="http://msdn.microsoft.com/en-us/library/bb534675.aspx">MSDN article on the LINQ <font face="Courier New">Join</font> method</a>, I thought the &quot;<font face="Courier New">Remarks</font><font face="Arial">&quot;</font> section has some really great stuff about deferred execution, default equality comparison, differences from <font face="Courier New">SelectMany</font>, sort order perseverance, and so on:</p>
+
+  <blockquote>
+    <p>This method is implemented by using deferred execution. The immediate return value is an object that stores all the information that is required to perform the action. The query represented by this method is not executed until the object is enumerated either by calling its <strong>GetEnumerator</strong> method directly or by using foreach in Visual C# or For Each in Visual Basic.</p>
+
+    <p>The default equality comparer, <a href="http://msdn.microsoft.com/en-us/library/ms224763.aspx">Default</a>, is used to hash and compare keys.</p>
+
+    <p>A join refers to the operation of correlating the elements of two sources of information based on a common key. <a href="http://msdn.microsoft.com/en-us/library/system.linq.enumerable.join.aspx">Join</a> brings the two information sources and the keys by which they are matched together in one method call. This differs from the use of <strong>SelectMany</strong>, which requires more than one method call to perform the same operation.</p>
+
+    <p><a href="http://msdn.microsoft.com/en-us/library/system.linq.enumerable.join.aspx">Join</a> preserves the order of the elements of outer, and for each of these elements, the order of the matching elements of inner.</p>
+
+    <p>In query expression syntax, a join (Visual C#) or Join (Visual Basic) clause translates to an invocation of <a href="http://msdn.microsoft.com/en-us/library/system.linq.enumerable.join.aspx">Join</a>.</p>
+
+    <p>In relational database terms, the <a href="http://msdn.microsoft.com/en-us/library/system.linq.enumerable.join.aspx">Join</a> method implements an inner equijoin. &#8216;Inner&#8217; means that only elements that have a match in the other sequence are included in the results. An &#8216;equijoin&#8217; is a join in which the keys are compared for equality. A left outer join operation has no dedicated standard query operator, but can be performed by using the <a href="http://msdn.microsoft.com/en-us/library/system.linq.enumerable.groupjoin.aspx">GroupJoin</a> method. See <a href="http://msdn.microsoft.com/en-us/library/bb397908.aspx">Join Operations</a>.</p>
+  </blockquote>
+
+  <p>Thanks, I hope this proves helpful to someone, as it was certainly eye-opening to me.</p>
+</span></div>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2012
+
+    Mike Murray
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a>
+</footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'mkmurray';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+		</div>
+		<div class="left-col">
+			<header id="header" class="inner"><div class="profilepic">	
+	<img src="/images/mkmurray.jpg" alt="Profile Picture">
+</div>
+<h1><a href="/">Mike Murray</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<br/>
+<h3 class="alignleft">please code responsibly</h3>
+<br/>
+<br/>
+<br/>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		<a class="facebook" href="http://www.facebook.com/mkmurray" title="Facebook">Facebook</a>
+		
+		
+		<a class="google" href="https://plus.google.com/109073345657761090655?rel=author" title="Google+">Google+</a>
+		
+		
+		<a class="twitter" href="http://twitter.com/mkmurray" title="Twitter">Twitter</a>
+		
+		
+		<a class="github" href="https://github.com/mkmurray" title="GitHub">GitHub</a>
+		
+		
+		<a class="linkedin" href="http://www.linkedin.com/in/mkmurray">LinkedIn</a>
+		
+		
+		
+		
+		<a class="rss" href="http://feeds.feedburner.com/mkmurray/" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+
+</header>				
+		</div>	
+	</div>
+</body>
+</html>

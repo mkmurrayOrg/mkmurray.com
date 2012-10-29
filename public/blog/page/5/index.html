@@ -1,0 +1,337 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Mike Murray</title>
+	<meta name="author" content="Mike Murray">
+
+	
+	<meta name="description" content="In a previous post I talked about Windows Forms UI Threading using delegates.&#160; Recently I needed to replicate what I had learned, and I &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="http://feeds.feedburner.com/mkmurray/" rel="alternate" title="Mike Murray" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	
+</head>
+
+<body>
+	<div class="container">
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2009/05/21/begininvoke-methods-and-oneway-attribute/">BeginInvoke Methods and OneWay Attribute</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-05-21T16:29:00-06:00" pubdate data-updated="true">May 21<span>st</span>, 2009</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/delegates/'>Delegates</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/threading/'>Threading</a>, <a class='category' href='/blog/categories/ui/'>UI</a>, <a class='category' href='/blog/categories/windows-forms/'>Windows Forms</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2009/05/21/begininvoke-methods-and-oneway-attribute/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>In a previous post I talked about <a href="http://murrayon.net/2008/01/windows-forms-ui-threading.html">Windows Forms UI Threading</a> using delegates.&#160; Recently I needed to replicate what I had learned, and I happened to do so without reviewing my notes in the former blog post.&#160; Apparently I didn’t remember everything I had learned and became confused over thread invocation techniques, introducing a bug into my thread messaging.&#160; The UI thread was blocking while the background worker thread was processing.</p>  <p>The cause was related to figuring out which <font face="Courier New">BeginInvoke</font> method to call when kicking off the worker thread, the <font face="Courier New">BeginInvoke</font> of the <font face="Courier New">Form</font> object or the <font face="Courier New">BeginInvoke</font> of the delegate.&#160; The answer is the <font face="Courier New">BeginInvoke</font> method of the delegate.&#160; All of the examples linked to in the previous post had it right, but I got it mixed up with making <font face="Courier New">Invoke</font> or <font face="Courier New">BeginInvoke</font> calls from the background thread using the <font face="Courier New">Form</font> object’s version of these methods.&#160; If you don’t care whether your messaging from the background thread is synchronous or asynchronous, then you can use either methods and you can use the ones from the <font face="Courier New">Form</font> object.</p>  <p>The problem is using these <font face="Courier New">Form</font> object methods in order to kick off your background worker thread.&#160; The description of the <font face="Courier New">BeginInvoke</font> method on the <font face="Courier New">Form</font> object states that it <font face="Courier New">“executes the specified delegate asynchronously on the thread that the control’s underlying handle was created on.”</font>&#160; I translate this to mean that calling your <font face="Courier New">Form</font> object’s <font face="Courier New">BeginInvoke</font> will process on your UI thread.&#160; Apparently the delegate <font face="Courier New">BeginInvoke</font> method has no such wording in its description.</p> <span class='fullpost'> <p>Rereading <a title="Safe, Simple Multithreading in Windows Forms, Part 1" href="http://msdn.microsoft.com/en-us/library/ms951089.aspx">this MSDN article</a> from the former post and reading the <font face="Courier New">Form</font> object’s <font face="Courier New">BeginInvoke</font> method description which I quoted above set me straight and got rid of my blocking UI problem (again).</p>  <p>During this research session, I came across another informative resource when trying to figure out what was meant by potential resource leaks when using <font face="Courier New">BeginInvoke</font> with out later calling <font face="Courier New">EndInvoke</font>.&#160; From reading the article, I gather you can substitute the <font face="Courier New">EndInvoke</font> call with the <a title="OneWayAttribute Class" href="http://msdn.microsoft.com/en-us/library/system.runtime.remoting.messaging.onewayattribute.aspx"><font face="Courier New">OneWay</font> attribute</a><font face="Courier New"><font color="#333333"><font face="Verdana"></font></font></font> on the method being invoked, as long as it has a <font face="Courier New">void</font> return signature and no <font face="Courier New">ref</font> nor <font face="Courier New">out</font> parameters.&#160; Please let me know if my interpretation is wrong.&#160; I added the attribute to my code in the applicable spots and have seen no side effects of doing so.&#160; Here is the article on read mentioning this attribute:</p>  <p><a href="http://weblogs.asp.net/rosherove/pages/DefensiveEventPublishing.aspx">Defensive Event Publishing in .NET – Part I</a></p> </span>  </div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2009/03/24/powershell-1-0-for-windows-xp/">PowerShell 1.0 for Windows XP</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-03-24T14:08:00-06:00" pubdate data-updated="true">Mar 24<span>th</span>, 2009</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>, <a class='category' href='/blog/categories/powershell/'>PowerShell</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2009/03/24/powershell-1-0-for-windows-xp/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>I just noticed in today&#8217;s Tuesday round of Microsoft Updates that there is an optional software download for PowerShell 1.0 on Windows XP.&#160; PowerShell has been one of those things that I really want to learn, but just haven&#8217;t devoted the time.&#160; I desperately would like to replace my use of the Command Prompt with Windows PowerShell.</p>  <p>PowerShell really is more than just your regular <a href="http://en.wikipedia.org/wiki/Command_line_interpreter">Command Line Interpreter</a> that you have been used to, especially compared to the <a href="http://en.wikipedia.org/wiki/Command_Prompt_(Windows)">Windows Command Prompt</a>.&#160; You get the power of the command line shells that you may have tried out in Linux environments, but it really does go beyond those as well.&#160; PowerShell is (from Wikipedia) <font face="Courier New">&quot;Microsoft&#8217;s new extensible command line shell and task-based scripting technology.&quot;</font>&#160; Here is a quote from an MSDN document that better explains the advantages PowerShell brings:</p> <span class='fullpost'> <blockquote>   <p>&quot;Unlike most shells, which accept and return text, Windows PowerShell is built on top of the .NET common language runtime (CLR) and the .NET Framework, and accepts and returns .NET objects. This fundamental change in the environment brings entirely new tools and methods to the management and configuration of Windows.</p>   <p>&quot;Windows PowerShell introduces the concept of a cmdlet (pronounced &quot;command-let&quot;), a simple, single-function command-line tool built into the shell. You can use each cmdlet separately, but their power is realized when you use these simple tools in combination to perform complex tasks. Windows PowerShell includes more than one hundred basic core cmdlets, and you can write your own cmdlets and share them with other users.</p>   <p>&quot;Like many shells, Windows PowerShell gives you access to the file system on the computer. In addition, Windows PowerShell providers enable you to access other data stores, such as the registry and the digital signature certificate stores, as easily as you access the file system.&quot;</p> </blockquote>  <p>If you want to know more about PowerShell, I would suggest the following readings:</p>  <ul>   <li><a href="http://en.wikipedia.org/wiki/Windows_PowerShell">Wikipedia - Windows PowerShell</a></li>    <li><a href="http://msdn.microsoft.com/en-us/library/aa973757(VS.85).aspx">MSDN - Windows PowerShell Getting Started Guide</a></li> </ul>  <p>Also, <a href="http://codebetter.com/members/james.kovacs.aspx">James Kovacs</a> from <a href="http://codebetter.com/">CodeBetter.com</a> has been doing <a href="http://codebetter.com/blogs/james.kovacs/archive/tags/PowerShell/default.aspx">a series of posts on the basics of PowerShell</a> that is a great light introduction to how a developer would find the tool most useful.&#160; Here are two of the starting posts from that series:</p>  <ul>   <li><a href="http://codebetter.com/blogs/james.kovacs/archive/2009/02/01/getting-started-with-powershell-developer-edition.aspx">Getting Started with PowerShell - Developer Edition</a></li>    <li><a href="http://codebetter.com/blogs/james.kovacs/archive/2009/02/07/powershell-processes-and-piping.aspx">PowerShell, Processes, and Piping</a></li> </ul> </span>  </div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2009/03/02/the-yield-keyword-in-c-aka-execution-control-hot-potato/">The &#8220;Yield&#8221; Keyword in C# (AKA Execution Control Hot Potato)</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-03-02T17:51:00-07:00" pubdate data-updated="true">Mar 2<span>nd</span>, 2009</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/linq/'>LINQ</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2009/03/02/the-yield-keyword-in-c-aka-execution-control-hot-potato/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>I actually read about this topic a while back when I saw a C# code sample containing an unfamiliar keyword &#8211; <font face="Courier New">yield</font>.&#160; Well just today I saw another code sample using this keyword again, and had since forgotten everything I had learned.&#160; As I Googled the topic again, I happened across the same article I read back then, a terrific blog post by <a href="http://flimflan.com/blog/">Joshua Flanagan</a>.&#160; Here is a link to Joshua&#8217;s simple introduction to the <font face="Courier New">yield</font> C# keyword:</p>  <p><a href="http://flimflan.com/blog/ThePowerOfYieldReturn.aspx">The power of yield (return)</a></p>  <p>I would also suggest the following MSDN article as well:</p>  <p><a href="http://msdn.microsoft.com/en-us/library/9k7k7cf0.aspx">yield (C# Reference)</a></p>  <p>I&#8217;ll give you the gist of this .NET 2.0 feature.&#160; If you have a method that returns an iterative collection and the consumers of your function will only need <a title="foreach, in (C# Reference)" href="http://msdn.microsoft.com/en-us/library/ttw7t8t6.aspx"><font face="Courier New">foreach</font></a>, read-only access to that collection, then it is good practice to have your method return the universal <font face="Courier New">IEnumerable</font> collection (as opposed to you arbitrarily selecting an implementation-specific collection to be forced upon the consumers of your code).&#160; In C#, when you are returning an <font face="Courier New">IEnumerable</font> collection from a method, you are allowed to use the <font face="Courier New">yield</font> keyword in order to transform your method into what Microsoft calls an &quot;iterator block&quot;.&#160; Here is a quote from the MSDN article I mentioned above to explain this phrase and the <font face="Courier New">yield</font> keyword:</p> <span class='fullpost'> <blockquote>   <p>&quot;The <strong>yield</strong> keyword signals to the compiler that the method in which it appears is an iterator block.&#160; The compiler generates a class to implement the behavior that is expressed in the iterator block.&#160; In the iterator block, the <strong>yield</strong> keyword is used together with the <strong>return</strong> keyword to provide a value to the enumerator object.&#160; This is the value that is returned, for example, in each loop of a <strong>foreach</strong> statement.&#160; The <strong>yield</strong> keyword is also used with <strong>break</strong> to signal the end of iteration.&quot;</p> </blockquote>  <p>You are essentially building an enumerator (or iterator), and with each iteration of your <font face="Courier New">foreach</font> loop in the calling, consuming code, you are executing your method containing the iterator block until it reaches a <font face="Courier New">yield return</font> statement.&#160; At this point, only one item at a time in the collection is returned back to the consuming <font face="Courier New">foreach</font> loop for immediate logic execution by the body of the loop.&#160; On the next iteration of the consuming <font face="Courier New">foreach</font> loop, the method containing the iterator block will be called again and another single item in the collection will be returned for similar logic execution.</p>  <p>This game of execution control <a href="http://en.wikipedia.org/wiki/Hot_Potato_(game)">Hot Potato</a> has its benefits, in that you can stop the flip-flop of execution control when the music has stopped.&#160; In this analogy, I am comparing the &quot;music stopping&quot; to your code satisfying some logic that makes the rest of your <font face="Courier New">foreach</font> loop iterations unnecessary (perhaps you have found the one item in the collection you were looking for by meeting the sufficient requirements of an <font face="Courier New">if</font> statement).&#160; The benefit is that when you <font face="Courier New"><a title="break (C# Reference)" href="http://msdn.microsoft.com/en-us/library/adbctzc4.aspx">break</a></font> out of the consuming <font face="Courier New">foreach</font> loop before completing the iterations, you prevent wasteful code execution and memory use.&#160; This feature prevents one piece of code from fully populating a potentially large collection of items, just to have another consuming piece of code iterate partially through the list and then prematurely exit.&#160; Consider the savings especially when adding each item to the collection may be computationally intensive or if each item in the collection is itself a very large data structure.&#160; In the Hot Potato analogy, this would be as if the kids in the circle who didn&#8217;t touch the &quot;hot potato&quot; never existed in the game, saving floor space and unnecessary tosses to people you don&#8217;t really want to target for humiliating removal from the game.</p>  <p>For good sample code snippets of using the <font face="Courier New">yield</font> keyword, see the links provided above.</p>  <p>I hope to identify situations in the near future where I could benefit from using this C# keyword.&#160; Hopefully then I won&#8217;t forget a year down the road from now and then have to re-search the internet for Joshua&#8217;s blog post and the MSDN article to remind myself what I already learned.</p>  <p><strong><u>FOLLOWUP (03/26/09)</u></strong>:&#160; So I&#8217;m not sure how I missed it, but it took reading a very recent article by <a href="http://www.4guysfromrolla.com/ScottMitchell.shtml">Scott Mitchell</a> of <a href="http://www.4guysfromrolla.com/">4GuysFromRolla.com</a> to understand the real reason the <font face="Courier New">yield</font> keyword was introduced.&#160; The introduction of this keyword in .NET 2.0 was most helpful in the case of fulfilling the requirements of implementing the <font face="Courier New">IEnumerable</font> interface, which typically required you to create a sub-class that implemented <font face="Courier New">IEnumerator</font>.&#160; In many cases, it allowed you to take about 50 lines of code and turn it into 2 lines of code using the <font face="Courier New">yield</font> keyword.&#160; The introduction of LINQ brought heavy reliance on enumerating using the <font face="Courier New">yield</font> keyword in order to <a href="http://en.wikipedia.org/wiki/Pipeline_(software)">pipeline</a> <a href="http://en.wikipedia.org/wiki/Language_Integrated_Query#Standard_Query_Operators">query operators</a> together.&#160; Scott Mitchell takes you through this whole journey, tying all of the loose ends together to create a complete history of this keyword and how it&#8217;s most commonly utilized.&#160; Please visit the following article to get the whole picture:</p>  <ul>   <li><a href="http://aspnet.4guysfromrolla.com/articles/032509-1.aspx">An Extensive Examination of LINQ: The Ins and Outs of Query Operators</a></li> </ul> </span>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Esteban Araya</div>
+<div class='content'>
+Yield definitely seems like a more elegant way to build collections. I&#8217;ve used yield to generate a list of N random elements. Cool stuff.</div>
+</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2009/02/19/sql-server-express-2005-remote-connections/">SQL Server Express 2005 Remote Connections</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-02-19T10:36:00-07:00" pubdate data-updated="true">Feb 19<span>th</span>, 2009</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/asp-net/'>ASP.NET</a>, <a class='category' href='/blog/categories/database/'>Database</a>, <a class='category' href='/blog/categories/error/'>Error</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/sql/'>SQL</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2009/02/19/sql-server-express-2005-remote-connections/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>I developed an ASP.NET site connecting to a local SQL Server Express 2005 instance on my development box.&#160; To further my informal testing, I wanted to host the site under IIS 7 on a Windows Server 2008 box, but I wanted to just use the same database remotely.&#160; I got the following error message when the site tried to hit the database:</p>  <blockquote>   <p>&quot;An error has occurred while establishing a connection to the server.&#160; When connecting to SQL Server 2005, this failure may be caused by the fact that under the default settings SQL Server does not allow remote connections.&#160; (provider: Named Pipes Provider, error: 40 - Could not open connection to SQL Server)&quot;</p> </blockquote>  <p>Apparently SQL Server Express 2005 is not automatically configured for remote access during installation (which really isn&#8217;t surprising as it is the Express version).&#160; Remote connections can be enabled though with a few relatively painless steps.&#160; See the following link for the procedure:</p>  <ul>   <li><a href="http://www.datamasker.com/SSE2005_NetworkCfg.htm">Configuring SQL Server Express 2005 for Remote Access when SQL Server does not allow remote connections</a></li> </ul>  <p>Hope this is helpful.</p>  </div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2009/02/17/iis-7-and-asp-net-providers-membership-roles-and-profile/">IIS 7 and ASP.NET Providers (Membership, Roles, and Profile)</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-02-17T17:38:00-07:00" pubdate data-updated="true">Feb 17<span>th</span>, 2009</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/asp-net/'>ASP.NET</a>, <a class='category' href='/blog/categories/asp-net-providers-series/'>ASP.NET Providers Series</a>, <a class='category' href='/blog/categories/error/'>Error</a>, <a class='category' href='/blog/categories/iis/'>IIS</a>, <a class='category' href='/blog/categories/isapi/'>ISAPI</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/server-2008/'>Server 2008</a>, <a class='category' href='/blog/categories/vista/'>Vista</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2009/02/17/iis-7-and-asp-net-providers-membership-roles-and-profile/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>I talked at length about the ASP.NET <a href="http://en.wikipedia.org/wiki/Provider_model">Provider Model pattern</a> and the ease of implementing several built-in services you can have for free with ASP.NET 2.0 in <a title="ASP.NET Providers - Membership, Role, and Profile" href="http://murrayon.net/2009/01/aspnet-providers-membership-role-and.html">my previous series of posts</a>.&#160; In this post, I will be discussing the advantages of using the ASP.NET Provider system under IIS 7 found in Windows Vista and Server 2008.&#160; I will also talk about an issue with using this Provider system to try and add authentication to an ASP.NET website that contains non-ASP.NET content, like static HTML pages.&#160; I think I&#8217;ll start with the discussion about non-ASP.NET content first.</p> <span class='fullpost'> <h3>IIS 7.0 Integrated Pipeline</h3>  <p>Since I don&#8217;t really understand much about <a title="Internet Server Application Programming Interface" href="http://en.wikipedia.org/wiki/ISAPI">ISAPI</a> filters and such, I&#8217;m just going to quote stuff from random pages on the <a href="http://www.iis.net/">official Microsoft IIS site</a>:</p>  <blockquote>   <p>&quot;IIS 6.0 and previous versions allowed the development of .NET application components via the ASP.NET platform. ASP.NET integrated with IIS via an ISAPI extension, and exposed its own application and request processing model. This effectively exposed two separate server pipelines, one for native ISAPI filters and extension components, and another for managed application components. ASP.NET components would execute entirely inside the ASP.NET ISAPI extension bubble and only for requests mapped to ASP.NET in the IIS script map configuration.</p>    <p>&quot;IIS 7.0 integrates the ASP.NET runtime with the core web server, providing a unified request processing pipeline that is exposed to both native and managed components known as modules.&quot;</p> </blockquote>  <p>and&#8230;</p>  <blockquote>   <p>&quot;This allows developers to fully extend the IIS 7.0 server with the richness of ASP.NET 2.0 and the .NET Framework, instead of using the lower level IIS C++ APIs. Existing ASP.NET applications also immediately benefit from tighter integration using existing ASP.NET features like Forms Authentication, Roles, and Output Caching for all content.&quot;</p> </blockquote>  <p>Note the last three words there:&#160; &quot;<font face="Courier New">for all content.</font>&quot;&#160; When I started this endeavor to implement the ASP.NET Provider system, I didn&#8217;t realize that it would really only apply to ASP.NET content and pages.&#160; I didn&#8217;t realize on IIS 6 I would have to fiddle with ISAPI filters and content filters to make my implementation work.&#160; And when I tried to doing a mapping (like <font face="Courier New">*.html</font> to the ASP.NET ISAPI DLL), I either didn&#8217;t do it right or it just isn&#8217;t very reliable and stable; here is a link to <a title="IIS problems with forms authentication &amp; HTML pages" href="http://forums.asp.net/t/1184547.aspx">the thread I followed in trying to make the appropriate changes in IIS 6</a>.&#160; I will note however that <a href="http://www.ultidev.com/products/Cassini/index.htm">UltiDev&#8217;s Cassini Web Server</a> can host such a site with absolutely no extra modification, where even IIS 7 required a little configuration.</p>  <p>By default in IIS 7, an <a title="IIS and ASP.NET: The Application Pool" href="http://www.developer.com/net/asp/article.php/2245511">application pool</a> runs using the <font face="Courier ne">Integrated</font> mode for the <font face="Courier New">Managed Pipeline</font> configuration.&#160; But there is also the option of <font face="Courier New">Classic</font> mode, which is helpful if you are needing strict compatibility with how you ran a website under IIS 6.&#160; In many cases, however, an existing ASP.NET website runs under <font face="Courier New">Integrated</font> mode without any problems.</p>  <h3>Configuring an ASP.NET Website to Run on IIS 7</h3>  <p>First, I think I will point you to a great video and document on Microsoft&#8217;s official IIS site that explains everything you really need to know.&#160; Then I will emphasize a few of the important points and also a gotcha or two.&#160; Here are the links you should reference:</p>  <ul>   <li><a href="http://learn.iis.net/page.aspx/377/using-aspnet-forms-authentication/">Using ASP.NET Forms Authentication</a> (video) </li>    <li><a href="http://learn.iis.net/page.aspx/243/aspnet-integration-with-iis7/">ASP.NET Integration with IIS 7.0</a> </li> </ul>  <p>The video above is also a terrific introduction to IIS 7.&#160; Below is a screenshot of IIS&#8217;s UI for configuring a website:</p>  <p><a href="http://lh6.ggpht.com/_rps657FzHZ0/SZtZDNleinI/AAAAAAAAACw/b2kq_6XIGD8/s1600-h/IIS_screenshot%5B5%5D.png"><img style="border-right-width: 0px; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" border="0" alt="IIS_screenshot" src="http://lh5.ggpht.com/_rps657FzHZ0/SZtZDjlrIRI/AAAAAAAAAC0/cC29GwiAIhk/IIS_screenshot_thumb%5B3%5D.png?imgmax=800" width="475" height="368" /></a> </p>  <p>Notice the <font face="Courier New">ASP.NET</font> section and how it&#8217;s able to use your Providers to bring back Users, Roles, and Profile data back from the database.&#160; This UI reads from and writes to your <font face="Courier New">Web.config</font> and is really slick in my opinion.</p>  <p>The only real &quot;breaking change&quot; for running your website under IIS 7 is the fact that your <font face="Courier New">Web.config</font> might need a little migration to be compatible with <font face="Courier New">Integrated</font> mode.&#160; Apparently IIS gives you helpful error messages if it detects you haven&#8217;t run through the migration yet.&#160; The two most common things that ASP.NET websites have that require this migration are if you have declared <font face="Courier New">httpModules</font> or <font face="Courier New">httpHandlers</font> in your <font face="Courier New">Web.config</font>.&#160; The fix is to either copy or move these sections under <font face="Courier New">system.web</font> to their corresponding <font face="Courier New">system.webServer</font> sections.&#160; If you duplicate the sections, then you should be able run under both <font face="Courier New">Integrated</font> and <font face="Courier New">Classic</font> modes without any problems.&#160; You can even still run on IIS 6 I believe, as IIS 6 will ignore this new section called <font face="Courier New">system.webServer</font> which is IIS 7 specific.&#160; IIS 7 even provides a utility that can perform this migration for you; here is the what you would type in a Command Prompt:</p>  <p><font face="Courier New">%windir%\system32\inetsrv\APPCMD.EXE migrate config &lt;Application Path&gt;</font></p>  <p>&#8230;where <font face="Courier New">&lt;Application Path&gt;</font> would be something like <font face="Courier New">&quot;Default Web Site/&quot;</font> or <font face="Courier New">&quot;Default Web Site/someApp&quot;</font>.&#160; If you manually migrate your <font face="Courier New">Web.config</font> and are still getting migration error messages, here is a snippet you can add right under the <font face="Courier New">system.webServer</font> node to disable the error message:</p>  <p><font face="Courier New">&lt;validation validateIntegratedModeConfiguration=&quot;false&quot; /&gt;</font></p>  <p>Also, I want to make note of something I couldn&#8217;t get to work that they showed in the tutorial video.&#160; At about the <font face="Courier New">13:50</font> mark in the video, they go into the <font face="Courier New">Modules</font> section of the UI.&#160; These are the modules of the IIS pipeline for both managed .NET code and unmanaged code.&#160; In order to make their video file hidden behind ASP.NET Forms Authentication, they change a property on two authentication modules to allow these modules to execute on non-managed content as well.&#160; However, this did not work for me for some reason when I was trying to secure HTML pages behind Forms Authentication.&#160; What did work for me (and may have been a drastic solution) was to put the following attribute on the <font face="Courier New">modules</font> node under <font face="Courier New">system.webServer</font>:</p>  <p><font face="Courier New">&lt;modules runAllManagedModulesForAllRequests=&quot;true&quot; /&gt;</font></p>  <p>I believe the issue in my case was their was another few managed modules that I needed to clear that checkbox for in the UI.&#160; But I didn&#8217;t take the time to find out which ones I was missing and opted for the drastic solution.&#160; I will also say there is a way to configure these managed modules through your <font face="Courier New">Web.config</font> so you don&#8217;t have to have your IT Admin configure properties manually in the UI.&#160; In fact, it seems that much of IIS 7 configuration for your website can be done this way.</p>  <h3>A Few Error Messages (and Their Solutions)</h3>  <p>If you get error messages while using the IIS Manager user interface like this&#8230;</p>  <blockquote>   <p>&quot;This feature cannot be used because the default provider type could not be determined to check whether it is a trusted provider.</p>    <p>&quot;You can use this feature only when the default provider is a trusted provider.&#160; If you are a server administrator, you can make a provider a trusted provider by adding the provider type to the trusted providers list in the Administration.config file.&#160; The provider has to be strongly typed and added to the GAC (Global Assembly Cache).&quot;</p> </blockquote>  <p>&#8230;then you should visit the following article for detailed information about resolving the error message:</p>  <ul>   <li><a href="http://www.iis.net/ConfigReference/system.webServer/management/trustedProviders/add">Adding Management Trusted Providers &lt;add&gt;</a> </li> </ul>  <p>Getting rid of this error message is really only for convenience in letting the IIS Manager UI be able to query your database using your providers and give you a basic view of your Membership, Roles, and Profile fields.&#160; Also, if you are trying to find your <font face="Courier New">Administration.config</font> file, it is likely located under the <font face="Courier New">C:\Windows\System32\inetsrv\config\</font> folder.</p>  <p>The other error message I received was not in the IIS Manager UI, but rather when you attempt to view your website in a browser (after you think you got all the configuration bugs out!).&#160; A <font face="Courier New">BadImageFormatException</font> is thrown and the error details say something like this:</p>  <p><font face="Courier New">Could not load file or assembly &#8216;AssemlyNameHere&#8217; or one of its dependencies.&#160; An attempt was made to load a program with an incorrect format.</font></p>  <p>The likely cause of this error is that the assembly referenced in the error message was compiled only for 32-bit machines and you are running a 64-bit operating system.&#160; With Windows Server 2008 x64, the application pools in IIS have an <font face="Courier New">Advanced Setting</font> called <font face="Courier New">Enable 32-Bit Applications</font>, that is disabled by default.&#160; Enable this setting and you&#8217;re probably good to go.&#160; See the following link for more detailed information and some nice screenshots:</p>  <ul>   <li><a href="http://blog.crowe.co.nz/archive/2007/11/05/Could-not-load-file-or-assembly-name-or-one-of.aspx">Could not load file or assembly &#8216;name&#8217; or one of its dependencies</a> </li> </ul>  <h3>Additional Reading</h3>  <p>I just barely noticed that <a href="http://www.4guysfromrolla.com/">4GuysFromRolla.com</a> recently posted an article about the exact same stuff I was attempting to explain.&#160; To read additional details about IIS 7&#8217;s Integrated Pipeline and ASP.NET Forms Authentication with static content, check out the following link:</p>  <ul>   <li><a href="http://aspnet.4guysfromrolla.com/articles/122408-1.aspx">Apply ASP.NET Authentication and Authorization Rules to Static Content with IIS 7.0&#8217;s Integrated Pipeline Feature</a> </li> </ul>  <h3>Conclusion</h3>  <p>I hope you&#8217;ve enjoyed <a title="ASP.NET Providers - Membership, Role, and Profile" href="http://murrayon.net/2009/01/aspnet-providers-membership-role-and.html">this series on the ASP.NET Provider System</a>.&#160; My desire is that you&#8217;ve found these posts helpful in getting you started with implementing such a versatile and customizable model for adding common membership and authorization functionality to your new and existing websites.&#160; There are quite a few advantages in hosting your site on IIS 7 in Windows Server 2008, as I&#8217;ve outlined in this specific post.&#160; Hopefully these discussions about errors and gotchas will also help you get going in no time!</p> </span>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>
+Thanks. Awesome job.</div>
+</div>
+<div class='comment'>
+<div class='author'>Tony</div>
+<div class='content'>
+Prefect article and thanks for the video links. It helped me understand this whole integrated vs classic iis7 mode and was a refresher on forms authenication.</div>
+</div>
+<div class='comment'>
+<div class='author'>Radek</div>
+<div class='content'>
+Thanks. This post helped me resolved serious issue with IIS7</div>
+</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+<nav id="pagenavi">
+    
+        <a href="/blog/page/4/" class="prev">Prev</a>
+    
+    
+        <a href="/blog/page/6/" class="next">Next</a>
+    
+    <div class="center"><a href="/blog/archives">Blog Archives</a></div>
+</nav></div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2012
+
+    Mike Murray
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a>
+</footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'mkmurray';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+		</div>
+		<div class="left-col">
+			<header id="header" class="inner"><div class="profilepic">	
+	<img src="/images/mkmurray.jpg" alt="Profile Picture">
+</div>
+<h1><a href="/">Mike Murray</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<br/>
+<h3 class="alignleft">please code responsibly</h3>
+<br/>
+<br/>
+<br/>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		<a class="facebook" href="http://www.facebook.com/mkmurray" title="Facebook">Facebook</a>
+		
+		
+		<a class="google" href="https://plus.google.com/109073345657761090655?rel=author" title="Google+">Google+</a>
+		
+		
+		<a class="twitter" href="http://twitter.com/mkmurray" title="Twitter">Twitter</a>
+		
+		
+		<a class="github" href="https://github.com/mkmurray" title="GitHub">GitHub</a>
+		
+		
+		<a class="linkedin" href="http://www.linkedin.com/in/mkmurray">LinkedIn</a>
+		
+		
+		
+		
+		<a class="rss" href="http://feeds.feedburner.com/mkmurray/" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+
+</header>				
+		</div>	
+	</div>
+</body>
+</html>

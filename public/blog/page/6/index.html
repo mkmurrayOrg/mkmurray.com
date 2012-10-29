@@ -1,0 +1,456 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Mike Murray</title>
+	<meta name="author" content="Mike Murray">
+
+	
+	<meta name="description" content="I talked at length about the ASP.NET Provider Model pattern and the ease of implementing several built-in services you can have for free with ASP. &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="http://feeds.feedburner.com/mkmurray/" rel="alternate" title="Mike Murray" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	
+</head>
+
+<body>
+	<div class="container">
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2009/02/11/asp-net-profile-and-web-application-projects/">ASP.NET Profile and Web Application Projects</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-02-11T15:08:00-07:00" pubdate data-updated="true">Feb 11<span>th</span>, 2009</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/asp-net/'>ASP.NET</a>, <a class='category' href='/blog/categories/asp-net-providers-series/'>ASP.NET Providers Series</a>, <a class='category' href='/blog/categories/build/'>Build</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/msbuild/'>MSBuild</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>, <a class='category' href='/blog/categories/web/'>Web</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2009/02/11/asp-net-profile-and-web-application-projects/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>I talked at length about the ASP.NET <a href="http://en.wikipedia.org/wiki/Provider_model">Provider Model pattern</a> and the ease of implementing several built-in services you can have for free with ASP.NET 2.0 in <a title="ASP.NET Providers - Membership, Role, and Profile" href="http://murrayon.net/2009/01/aspnet-providers-membership-role-and.html">my previous series of posts</a>.&#160; In this post, I will be discussing a few issues I ran into using the Profile system with the <font face="Courier New">Web Application</font> project template instead of the <font face="Courier New">Web Site</font> project template as found in Visual Studio&#8217;s list of default project templates.</p>  <p>The crux of the issue is that Visual Studio doesn&#8217;t automatically generate the <font face="Courier New">Profile</font> proxy class object when using the <font face="Courier New">Web Application</font> project template, like it does with the <font face="Courier New">Web Site</font> project template.&#160; This proxy class can be used to obtain access to strongly-typed properties representing the custom Profile fields you specified in your <font face="Courier New">Web.config</font>.&#160; This is a very convenient way to access a user&#8217;s Profile data, both for authenticated and for anonymous users.</p>  <p>Let&#8217;s discuss the issue a little further and then I will present a workaround that I found and have successfully implemented in my own project.</p> <span class='fullpost'> <h3>VS Project Templates:&#160; Web Site vs. Web Application</h3>  <p>It appears that Microsoft has tried to differentiate these two project templates as much as possible in Visual Studio 2008.&#160; In 2005, you would go to the <font face="Courier New">New Project</font> dialog window and you would see these two <font face="Courier New">Web</font> project templates side-by-side, wondering what difference it would make if you chose one over the other.&#160; However, in Visual Studio 2008, it appears they reworked this whole dialog and menu system for starting a new project so that you would never see these two project templates side-by-side.&#160; In 2008, you have more than one option in the <font face="Courier New">File</font> menu for starting a project; those options are <font face="Courier New">File | New | Project</font> and <font face="Courier New">File | New | Web Site</font>.&#160; The first option is the one that will get you to the <font face="Courier New">ASP.NET Web Application</font> template, while the second takes you to the <font face="Courier New">ASP.NET Web Site</font> project template.</p>  <p>Now as for the differences between these two templates, I&#8217;ll outline a few of the main differences and give a little bit of history of how these two templates came to coexist.&#160; The history in a nutshell is that Visual Studio 2005 came out with the <font face="Courier New">Web Site</font> project template to replace the old, but proven project configuration used by ASP.NET 1.x.&#160; In the opinion of many, the old template better encouraged Object-Oriented design practices.&#160; The new template had no project file for explicitly delineating what files where included in the project and namespacing was quite cumbersome, as the only painless design was to let everything pile up into one big default namespace.&#160; A few other changes involved taking ASP.NET back to compiling on the fly at the web server and also drastically changing the organization of UI template and code-behind files.&#160; It appears the intention was to closely mimic the configuration and deployment practices of popular agile languages like PHP and Ruby on Rails.</p>  <p>In the Service Pack 1 of Visual Studio 2005, Microsoft decided to resurrect the older project template under the name of <font face="Courier New">Web Application</font>.&#160; There is evidence to suggest that Microsoft considers this latter project template an &quot;enterprise&quot; project type, as compared to the casual <font face="Courier New">Web Site</font> project template.&#160; With the advent of Visual Studio 2008, it is apparent that Microsoft is committed to supporting both project types for at least a little while.&#160; For a more detailed discussion of the history and differences of these two project templates, I suggest the following blog post by <a href="http://reddnet.net/code/">Stephen M. Redd</a>:</p>  <ul>   <li><a href="http://reddnet.net/code/aspnet-web-site-vs-web-application/">ASP.NET - Web Site vs. Web Application</a></li> </ul>  <h3>Web Profile Builder by Joe Wrobel</h3>  <p>The ability to retrieve and update your custom Profile fields at design time via strongly-typed properties on the <font face="Courier New">Profile</font> proxy class is extremely convenient.&#160; Unfortunately, you get no such compiler and intellisense love if you are using the <font face="Courier New">Web Application</font> project template for your site.</p>  <p>In trying to find a workaround, I came across a <a title="Web Profile Builder for Web Application Projects" href="http://weblogs.asp.net/joewrobel/archive/2008/02/03/web-profile-builder-for-web-application-projects.aspx">blog post by Joe Wrobel introducing a project he worked on to solve this issue</a>.&#160; It&#8217;s called the <font face="Courier New">Web Profile Builder</font> (here&#8217;s a <a title="Web Profile Builder" href="http://code.msdn.microsoft.com/WebProfileBuilder/Release/ProjectReleases.aspx">link to it&#8217;s project page on MSDN Code Gallery</a>) and it was based on a project called the <a href="http://www.codeplex.com/WebProfile">Web Profile Generator</a>, which was a Visual Studio 2005 Add-In project found on <a href="http://www.codeplex.com/">CodePlex</a>.&#160; The latter project seems to have not been worked on in over a year and a half, nor does it seem to be compatible with Visual Studio 2008.&#160; Hence, Joe feeling the need to start up on his own project, with a few improvements on the side of course.</p>  <p>In Joe&#8217;s introductory post to the project, he mentions he changed the Visual Studio integration from being a plug-in to being an MSBuild Build Task.&#160; The method for incorporating the Build Task into your project is to add a line into your project file (the one with file extension <font face="Courier New">.csproj</font>).&#160; In case you weren&#8217;t aware, Visual Studio project files are just <a href="http://en.wikipedia.org/wiki/MSBuild">MSBuild</a> build scripts.&#160; For details about where to put this line in the file (and about a message Visual Studio pops up when it detects you&#8217;ve mucked with the project file), be sure to check out <a title="Web Profile Builder for Web Application Projects" href="http://weblogs.asp.net/joewrobel/archive/2008/02/03/web-profile-builder-for-web-application-projects.aspx">Joe&#8217;s post on the Web Profile Builder project</a>.</p>  <p>There are a couple of other things I need to point out about using the Build Task that weren&#8217;t entirely clear to me beforehand.&#160; The build task actually generates a C# code file that is intended to be included into your project; once it&#8217;s generated, you need to go to the <font face="Courier New">Solution Explorer</font> and explicitly add it as a file in your project (one way is through the <font face="Courier New">Add | Existing Item</font> menu option).&#160; One of the main things that helped me decide to use this solution and how to configure it was reading two blog posts from <a href="http://www.codersbarn.com/">Anthony Grace</a>; the second post below has a great excerpt apparently from the <font face="Courier New">Web Profile Builder</font> documentation that explains the process I outlined above in a bit more detail:</p>  <ul>   <li><a href="http://www.codersbarn.com/post/2008/06/ASPNET-Web-Site-versus-Web-Application-Project.aspx">ASP.NET: Web Site versus Web Application Project</a></li>    <li><a href="http://www.codersbarn.com/post/2008/07/10/ASPNET-PayPal-Subscriptions-IPN.aspx">ASP.NET PayPal Subscription IPN</a></li> </ul>  <p>Also, it is not necessary to do the steps in the <font face="Courier New">Extended Usage</font> section of Joe&#8217;s blog post.&#160; They are optional configuration points in the <font face="Courier New">Web.config</font> where you control the <font face="Courier New">className</font>, <font face="Courier New">nameSpace</font>, <font face="Courier New">directory</font>, and <font face="Courier New">fileName</font> of the auto-generated code file.&#160; Most of the defaults are fine, but in my case I wanted the generated file to end up in an <font face="Courier New">App_Code</font> directory instead of in the root of the project folder.&#160; If you decide to add in this custom configuration, you need to be aware that you must add the following XML namespace to the <font face="Courier New">configuration</font> root element of your <font face="Courier New">Web.config</font>:</p>  <p><font face="Courier New">xmlns=&quot;http://schemas.microsoft.com/.NetConfiguration/v2.0&quot;</font></p>  <p>Finally, it should be noted that if the website you are building is under source control, you will likely want to always keep this auto-generated code file checked out in order to prevent the file from having its <font face="Courier New">Read-Only</font> attribute set when it&#8217;s checked in.&#160; If you don&#8217;t have it checked out, the build will throw out a warning and the generated code file will not be regenerated if changes in your <font face="Courier New">Web.config</font> need to be propagated to it.</p>  <h3>Conclusion</h3>  <p>With all of this in place, you should be able to use the Profile proxy class object in your ASPX code-behind files, just as I gave examples of in my <a href="http://murrayon.net/2009/02/aspnet-providers-profile.html">previous post about the ASP.NET Profile system</a>.&#160; Although in my case, I mostly used the static method <font face="Courier New">GetProfile</font> from the auto-generated <font face="Courier New">WebProfile</font><font face="Verdana"> class (the name the Visual Studio Build Task selects by default).</font></p>  <p>As I mentioned when <a title="ASP.NET Providers - Membership, Role, and Profile" href="http://murrayon.net/2009/01/aspnet-providers-membership-role-and.html">I first started the ASP.NET Provider Series of posts</a>, my next blog post will be about some advantages of using this Provider system on IIS 7 and a few issues when your ASP.NET website contains non-ASP.NET content:</p>  <ul>   <li><a href="http://murrayon.net/2009/02/iis-7-and-aspnet-providers-membership.html">IIS 7 and ASP.NET Providers (Membership, Roles, and Profile)</a> </li> </ul> </span>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Martena Gaines</div>
+<div class='content'>
+Web sites are dynamically compiled and source is distributed with them. Web Applications can be compiled into a single DLL and deployed. You cannot use the app_code folder in WAP projects, but you can with WSP.</div>
+</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2009/02/09/asp-net-providers-profile/">ASP.NET Providers - Profile</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-02-09T16:10:00-07:00" pubdate data-updated="true">Feb 9<span>th</span>, 2009</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/asp-net/'>ASP.NET</a>, <a class='category' href='/blog/categories/asp-net-providers-series/'>ASP.NET Providers Series</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/database/'>Database</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/sql/'>SQL</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>, <a class='category' href='/blog/categories/web/'>Web</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2009/02/09/asp-net-providers-profile/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>This blog post is part of a series about the ASP.NET Providers (namely Membership, Role Management, and Profile). The introductory post in the series can be found at the following link, which introduces the <a href="http://en.wikipedia.org/wiki/Provider_model">Provider Model pattern</a> and gives a personal example of an implementation I have been working on:</p><ul><li><a href="http://murrayon.net/2009/01/aspnet-providers-membership-role-and.html">ASP.NET Providers - Membership, Role, and Profile</a></li></ul><p>This post will deal with adding Profile properties to your user accounts (and apparently this can also be used with anonymous users as well).&#160; However, I will suggest using a slightly different Profile Provider than what comes in ASP.NET by default.&#160; This will show how easy it is to plug in a different implementation in this very flexible Provider Model.</p> <span class='fullpost'> <h3>SqlProfileProvider vs. SqlTableProfileProvider</h3><p>The <font face="Courier New">SqlProfileProvider</font> is the built-in Profile Provider that ASP.NET comes with by default.&#160; It allows you to define custom fields that make up profiling data you would want to collect and store about your users.&#160; This could be demographics, preferences, or any other useful details.&#160; This specific implementation is designed in a way where no matter what fields you define, your database schema will be compatible with any upgrade Microsoft could send down to patch the Provider system or ASP.NET in general.&#160; The way this is accomplished is by storing a <a title="Binary Large Object" href="http://en.wikipedia.org/wiki/Binary_large_object">blob</a> of all the field names in one table column and a blob of all the field values in another column; it&#8217;s similar to the concept of a <a title="Associative Array" href="http://en.wikipedia.org/wiki/Associative_array">dictionary</a> with key/value pairs.&#160; The difficult part is that these blobs can contain clear-text, XML, and/or binary, depending on how the source data type serializes by default.&#160; Unfortunately, this highly flexible solution is quite unusable if you need a clear view of the Profile data for reporting purposes or stored procedure needs.</p><p>When trying to find an already implemented custom provider that would allow to store each Profile field in its own table column, I came across a <a title="ASP.NET 2.0 SQL Table Profile Provider Released Today" href="http://weblogs.asp.net/scottgu/archive/2006/01/10/435038.aspx">blog post from Scott Guthrie introducing such an implementation done by two Microsoft employees</a>.&#160; The name of this provider is the <font face="Courier New">SqlTableProfileProvider</font>, and it can be found at the following link:</p><p><a href="http://www.asp.net/downloads/sandbox/table-profile-provider-samples/">Table Profile Provider Samples</a></p><p>At the above location, you will find an MSI download that will install a sample project containing a few source code files you can include in your project; you will also find a download link for a &quot;white paper&quot; Word document that explains the usage of the <font face="Courier New">SqlTableProfileProvider</font> and the <font face="Courier New">SqlStoredProcedureProfileProvider</font> custom providers.&#160; The nice thing about both of these providers is that their use in code and their configuration in the Web.config is extremely similar to how the original <font face="Courier New">SqlProfileProvider</font> is used and configured.</p><h3>Setting up the SqlTableProfileProvider</h3><p>As was done with the <a title="ASP.NET Providers - Membership" href="http://murrayon.net/2009/01/aspnet-providers-membership.html">Membership</a> and <a title="ASP.NET Providers - Role Management" href="http://murrayon.net/2009/02/aspnet-providers-role-management.html">Role Management</a> Providers, here is the XML fragment that would go in your <font face="Courier New">Web.config</font>:</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 325px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #0000ff">&lt;</span><span style="color: #800000">configuration</span><span style="color: #0000ff">&gt;</span>
+    <span style="color: #0000ff">&lt;</span><span style="color: #800000">connectionStrings</span><span style="color: #0000ff">&gt;</span>
+        <span style="color: #0000ff">&lt;</span><span style="color: #800000">add</span> <span style="color: #ff0000">name</span><span style="color: #0000ff">=&quot;MyDB&quot;</span> <span style="color: #ff0000">connectionString</span><span style="color: #0000ff">=&quot;...&quot;</span> <span style="color: #0000ff">/&gt;</span>
+    <span style="color: #0000ff">&lt;/</span><span style="color: #800000">connectionStrings</span><span style="color: #0000ff">&gt;</span>
+    <span style="color: #0000ff">&lt;</span><span style="color: #800000">system.web</span><span style="color: #0000ff">&gt;</span>
+        ... authentication &amp; authorization settings ...
+        <span style="color: #0000ff">&lt;</span><span style="color: #800000">profile</span> <span style="color: #ff0000">enabled</span><span style="color: #0000ff">=&quot;true&quot;</span>
+                 <span style="color: #ff0000">defaultProvider</span><span style="color: #0000ff">=&quot;ConfiguredProfileProvider&quot;</span><span style="color: #0000ff">&gt;</span>
+            <span style="color: #0000ff">&lt;</span><span style="color: #800000">providers</span><span style="color: #0000ff">&gt;</span>
+                <span style="color: #0000ff">&lt;</span><span style="color: #800000">add</span> <span style="color: #ff0000">name</span><span style="color: #0000ff">=&quot;ConfiguredProfileProvider&quot;</span>
+                     <span style="color: #ff0000">type</span><span style="color: #0000ff">=&quot;Microsoft.Samples.SqlTableProfileProvider&quot;</span>
+                     <span style="color: #ff0000">connectionStringName</span><span style="color: #0000ff">=&quot;MyDB&quot;</span>
+                     <span style="color: #ff0000">table</span><span style="color: #0000ff">=&quot;custom_Profile&quot;</span>
+                     <span style="color: #ff0000">applicationName</span><span style="color: #0000ff">=&quot;SampleWebSite&quot;</span> <span style="color: #0000ff">/&gt;</span>
+            <span style="color: #0000ff">&lt;/</span><span style="color: #800000">providers</span><span style="color: #0000ff">&gt;</span>
+            ... properties section found in the next XML snippet ...
+        <span style="color: #0000ff">&lt;/</span><span style="color: #800000">profile</span><span style="color: #0000ff">&gt;</span>
+    <span style="color: #0000ff">&lt;/</span><span style="color: #800000">system.web</span><span style="color: #0000ff">&gt;</span>
+<span style="color: #0000ff">&lt;/</span><span style="color: #800000">configuration</span><span style="color: #0000ff">&gt;</span></pre></div><p><strong><u>WARNING</u>: </strong>According to Microsoft, you should <strong><u>never</u></strong> use the default provider settings and should <strong><u>always</u></strong> add a new, configured provider; in addition you <strong><u>must</u></strong> be sure to specify the <font face="Courier New">applicationName</font> attribute! See <a href="http://weblogs.asp.net/scottgu/archive/2006/04/22/Always-set-the-_2200_applicationName_2200_-property-when-configuring-ASP.NET-2.0-Membership-and-other-Providers.aspx">Scott Guthrie&#8217;s blog post on this topic</a> for more details. Apparently, you can also use a value of <font face="Courier New">&quot;/&quot;</font> for the <font face="Courier New">applicationName</font> and it will use the root application name.</p><p>You&#8217;ll notice in the <font face="Courier New">type</font> attribute that we are not referencing the default <font face="Courier New">SqlProfileProvider</font> that ships with ASP.NET.&#160; What you need to do is get this new class included or referenced in your solution so that this namespace reference can successfully resolve.&#160; I opted to just include the code files in my solution as is; I chose to place them in my <font face="Courier New">App_Code</font> folder.&#160; The code files you want to grab are likely in the default location that the MSI installed to, which is <font face="Courier New">Program Files/Microsoft/ASP.NET 2.0 Table Profile Provider Samples</font>.&#160; The two files you need are <font face="Courier New">SqlStoredProcedureProfileProvider.cs</font> and <font face="Courier New">SqlTableProfileProvider.cs</font><font face="Verdana">, </font>both of which are found in the <font face="Courier New">App_Code</font> folder of the sample project.&#160; You need to copy both code files to your solution, as it appears that the <font face="Courier New">SqlTableProfileProvider</font> depends on some logic in the <font face="Courier New">SqlStoredProcedureProfileProvider</font> for some reason.</p><p>Also note the <font face="Courier New">table</font> attribute above (which is not present in the built-in <font face="Courier New">SqlProfileProvider</font>), which tells the provider which table in your database will be storing the custom Profile fields.&#160; As for the &quot;properties section&quot; referenced near the end of the above snippet, this is where you specify the custom Profile fields and their mappings to column names in the specified database table.&#160; The advantage of specifying this information in the <font face="Courier New">Web.config</font> is that you will be able to get programmatic access to these fields as strongly-typed properties on a proxy class named <font face="Courier New">Profile</font> in your code-behind.&#160; Here is a sample <font face="Courier New">properties</font> configuration:</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 300px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #0000ff">&lt;</span><span style="color: #800000">properties</span><span style="color: #0000ff">&gt;</span>
+    <span style="color: #0000ff">&lt;</span><span style="color: #800000">add</span> <span style="color: #ff0000">name</span><span style="color: #0000ff">=&quot;FirstName&quot;</span>
+         <span style="color: #ff0000">type</span><span style="color: #0000ff">=&quot;string&quot;</span>
+         <span style="color: #ff0000">defaultValue</span><span style="color: #0000ff">=&quot;[null]&quot;</span>
+         <span style="color: #ff0000">customProviderData</span><span style="color: #0000ff">=&quot;FirstName;nvarchar&quot;</span> <span style="color: #0000ff">/&gt;</span>
+    <span style="color: #0000ff">&lt;</span><span style="color: #800000">add</span> <span style="color: #ff0000">name</span><span style="color: #0000ff">=&quot;Age&quot;</span>
+         <span style="color: #ff0000">type</span><span style="color: #0000ff">=&quot;int&quot;</span>
+         <span style="color: #ff0000">customProviderData</span><span style="color: #0000ff">=&quot;Age;int&quot;</span> <span style="color: #0000ff">/&gt;</span>
+    <span style="color: #0000ff">&lt;</span><span style="color: #800000">add</span> <span style="color: #ff0000">name</span><span style="color: #0000ff">=&quot;AccountExpiration&quot;</span>
+         <span style="color: #ff0000">type</span><span style="color: #0000ff">=&quot;DateTime&quot;</span>
+         <span style="color: #ff0000">defaultValue</span><span style="color: #0000ff">=&quot;[null]&quot;</span>
+         <span style="color: #ff0000">customProviderData</span><span style="color: #0000ff">=&quot;AccountExpiration;datetime&quot;</span> <span style="color: #0000ff">/&gt;</span>
+    <span style="color: #0000ff">&lt;</span><span style="color: #800000">add</span> <span style="color: #ff0000">name</span><span style="color: #0000ff">=&quot;CookieID&quot;</span>
+         <span style="color: #ff0000">type</span><span style="color: #0000ff">=&quot;System.Guid&quot;</span>
+         <span style="color: #ff0000">defaultValue</span><span style="color: #0000ff">=&quot;[null]&quot;</span>
+         <span style="color: #ff0000">customProviderData</span><span style="color: #0000ff">=&quot;CookieID;uniqueidentifier&quot;</span> <span style="color: #0000ff">/&gt;</span>
+<span style="color: #0000ff">&lt;/</span><span style="color: #800000">properties</span><span style="color: #0000ff">&gt;</span></pre></div><p>The Profile system provides a configuration point for each Profile field called <font face="Courier New">customProviderData</font>.&#160; It appears the default <font face="Courier New">SqlProfileProvider</font> doesn&#8217;t even look at this additional attribute, but rather reserves this configuration point for use by custom implemented Profile providers.&#160; The <font face="Courier New">SqlTableProfileProvider </font>utilizes this extra metadata field as a place to put mapping information for a column name and ADO.NET database type.&#160; If you have questions about which ADO.NET and .NET types to use/specify in this configuration, there is helpful information in the accompanying white paper found on the download site.&#160; Also found in that document is a great discussion you may want to read about the <font face="Courier New">defaultValue</font> attribute, what it configures, and how it might differ for value types (such as <font face="Courier New">integer</font>).</p><h3>Creating the Database Table</h3><p>Now that you have the code files in your solution and have configured the Profile fields, you need to create the custom table in the database that this provider will query and update.&#160; Here is a sample SQL definition for our custom profile table:</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 200px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #0000ff">create</span> <span style="color: #0000ff">table</span> dbo.custom_Profile
+(
+    UserId               uniqueidentifier <span style="color: #0000ff">not</span> <span style="color: #0000ff">null</span> <span style="color: #0000ff">Primary</span> <span style="color: #0000ff">Key</span>,
+    FirstName            nvarchar(50) <span style="color: #0000ff">null</span>,
+    Age                  <span style="color: #0000ff">int</span> <span style="color: #0000ff">null</span>,
+    AccountExpiration    datetime <span style="color: #0000ff">null</span>,
+    CookieID             uniqueidentifier <span style="color: #0000ff">null</span>,
+    LastUpdatedDate      datetime <span style="color: #0000ff">not</span> <span style="color: #0000ff">null</span>
+)
+go</pre></div><p>Note that the <font face="Courier New">SqlTableProfileProvider</font> requires two extra columns in addition to your custom defined Profile properties, namely <font face="Courier New">UserId</font> and <font face="Courier New">LastUpdatedDate</font>.&#160; One other thing to be aware of is that if you use the Membership API to delete a user programmatically, this will remove all entries related to that user in the database <strong><u>except</u></strong> from your custom Profile table.&#160; I believe this might be because the Profile system can apparently be used independently of the Membership system, even allowing you to store Profile data on anonymous, unauthenticated users.&#160; I think the same caution would go for any utility that presumably uses this Membership API under the covers, such as the <font face="Courier New">ASP.NET Website Administration Tool</font> launched from Visual Studio that I referred to earlier in this series with a post titled <a href="http://murrayon.net/2009/01/aspnet-providers-getting-started.html">ASP.NET Providers - Getting Started</a>.&#160; Up to this point, I have resorted to manually clearing out Profile table rows myself that are linked to the membership account being removed from the database.</p><p>Also, if your web site is using a Windows user or system account for the identity of the worker process, you&#8217;ll want to make sure that set of credentials has <font face="Courier New">SELECT</font>, <font face="Courier New">INSERT</font>, <font face="Courier New">UPDATE</font>, and <font face="Courier New">DELETE</font> permissions granted to it for this new custom database table you created.&#160; There are also some <font face="Courier New">EXECUTE</font>, <font face="Courier New">SELECT</font>, and <font face="Courier New">UPDATE</font> permissions required on a few of the already-existing stored procedures that the Provider system uses.&#160; Again, check the accompanying white paper on the download site for a discussion about these procedure and for some SQL statements to help you automate the granting of these permissions.</p><h3>The Profile Proxy Class</h3><p>If you are using the <font face="Courier New">Web Site</font> project template in Visual Studio, then you are good to go with using the <font face="Courier New">Profile</font> proxy class that can be used anywhere in your code to retrieve and update Profile fields on the current user.&#160; The availability of this <font face="Courier New">Profile</font> class is independent of whether you are using the built-in ASP.NET <font face="Courier New">SqlProfileProvider</font> or the custom <font face="Courier New">SqlTableProfileProvider</font> that I&#8217;ve been showcasing thus far.&#160; However, if you are using the <font face="Courier New">Web Application</font> project template, this proxy object is not auto-generated for you by Visual Studio.&#160; For a detailed discussion of the problem and a working solution, see my next post which is entitled <a href="http://murrayon.net/2009/02/aspnet-profile-and-web-application.html">ASP.NET Profile and Web Application Projects</a>.</p><p>Use of this <font face="Courier New">Profile</font> class couldn&#8217;t be easier and is exactly as you would expect it to be.&#160; Here is a code snippet that both retrieves and updates strongly-typed Profile properties (exactly as they were defined in the <font face="Courier New">Web.config</font>) using this proxy object:</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 200px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #008000">// Set Profile property</span>
+Profile.FirstName = txtBoxFirstName.Text;
+
+<span style="color: #008000">// Retrieve Profile property</span>
+<span style="color: #0000ff">int</span> age = Profile.Age;</pre></div><h3>Read On!</h3><p>This crash course of the ASP.NET Provider system is pretty much done I guess you could say, as far as a tutorial goes that is.&#160; I still have another two posts on the radar that will be coming over the next few days regarding issues and workarounds that I encountered.&#160; One post will deal with generating this <font face="Courier New">Profile</font> proxy class under the Visual Studio <font face="Courier New">Web Application</font> project template.&#160; The other post will be about the advantages of using this system under IIS 7 found in Windows Vista and Server 2008; it will also include some issues with using this system if some of your content is static HTML instead of ASPX pages.&#160; Here are the links to these two posts:</p><ul><li><a href="http://murrayon.net/2009/02/aspnet-profile-and-web-application.html">ASP.NET Profile and Web Application Projects</a> </li><li><a href="http://murrayon.net/2009/02/iis-7-and-aspnet-providers-membership.html">IIS 7 and ASP.NET Providers (Membership, Roles, and Profile)</a> </li></ul><p>It has been a very pleasant experience overall to work with the ASP.NET Provider system because of it&#8217;s highly customizable and flexible design.&#160; If your <a title="ASP.NET Providers - Membership" href="http://murrayon.net/2009/01/aspnet-providers-membership.html">Membership</a>, <a title="ASP.NET Providers - Role Management" href="http://murrayon.net/2009/02/aspnet-providers-role-management.html">Role Management</a>, and Profile needs are fairly common and typical, this framework is a piece of cake to incorporate into your product (including your existing ones, no matter how out-of-date they are).&#160; Hope you&#8217;ve enjoyed the series!</p>
+</span>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>mamali</div>
+<div class='content'>
+perfect, thank you very much&#8230;</div>
+</div>
+<div class='comment'>
+<div class='author'>Bryan</div>
+<div class='content'>
+I&#39;ve been using the profile system with good results, but in the last couple of weeks, I must have made some change because now I&#39;m getting the error: &quot;Column name &#39;UserID&#39; appears more than once in the result column list.&quot; I can see the SQL command that&#39;s generated in SqlTableProfileProvider.vb, and it indeed contains two columns with name UserID. The problem is, I&#39;m unable to find the source of the second UserID column. What can I do to trace and resolve the problem?</div>
+</div>
+<div class='comment'>
+<div class='author'>Esteban Araya</div>
+<div class='content'>
+@Shalan &amp; Mike:<br /><br />I&#39;d just store the photo on a file server, and then just store a UNC path to the photo on the custom profile table.<br /><br />That way, all you&#39;d have to do is: read the path, load the photo &amp; display it.<br /><br />Hope this helps!</div>
+</div>
+<div class='comment'>
+<div class='author'>Mike Murray</div>
+<div class='content'>
+Ya know, I&#39;m not really sure.  But I am wondering if I&#39;ve got something that might lead to an answer.  I&#39;m looking at the examples in my blog post and notice the Guid field.  In order for that data type to work, it had to be specified as System.Guid, I&#39;m assuming because it&#39;s not a primitive type.  Perhaps something similar has to be done, like System.Array or System.Array&lt;Byte&gt;&#8230;not really sure.  The other thing I can think of is maybe using the primitive version of &quot;byte&quot; instead of &quot;Byte&quot;.<br /><br />Just a few random guesses.  Let us know if you find the resolution and post back here.  Thanks!</div>
+</div>
+<div class='comment'>
+<div class='author'>shalan</div>
+<div class='content'>
+Hi Mike.  Excellent article! I&#8217;ve been using TableProvider for some time now, but recently I had a first case where the user wanted to incorporated photos as part of their profile.<br /><br />I have tried to accomplish but to no avail. Its setup as a varbinary field in the database, and a Byte[] datatype in the web.config, but I keep getting an error saying that it could not load type &#8220;Byte[]&#8221;.  Have you tried this?  Do you have any suggestions?<br /><br />Thanx!</div>
+</div>
+<div class='comment'>
+<div class='author'>Mike Murray</div>
+<div class='content'>
+Very good question.<BR/><BR/>In my particular use case, the need to delete a user account from the system would be so rare that I am content to leave it a manual process.  And since I&#8217;ll be the one managing it for a while, I&#8217;m content with this solution for the time being.<BR/><BR/>I will give this question some thought, however, and I will post back if come up with an idea or two&#8230;that is if someone else doesn&#8217;t beat me to it here in the comments.<BR/><BR/>Please do let us know if you come up with something yourself.  Thanks, and good luck.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>
+Has anybody came up with a way to automatically delete custom profile table along with the rest of the membership information?</div>
+</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2009/02/05/asp-net-providers-role-management/">ASP.NET Providers - Role Management</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-02-05T16:45:00-07:00" pubdate data-updated="true">Feb 5<span>th</span>, 2009</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/asp-net/'>ASP.NET</a>, <a class='category' href='/blog/categories/asp-net-providers-series/'>ASP.NET Providers Series</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/security/'>Security</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>, <a class='category' href='/blog/categories/web/'>Web</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2009/02/05/asp-net-providers-role-management/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>This blog post is part of a series about the ASP.NET Providers (namely Membership, Role Management, and Profile). The introductory post in the series can be found at the following link, which introduces the <a href="http://en.wikipedia.org/wiki/Provider_model">Provider Model pattern</a> and gives a personal example of an implementation I have been working on:</p>  <ul>   <li><a href="http://murrayon.net/2009/01/aspnet-providers-membership-role-and.html">ASP.NET Providers - Membership, Role, and Profile</a> </li> </ul>  <p>This post will deal with adding Role Management to your website.</p> <span class='fullpost'> <h3>Role Management</h3>  <p>Creating roles and assigning users accounts to them is a great way to group users together under similar permissions and abilities.&#160; The ASP.NET Roles Management service allows you to restrict page viewing (or even just certain regions of a page) based on roles you define; you can even apply roles security to specific methods or classes using <a title="Introduction to Attributes (C#)" href="http://msdn.microsoft.com/en-us/library/aa288059(VS.71).aspx">attributes</a>, which I will show an example of a little later.</p>  <p>In order to add role management to your site, add an XML fragment like the one below; the process is much the same as it was with the <a title="ASP.NET Providers - Membership" href="http://murrayon.net/2009/01/aspnet-providers-membership.html">Membership Provider</a>:</p>  <div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 300px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #0000ff">&lt;</span><span style="color: #800000">configuration</span><span style="color: #0000ff">&gt;</span>
+    <span style="color: #0000ff">&lt;</span><span style="color: #800000">connectionStrings</span><span style="color: #0000ff">&gt;</span>
+        <span style="color: #0000ff">&lt;</span><span style="color: #800000">add</span> <span style="color: #ff0000">name</span><span style="color: #0000ff">=&quot;MyDB&quot;</span> <span style="color: #ff0000">connectionString</span><span style="color: #0000ff">=&quot;...&quot;</span> <span style="color: #0000ff">/&gt;</span>
+    <span style="color: #0000ff">&lt;/</span><span style="color: #800000">connectionStrings</span><span style="color: #0000ff">&gt;</span>
+    <span style="color: #0000ff">&lt;</span><span style="color: #800000">system.web</span><span style="color: #0000ff">&gt;</span>
+        ... authentication &amp; authorization settings ...
+        <span style="color: #0000ff">&lt;</span><span style="color: #800000">roleManager</span> <span style="color: #ff0000">enabled</span><span style="color: #0000ff">=&quot;true&quot;</span>
+                     <span style="color: #ff0000">defaultProvider</span><span style="color: #0000ff">=&quot;ConfiguredRoleProvider&quot;</span><span style="color: #0000ff">&gt;</span>
+            <span style="color: #0000ff">&lt;</span><span style="color: #800000">providers</span><span style="color: #0000ff">&gt;</span>
+                <span style="color: #0000ff">&lt;</span><span style="color: #800000">add</span> <span style="color: #ff0000">name</span><span style="color: #0000ff">=&quot;ConfiguredRoleProvider&quot;</span>
+                     <span style="color: #ff0000">type</span><span style="color: #0000ff">=&quot;System.Web.Security.SqlRoleProvider&quot;</span>
+                     <span style="color: #ff0000">connectionStringName</span><span style="color: #0000ff">=&quot;MyDB&quot;</span>
+                     <span style="color: #ff0000">applicationName</span><span style="color: #0000ff">=&quot;SampleWebSite&quot;</span> <span style="color: #0000ff">/&gt;</span>
+            <span style="color: #0000ff">&lt;/</span><span style="color: #800000">providers</span><span style="color: #0000ff">&gt;</span>
+        <span style="color: #0000ff">&lt;/</span><span style="color: #800000">roleManager</span><span style="color: #0000ff">&gt;</span>
+    <span style="color: #0000ff">&lt;/</span><span style="color: #800000">system.web</span><span style="color: #0000ff">&gt;</span>
+<span style="color: #0000ff">&lt;/</span><span style="color: #800000">configuration</span><span style="color: #0000ff">&gt;</span></pre></div><p><strong><u>WARNING</u>: </strong>According to Microsoft, you should <strong><u>never</u></strong> use the default provider settings and should <strong><u>always</u></strong> add a new, configured provider; in addition you <strong><u>must</u></strong> be sure to specify the <font face="Courier New">applicationName</font> attribute! See <a href="http://weblogs.asp.net/scottgu/archive/2006/04/22/Always-set-the-_2200_applicationName_2200_-property-when-configuring-ASP.NET-2.0-Membership-and-other-Providers.aspx">Scott Guthrie&#8217;s blog post on this topic</a> for more details. Apparently, you can also use a value of <font face="Courier New">&quot;/&quot;</font> for the <font face="Courier New">applicationName</font> and it will use the root application name.</p><p>Role names can be used in the <font face="Courier New">Web.config</font> in the same place we used the user class wildcard characters (namely, <font face="Courier New">*</font> for all users and <font face="Courier New">?</font> for anonymous users); the following sample fragment would go under the <font face="Courier New">system.web</font> node:</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 200px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #0000ff">&lt;</span><span style="color: #800000">authorization</span><span style="color: #0000ff">&gt;</span>
+    <span style="color: #0000ff">&lt;</span><span style="color: #800000">deny</span> <span style="color: #ff0000">users</span><span style="color: #0000ff">=&quot;BannedUsers,?&quot;</span> <span style="color: #0000ff">/&gt;</span>
+    <span style="color: #0000ff">&lt;</span><span style="color: #800000">allow</span> <span style="color: #ff0000">users</span><span style="color: #0000ff">=&quot;PremiumUsers&quot;</span> <span style="color: #0000ff">/&gt;</span>
+<span style="color: #0000ff">&lt;/</span><span style="color: #800000">authorization</span><span style="color: #0000ff">&gt;</span></pre></div><p>Role names can be defined by using the <font face="Courier New">ASP.NET Website Administration Tool</font> launched from Visual Studio that I referred to earlier in this series with a post titled <a href="http://murrayon.net/2009/01/aspnet-providers-getting-started.html">ASP.NET Providers - Getting Started</a>.&#160; You can also use this utility to assign users to one or more roles.&#160; Roles can be programmatically assigned and verified in code as well, using the provided <font face="Courier New">Roles</font> .NET API.</p><h3>Attribute-based Role Management</h3><p>In order to put authorization rules on classes or methods, you use the attribute named <font face="Courier New">PrincipalPermission</font>.&#160; Here is a sample that contains a method only accessible by a user with the username of <font face="Courier New">administrator</font>&#160;<u>AND</u> in the role group <font face="Courier New">Admin</font>:</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 200px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none">[PrincipalPermission(SecurityAction.Demand, Name=<span style="color: #006080">&quot;administrator&quot;</span>, Role=<span style="color: #006080">&quot;Admin&quot;</span>)]
+<span style="color: #0000ff">public</span> <span style="color: #0000ff">void</span> SomeMethod(...)
+{
+    ...
+}</pre></div><p>The <u>OR</u> version of the above logic (meaning the user account being verified need only satisfy one of these authorization rules) would be represented like this:</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 200px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none">[PrincipalPermission(SecurityAction.Demand, Name=<span style="color: #006080">&quot;administrator&quot;</span>)]
+[PrincipalPermission(SecurityAction.Demand, Role=<span style="color: #006080">&quot;Admin&quot;</span>)]
+<span style="color: #0000ff">public</span> <span style="color: #0000ff">void</span> SomeOtherMethod(...)
+{
+    ...
+}</pre></div><p>Here is an interesting sample that restricts a page to authenticated users (those not visiting anonymously); you would put the attribute on the code-behind of an ASPX page, like this example for <font face="Courier New">SomePage.aspx</font>:</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 200px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #0000ff">using</span> System.Security.Permissions;
+
+[PrincipalPermission(SecurityAction.Demand, Authenticated=<span style="color: #0000ff">true</span>)]
+<span style="color: #0000ff">public</span> <span style="color: #0000ff">partial</span> <span style="color: #0000ff">class</span> SomePage : System.Web.UI.Page
+{
+    ...
+}</pre></div><p>In all of these cases, if the authorization criteria is not met, a <font face="Courier New">SecurityException</font> is thrown.&#160; You would want to catch that exception and perform alternate logic or display a more user-friendly error message.</p><h3>Read On!</h3><p>Continue onward by reading the next blog post in this series found at the following link:</p><ul><li><a href="http://murrayon.net/2009/02/aspnet-providers-profile.html">ASP.NET Providers - Profile</a> </li></ul>
+</span>  </div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2009/01/30/asp-net-providers-membership/">ASP.NET Providers - Membership</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-01-30T14:21:00-07:00" pubdate data-updated="true">Jan 30<span>th</span>, 2009</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/asp-net/'>ASP.NET</a>, <a class='category' href='/blog/categories/asp-net-providers-series/'>ASP.NET Providers Series</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/encryption/'>Encryption</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/sql/'>SQL</a>, <a class='category' href='/blog/categories/security/'>Security</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>, <a class='category' href='/blog/categories/web/'>Web</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2009/01/30/asp-net-providers-membership/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>This blog post is part of a series about the ASP.NET Providers (namely Membership, Role Management, and Profile). The introductory post in the series can be found at the following link, which introduces the <a href="http://en.wikipedia.org/wiki/Provider_model" target="_blank">Provider Model pattern</a> and gives a personal example of an implementation I have been working on:</p><ul><li><a href="http://murrayon.net/2009/01/aspnet-providers-membership-role-and.html">ASP.NET Providers - Membership, Role, and Profile</a></li></ul><p>This post will deal with adding the Membership functionality to your website.</p> <span class='fullpost'> <h3>Membership Provider Configuration</h3><p>Now that your DB is set up, there are a few snippets that need to be added to your <span style="font-family: courier new">Web.config</span>. It involves adding a connection string and adding a new membership provider, as in the sample below:</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 350px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #0000ff">&lt;</span><span style="color: #800000">configuration</span><span style="color: #0000ff">&gt;</span><br />    <span style="color: #0000ff">&lt;</span><span style="color: #800000">connectionStrings</span><span style="color: #0000ff">&gt;</span><br />        <span style="color: #0000ff">&lt;</span><span style="color: #800000">add</span> <span style="color: #ff0000">name</span><span style="color: #0000ff">=&quot;MyDB&quot;</span> <span style="color: #ff0000">connectionString</span><span style="color: #0000ff">=&quot;...&quot;</span> <span style="color: #0000ff">/&gt;</span><br />    <span style="color: #0000ff">&lt;/</span><span style="color: #800000">connectionStrings</span><span style="color: #0000ff">&gt;</span><br />    <span style="color: #0000ff">&lt;</span><span style="color: #800000">system.web</span><span style="color: #0000ff">&gt;</span><br />        ... authentication &amp; authorization settings ...<br /><br />        <span style="color: #0000ff">&lt;</span><span style="color: #800000">membership</span> <span style="color: #ff0000">defaultProvider</span><span style="color: #0000ff">=&quot;ConfiguredMembershipProvider&quot;</span><span style="color: #0000ff">&gt;</span><br />            <span style="color: #0000ff">&lt;</span><span style="color: #800000">providers</span><span style="color: #0000ff">&gt;</span><br />                <span style="color: #0000ff">&lt;</span><span style="color: #800000">add</span> <span style="color: #ff0000">name</span><span style="color: #0000ff">=&quot;ConfiguredMembershipProvider&quot;</span><br />                     <span style="color: #ff0000">type</span><span style="color: #0000ff">=&quot;System.Web.Security.SqlMembershipProvider&quot;</span><br />                     <span style="color: #ff0000">connectionStringName</span><span style="color: #0000ff">=&quot;MyDB&quot;</span><br />                     <span style="color: #ff0000">applicationName</span><span style="color: #0000ff">=&quot;SampleWebSite&quot;</span><br />                     <span style="color: #ff0000">minRequiredPasswordLength</span><span style="color: #0000ff">=&quot;5&quot;</span><br />                     <span style="color: #ff0000">minRequiredNonalphanumericCharacters</span><span style="color: #0000ff">=&quot;0&quot;</span> <span style="color: #0000ff">/&gt;</span><br />            <span style="color: #0000ff">&lt;/</span><span style="color: #800000">providers</span><span style="color: #0000ff">&gt;</span><br />        <span style="color: #0000ff">&lt;/</span><span style="color: #800000">membership</span><span style="color: #0000ff">&gt;</span><br />    <span style="color: #0000ff">&lt;/</span><span style="color: #800000">system.web</span><span style="color: #0000ff">&gt;</span><br /><span style="color: #0000ff">&lt;/</span><span style="color: #800000">configuration</span><span style="color: #0000ff">&gt;</span></pre></div><p><strong><u>WARNING</u>: </strong>According to Microsoft, you should <strong><u>never</u></strong> use the default provider settings and should <strong><u>always</u></strong> add a new, configured provider; in addition you <strong><u>must</u></strong> be sure to specify the <span style="font-family: courier new">applicationName</span> attribute! See <a title="Always set the " href="http://weblogs.asp.net/scottgu/archive/2006/04/22/Always-set-the-_2200_applicationName_2200_-property-when-configuring-ASP.NET-2.0-Membership-and-other-Providers.aspx" other="other" and="and" configuring="configuring" when="when" property="property" membership="membership" net="ASP.NET" 0="2.0">Scott Guthrie&#8217;s blog post on this topic</a> for more details. Apparently, you can also use a value of <span style="font-family: courier new">&quot;/&quot;</span> for the <span style="font-family: courier new">applicationName</span> and it will use the root application name.</p><p>The last two attributes of the <span style="font-family: courier new">add</span> node are only a couple of several membership features you can configure. For a complete list of attributes you can configure, see <a href="http://msdn.microsoft.com/en-us/library/whae3t94.aspx">&lt;add&gt; Element for Providers for Membership</a>.</p><h3>Securing Site Content by Requiring Authentication</h3><p>With 5 more lines of configuration added to your <span style="font-family: courier new">Web.config</span>, you can have the whole site secured and accessible only by user account authentication. Even better, you can make that 6 lines added to the <span style="font-family: courier new">Web.config</span>, add a <span style="font-family: courier new">Login.aspx</span> page, and drop in a <span style="font-family: courier new">Login</span> control from the Toolbox and you will get auto-redirect to the login page if someone tries to hit any page you&#8217;ve now secured. The framework is even smart enough to return you to that desired page after successful login; it accomplishes this by redirecting you to the login page but by adding a <span style="font-family: courier new">ReturnUrl</span> query string attribute to know where to go after authentication.</p><p>Here are the additional lines for your <span style="font-family: courier new">Web.config</span> (put them under the <span style="font-family: courier new">system.web</span> node):</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 200px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #0000ff">&lt;</span><span style="color: #800000">authorization</span><span style="color: #0000ff">&gt;</span><br />    <span style="color: #0000ff">&lt;</span><span style="color: #800000">deny</span> <span style="color: #ff0000">users</span><span style="color: #0000ff">=&quot;?&quot;</span> <span style="color: #0000ff">/&gt;</span><br /><span style="color: #0000ff">&lt;/</span><span style="color: #800000">authorization</span><span style="color: #0000ff">&gt;</span><br /><br /><span style="color: #0000ff">&lt;</span><span style="color: #800000">authentication</span> <span style="color: #ff0000">mode</span><span style="color: #0000ff">=&quot;Forms&quot;</span><span style="color: #0000ff">&gt;</span><br />    <span style="color: #0000ff">&lt;</span><span style="color: #800000">forms</span> <span style="color: #ff0000">defaultUrl</span><span style="color: #0000ff">=&quot;index.html&quot;</span> <span style="color: #ff0000">loginUrl</span><span style="color: #0000ff">=&quot;Login.aspx&quot;</span> <span style="color: #0000ff">/&gt;</span><br /><span style="color: #0000ff">&lt;/</span><span style="color: #800000">authentication</span><span style="color: #0000ff">&gt;</span></pre></div><p><u><strong>NOTE</strong></u>: You will likely already have an <span style="font-family: courier new">authentication</span> node in your <span style="font-family: courier new">Web.config</span>, but it&#8217;s <span style="font-family: courier new">mode</span> may be set to the default <span style="font-family: courier new">&quot;Windows&quot;</span> value. To use the Membership Provider for authentication, you must have this value set to <span style="font-family: courier new">&quot;Forms.&quot;</span></p><p>The optional 6th line I spoke of earlier is the <span style="font-family: courier new">forms</span> node under the <span style="font-family: courier new">authentication</span> node. The <span style="font-family: courier new">defaultUrl</span> attribute of this line is used to tell the framework where to go after successful login if there is no <span style="font-family: courier new">ReturnUrl</span> specified in the query string. The <span style="font-family: courier new">loginUrl</span> attribute is used to specify the page the user is redirected to if they are attempting to hit a page that requires authentication.</p><p>The <span style="font-family: courier new">deny</span> node is using the question mark (<span style="font-family: courier new">?</span>) wildcard character, which is used for anonymous users (or those that haven&#8217;t been authenticated yet); the asterisk (<span style="font-family: courier new">*</span>) wildcard is used to signify all users browsing the site. Since we are dealing with the <span style="font-family: courier new">Web.config</span> at the root of the site, this <span style="font-family: courier new">deny</span> rule will apply to the whole site and it&#8217;s subdirectories. You can either put a <span style="font-family: courier new">Web.config</span> in each subfolder that requires an overriding or more restrictive set of <span style="font-family: courier new">allow</span> and <span style="font-family: courier new">deny</span> rules, or you can actually specify <span style="font-family: courier new">location</span> elements in your <span style="font-family: courier new">Web.config</span>, as is shown in the following example (basically you could have several of these <span style="font-family: courier new">location</span> elements, each with their own <span style="font-family: courier new">authorization</span> rules):</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 200px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #0000ff">&lt;</span><span style="color: #800000">configuration</span><span style="color: #0000ff">&gt;</span><br />    <span style="color: #0000ff">&lt;</span><span style="color: #800000">location</span> <span style="color: #ff0000">path</span><span style="color: #0000ff">=&quot;Login.aspx&quot;</span><span style="color: #0000ff">&gt;</span><br />        <span style="color: #0000ff">&lt;</span><span style="color: #800000">system.web</span><span style="color: #0000ff">&gt;</span><br />            <span style="color: #0000ff">&lt;</span><span style="color: #800000">authorization</span><span style="color: #0000ff">&gt;</span><br />                <span style="color: #0000ff">&lt;</span><span style="color: #800000">allow</span> <span style="color: #ff0000">users</span><span style="color: #0000ff">=&quot;?&quot;</span> <span style="color: #0000ff">/&gt;</span><br />            <span style="color: #0000ff">&lt;/</span><span style="color: #800000">authorization</span><span style="color: #0000ff">&gt;</span><br />        <span style="color: #0000ff">&lt;/</span><span style="color: #800000">system.web</span><span style="color: #0000ff">&gt;</span><br />    <span style="color: #0000ff">&lt;/</span><span style="color: #800000">location</span><span style="color: #0000ff">&gt;</span><br /><span style="color: #0000ff">&lt;/</span><span style="color: #800000">configuration</span><span style="color: #0000ff">&gt;</span></pre></div><p>As far as I can tell, this sample configuration above isn&#8217;t necessary if you have specified your login page in the <span style="font-family: courier new">loginUrl</span> attribute of the <span style="font-family: courier new">authentication/forms</span> node like we did in the previous code snippet. But this sample is at least illustrative of the location-based authorization rules.</p><p>Personally, I decided to create a folder named<span style="font-family: courier new"> Public</span> in my site and I give it its own <span style="font-family: courier new">Web.config</span> that allows all users (including anonymous ones) access to the containing web pages. This folder currently contains the login, user account registration, account activation (a link included in the email sent upon registration), and password retrieval pages, all of which would need unrestricted access for anonymous users.</p><h3>Test Your Membership Provider</h3><p>With all of this now in place, you should be able to use the <span style="font-family: courier new">ASP.NET Website Administration Tool</span> launched from Visual Studio to create a few new user accounts. I mentioned how to launch this utility earlier in this series with a post titled <a href="http://murrayon.net/2009/01/aspnet-providers-getting-started.html">ASP.NET Providers - Getting Started</a>. Then you can double-check your membership system is working by logging in with your newly created credentials. Also, you can now create a user account registration page (utilizing the <span style="font-family: courier new">CreateUserWizard</span> control) and a password retrieval/reset page (using the <span style="font-family: courier new">PasswordRecovery</span> control). All of the controls I have named throughout this post are highly skinable and configurable via numerous attributes and templates; they also contain flexible task workflows that you can override or plug into by registering to any of several event listeners.</p><p>One other thing that needs to be done if you want to enable the email notification capabilities is to set the SMTP settings in your <font face="Courier New">Web.config</font>.&#160; Here is a snippet you would put right above the <font face="Courier New">system.web</font> node:</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 200px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #0000ff">&lt;</span><span style="color: #800000">system.net</span><span style="color: #0000ff">&gt;</span>
+    <span style="color: #0000ff">&lt;</span><span style="color: #800000">mailSettings</span><span style="color: #0000ff">&gt;</span>
+        <span style="color: #0000ff">&lt;</span><span style="color: #800000">smtp</span> <span style="color: #ff0000">from</span><span style="color: #0000ff">=&quot;service@website.com&quot;</span><span style="color: #0000ff">&gt;</span>
+            <span style="color: #0000ff">&lt;</span><span style="color: #800000">network</span> <span style="color: #ff0000">host</span><span style="color: #0000ff">=&quot;mail.domain.com&quot;</span> <span style="color: #ff0000">port</span><span style="color: #0000ff">=&quot;25&quot;</span>
+                     <span style="color: #ff0000">userName</span><span style="color: #0000ff">=&quot;...&quot;</span> <span style="color: #ff0000">password</span><span style="color: #0000ff">=&quot;...&quot;</span> <span style="color: #0000ff">/&gt;</span>
+        <span style="color: #0000ff">&lt;/</span><span style="color: #800000">smtp</span><span style="color: #0000ff">&gt;</span>
+    <span style="color: #0000ff">&lt;/</span><span style="color: #800000">mailSettings</span><span style="color: #0000ff">&gt;</span>
+<span style="color: #0000ff">&lt;/</span><span style="color: #800000">system.net</span><span style="color: #0000ff">&gt;</span></pre></div><h3>Membership API and MembershipInfo Class</h3><p>There is also a <span style="font-family: courier new">Membership</span> API and an accompanying <span style="font-family: courier new">MembershipInfo</span> class that you can call in order to retrieve and update user info from the database if you wanted to create your own custom controls or page logic. For instance, the following is code that I adapted <a title="Examining ASP.NET 2.0&#39;s Membership, Roles, and Profile - Part 11" href="http://aspnet.4guysfromrolla.com/articles/062508-1.aspx">from Part 11 of the tutorial I mentioned earlier</a> in the introductory post of this series; this code activates an account when a user clicks the link emailed to them during registration:</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 650px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #0000ff">public</span> <span style="color: #0000ff">partial</span> <span style="color: #0000ff">class</span> Verify : System.Web.UI.Page<br />{<br />    <span style="color: #0000ff">protected</span> <span style="color: #0000ff">void</span> Page_Load(<span style="color: #0000ff">object</span> sender, EventArgs e)<br />    {<br />        <span style="color: #008000">//Make sure valid querystring value was passed</span><br />        <span style="color: #0000ff">if</span> (<span style="color: #0000ff">string</span>.IsNullOrEmpty(Request.QueryString[<span style="color: #006080">&quot;ID&quot;</span>]) ||<br />            !Regex.IsMatch(Request.QueryString[<span style="color: #006080">&quot;ID&quot;</span>],<br />                <span style="color: #006080">@&quot;[0-9a-f]{8}\-([0-9a-f]{4}\-){3}[0-9a-f]{12}&quot;</span>))<br />        {<br />            InformationLabel.Text = <span style="color: #006080">&quot;An invalid ID value was passed &quot;</span> +<br />                <span style="color: #006080">&quot;in through the query string.&quot;</span>;<br />        }<br />        <span style="color: #0000ff">else</span><br />        {<br />            <span style="color: #008000">//ID exists and is kosher, approve user</span><br />            <span style="color: #008000">//Get the ID sent in on query string</span><br />            Guid userId = <span style="color: #0000ff">new</span> Guid(Request.QueryString[<span style="color: #006080">&quot;ID&quot;</span>]);<br /><br />            <span style="color: #008000">//Get user object</span><br />            MembershipUser userInfo = Membership.GetUser(userId);<br /><br />            <span style="color: #0000ff">if</span> (userInfo == <span style="color: #0000ff">null</span>)<br />            {<br />                <span style="color: #008000">//Could not find user!</span><br />                InformationLabel.Text = <span style="color: #006080">&quot;The user account could not &quot;</span> +<br />                    <span style="color: #006080">&quot;be found in the membership database.&quot;</span>;<br />            }<br />            <span style="color: #0000ff">else</span><br />            {<br />                <span style="color: #008000">//User is valid, approve them</span><br />                userInfo.IsApproved = <span style="color: #0000ff">true</span>;<br />                Membership.UpdateUser(userInfo);<br /><br />                <span style="color: #008000">//Display a message</span><br />                InformationLabel.Text = <span style="color: #006080">&quot;Your account has been &quot;</span> +<br />                    <span style="color: #006080">&quot;verified and you can now log into the site.&quot;</span>;<br />            }<br />        }<br />    }<br />}</pre></div><h3>Read On!</h3><p>Continue onward by reading the next blog post in this series found at the following link:</p><ul><li><a href="http://murrayon.net/2009/02/aspnet-providers-role-management.html">ASP.NET Providers - Role Management</a></li></ul>
+</span>  </div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2009/01/30/asp-net-providers-getting-started/">ASP.NET Providers - Getting Started</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-01-30T14:20:00-07:00" pubdate data-updated="true">Jan 30<span>th</span>, 2009</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/asp-net/'>ASP.NET</a>, <a class='category' href='/blog/categories/asp-net-providers-series/'>ASP.NET Providers Series</a>, <a class='category' href='/blog/categories/database/'>Database</a>, <a class='category' href='/blog/categories/encryption/'>Encryption</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/sql/'>SQL</a>, <a class='category' href='/blog/categories/security/'>Security</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2009/01/30/asp-net-providers-getting-started/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>This blog post is part of a series about the ASP.NET Providers (namely Membership, Role Management, and Profile).&#160; The introductory post in the series can be found at the following link, which introduces the <a href="http://en.wikipedia.org/wiki/Provider_model" target="_blank">Provider Model pattern</a> and gives a personal example of an implementation I have been working on:</p>  <ul>   <li><a href="http://murrayon.net/2009/01/aspnet-providers-membership-role-and.html">ASP.NET Providers - Membership, Role, and Profile</a> </li> </ul>  <p>This post will deal with getting started using the ASP.NET Providers by setting up a database.</p> <span class='fullpost'> <h3>Database Setup</h3>  <p>First, you will need to configure a database to securely store all of the site&#8217;s user data and activity info.&#160; You&#8217;ll most likely be content with the already provided SQL Providers (such as the <font face="Courier New">SqlMembershipProvider</font><font face="Verdan">), but Microsoft also provides you with other options in many cases.&#160; For example in the case of Membership, </font>you also have the option of having your site use the <font face="Courier New">ActiveDirectoryMembershipProvider</font> or you can even roll your own <font face="Courier New">MembershipProvider</font>.&#160; The nice thing about using any of these Microsoft Providers is that they are already set up to store sensitive data like passwords in an encrypted format in the database.</p>  <p>There are two tools you can use to automatically generate the necessary database tables needed for the SQL implementation.&#160; The first tool is a web-based configuration tool launched from Visual Studio called the <font face="Courier New">ASP.NET Website Administration Tool</font>. It can not only create the database tables, but can also configure authorization rules, user roles, user accounts, and many other settings that go right into your <font face="Courier New">Web.config</font>.&#160; It is launched by selecting the <font face="Courier New">ASP.NET Configuration</font> menu option in the <font face="Courier New">Project</font> menu (or <font face="Courier New">Website</font> menu, depending on which version of Visual Studio you have or the project template you selected).&#160; However, this tool will create the database in a SQL Server file named <font face="Courier New">ASPNETDB.mdf</font> placed in the site&#8217;s <font face="Courier New">App_Data</font> folder.&#160; If you would prefer to create the database schema in an already existing install of SQL Server (likely on a different box), you need to use the <font face="Courier New">aspnet_regsql.exe</font> command-line tool.&#160; The command-line tool&#8217;s graphical interface can be launched by typing the name of the executable in a <font face="Courier New">Visual Studio Command Prompt</font> (located in the Start Menu under <font face="Courier new">Visual Studio | Visual Studio Tools</font>).</p>  <p>The only other thing you need now is the connection string to this newly populated database.&#160; I will show you where in your <font face="Courier New">Web.config</font> to put the connection string in the next post of this series.</p>  <h3>Read On!</h3>  <p>Continue onward by reading the next blog post in this series found at the following link:</p>  <ul>   <li><a href="http://murrayon.net/2009/01/aspnet-providers-membership.html">ASP.NET Providers - Membership</a> </li> </ul> </span>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Alan Blake</div>
+<div class='content'>
+I needed to use the built-in authentication handling for only a single page and a single user (very simple).  Therefore, I used the &#8220;location&#8221;<br />tag and the &#8220;credentials&#8221; tag to then add a user to my web.config you should consider adding this approach as well.</div>
+</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+<nav id="pagenavi">
+    
+        <a href="/blog/page/5/" class="prev">Prev</a>
+    
+    
+        <a href="/blog/page/7/" class="next">Next</a>
+    
+    <div class="center"><a href="/blog/archives">Blog Archives</a></div>
+</nav></div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2012
+
+    Mike Murray
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a>
+</footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'mkmurray';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+		</div>
+		<div class="left-col">
+			<header id="header" class="inner"><div class="profilepic">	
+	<img src="/images/mkmurray.jpg" alt="Profile Picture">
+</div>
+<h1><a href="/">Mike Murray</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<br/>
+<h3 class="alignleft">please code responsibly</h3>
+<br/>
+<br/>
+<br/>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		<a class="facebook" href="http://www.facebook.com/mkmurray" title="Facebook">Facebook</a>
+		
+		
+		<a class="google" href="https://plus.google.com/109073345657761090655?rel=author" title="Google+">Google+</a>
+		
+		
+		<a class="twitter" href="http://twitter.com/mkmurray" title="Twitter">Twitter</a>
+		
+		
+		<a class="github" href="https://github.com/mkmurray" title="GitHub">GitHub</a>
+		
+		
+		<a class="linkedin" href="http://www.linkedin.com/in/mkmurray">LinkedIn</a>
+		
+		
+		
+		
+		<a class="rss" href="http://feeds.feedburner.com/mkmurray/" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+
+</header>				
+		</div>	
+	</div>
+</body>
+</html>

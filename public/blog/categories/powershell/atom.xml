@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: PowerShell | Mike Murray]]></title>
+  <link href="http://mkmurray.com/blog/categories/powershell/atom.xml" rel="self"/>
+  <link href="http://mkmurray.com/"/>
+  <updated>2012-10-29T14:47:08-06:00</updated>
+  <id>http://mkmurray.com/</id>
+  <author>
+    <name><![CDATA[Mike Murray]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Web Deployment Tool]]></title>
+    <link href="http://mkmurray.com/blog/2009/09/29/web-deployment-tool/"/>
+    <updated>2009-09-29T17:45:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2009/09/29/web-deployment-tool</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>It appears that the IIS team at Microsoft has officially completed a 1.0 version of the deployment utility I mentioned at the end of <a title="Visual Studio Web Deployment Projects" href="http://murrayon.net/2008/02/visual-studio-web-deployment-projects.html">my previous post about Visual Studio Web Deployment Projects</a> almost two years ago.&#160; It includes a command-line tool named MSDeploy that helps with deploying and syncing web projects across all of the web servers in your server farm.&#160; The installation also includes all kinds of packaging and deployment features that seem really handy.&#160; You can even do migrations from IIS 6 to IIS 7 or package your apps to be distributed via the <a href="http://www.microsoft.com/web/downloads/platform.aspx">Microsoft Web Platform Installer</a>.</p>  <p>I thought that maybe the tool creates MSI installers, but it appears the package may actually just be a ZIP file that you can import and export through the IIS Manager or various other command-line tools or PowerShell Cmdlets.</p>  <p>Here is the page where you can read more about the toolset and download the installer:&#160; <a title="http://www.iis.net/extensions/WebDeploymentTool" href="http://www.iis.net/extensions/WebDeploymentTool">http://www.iis.net/extensions/WebDeploymentTool</a></p>  </div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[PowerShell 1.0 for Windows XP]]></title>
+    <link href="http://mkmurray.com/blog/2009/03/24/powershell-1-0-for-windows-xp/"/>
+    <updated>2009-03-24T14:08:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2009/03/24/powershell-1-0-for-windows-xp</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>I just noticed in today's Tuesday round of Microsoft Updates that there is an optional software download for PowerShell 1.0 on Windows XP.&#160; PowerShell has been one of those things that I really want to learn, but just haven't devoted the time.&#160; I desperately would like to replace my use of the Command Prompt with Windows PowerShell.</p>  <p>PowerShell really is more than just your regular <a href="http://en.wikipedia.org/wiki/Command_line_interpreter">Command Line Interpreter</a> that you have been used to, especially compared to the <a href="http://en.wikipedia.org/wiki/Command_Prompt_(Windows)">Windows Command Prompt</a>.&#160; You get the power of the command line shells that you may have tried out in Linux environments, but it really does go beyond those as well.&#160; PowerShell is (from Wikipedia) <font face="Courier New">&quot;Microsoft's new extensible command line shell and task-based scripting technology.&quot;</font>&#160; Here is a quote from an MSDN document that better explains the advantages PowerShell brings:</p> <span class='fullpost'> <blockquote>   <p>&quot;Unlike most shells, which accept and return text, Windows PowerShell is built on top of the .NET common language runtime (CLR) and the .NET Framework, and accepts and returns .NET objects. This fundamental change in the environment brings entirely new tools and methods to the management and configuration of Windows.</p>   <p>&quot;Windows PowerShell introduces the concept of a cmdlet (pronounced &quot;command-let&quot;), a simple, single-function command-line tool built into the shell. You can use each cmdlet separately, but their power is realized when you use these simple tools in combination to perform complex tasks. Windows PowerShell includes more than one hundred basic core cmdlets, and you can write your own cmdlets and share them with other users.</p>   <p>&quot;Like many shells, Windows PowerShell gives you access to the file system on the computer. In addition, Windows PowerShell providers enable you to access other data stores, such as the registry and the digital signature certificate stores, as easily as you access the file system.&quot;</p> </blockquote>  <p>If you want to know more about PowerShell, I would suggest the following readings:</p>  <ul>   <li><a href="http://en.wikipedia.org/wiki/Windows_PowerShell">Wikipedia - Windows PowerShell</a></li>    <li><a href="http://msdn.microsoft.com/en-us/library/aa973757(VS.85).aspx">MSDN - Windows PowerShell Getting Started Guide</a></li> </ul>  <p>Also, <a href="http://codebetter.com/members/james.kovacs.aspx">James Kovacs</a> from <a href="http://codebetter.com/">CodeBetter.com</a> has been doing <a href="http://codebetter.com/blogs/james.kovacs/archive/tags/PowerShell/default.aspx">a series of posts on the basics of PowerShell</a> that is a great light introduction to how a developer would find the tool most useful.&#160; Here are two of the starting posts from that series:</p>  <ul>   <li><a href="http://codebetter.com/blogs/james.kovacs/archive/2009/02/01/getting-started-with-powershell-developer-edition.aspx">Getting Started with PowerShell - Developer Edition</a></li>    <li><a href="http://codebetter.com/blogs/james.kovacs/archive/2009/02/07/powershell-processes-and-piping.aspx">PowerShell, Processes, and Piping</a></li> </ul> </span>  </div>
+
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: GUID | Mike Murray]]></title>
+  <link href="http://mkmurray.com/blog/categories/guid/atom.xml" rel="self"/>
+  <link href="http://mkmurray.com/"/>
+  <updated>2012-10-29T14:47:08-06:00</updated>
+  <id>http://mkmurray.com/</id>
+  <author>
+    <name><![CDATA[Mike Murray]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Display Name in Add/Remove Programs, MSI-Installed Products, and Compressed GUIDs]]></title>
+    <link href="http://mkmurray.com/blog/2008/06/12/display-name-in-add-remove-programs-msi-installed-products-and-compressed-guids/"/>
+    <updated>2008-06-12T15:52:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2008/06/12/display-name-in-add-remove-programs-msi-installed-products-and-compressed-guids</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>I was trying to rename a product's display name found in its ARP (Add/Remove Programs) entry.&#160; There is a registry key that lists just about every product installed on your machine:</p>  <p><font face="Courier New">HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall</font></p>  <p>Most (if not all) MSI-installed products have an entry under this key that is the <font face="Courier New">ProductCode</font> GUID.&#160; Every product under this key seems to have a <font face="Courier New">DisplayName</font> value, some of which you can modify and it will show the change in ARP.&#160; However, it appeared any product installed via MSI did not work this way.&#160; So I went registry hunting for any other entries the MSI installers might create.&#160; I found the following location:</p>  <p><font face="Courier New">HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Installer</font></p>  <p>This key has many helpful sub-keys (including <font face="Courier New">Assemblies</font>, <font face="Courier New">Components</font>, <font face="Courier New">Features</font>, <font face="Courier New">Patches</font>, <font face="Courier New">Products</font>, and <font face="Courier New">UpgradeCodes</font>); the <font face="Courier New">Products</font> sub-key is the most important to me at the moment.&#160; Under this sub-key there are many entries (not as many as the first location I mentioned; these appear to MSI only products) that appear to be GUIDs without hyphens and braces.&#160; However, the key that represented the product I was interested in didn't match the <font face="Courier New">ProductCode</font> I had.&#160; But in one of the values, there was a <font face="Courier New">PackageCode</font> that was indeed the correct package GUID (different than <font face="Courier New">ProductCode</font>) and the <font face="Courier New">ProductName</font> matched as well.&#160; Turns out for MSI-installed products I could change this <font face="Courier New">ProductName</font> value and it would make the change to its ARP entry.</p> <span class='fullpost'> <p>But I was puzzled how I would know which entry to pick for any given product under this <font face="Courier New">Products</font> sub-key.&#160; I ended up coming across this blog post that explained what these different GUIDs are (called <font face="Courier New">Compressed GUIDs</font>); focus on the &quot;<strong>UPDATE</strong>&quot; section by John Walker:</p>  <p><a title="http://www.hanselman.com/blog/BATCHFILEVOODOODetermineIfMultipleAndWhichVersionsOfAnMSIinstalledProductAreInstalledUsingUpgradeCode.aspx" href="http://www.hanselman.com/blog/BATCHFILEVOODOODetermineIfMultipleAndWhichVersionsOfAnMSIinstalledProductAreInstalledUsingUpgradeCode.aspx">http://www.hanselman.com/blog/BATCHFILEVOODOODeterm.....UsingUpgradeCode.aspx</a></p>  <p>And then John Walker's update mentions this link that explains how to convert back and forth between regular and Compressed GUIDs:</p>  <p><a title="http://www.appdeploy.com/messageboards/tm.asp?m=11996&amp;mpage=1⼅" href="http://www.appdeploy.com/messageboards/tm.asp?m=11996&amp;mpage=1⼅">http://www.appdeploy.com/messageboards/tm.asp?m=11996&amp;mpage=1&amp;#12037</a></p>  <p>Basically you break up the GUID into groupings and reverse them.&#160; See below:</p>  <ul>   <li><u>Original GUID</u>:&#160; {abcdefgh-ijkl-mnop-qrst-uvwxyz123456} </li>    <li><u>Groupings</u>:&#160; abcdefgh ijkl mnop qr st uv wx yz 12 34 56 </li>    <li><u>Reversed Groupings</u>:&#160; hgfedcba lkji ponm rq ts vu xw zy 21 43 65 </li>    <li><u>Compressed GUID</u>:&#160; hgfedcbalkjiponmrqtsvuxwzy214365 </li> </ul>  <p>Don't know why Microsoft chose to butcher up GUIDs like this, but it's nice to know.</p> </span>  </div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[InsertGuid Visual Studio Macro]]></title>
+    <link href="http://mkmurray.com/blog/2007/12/05/insertguid-visual-studio-macro/"/>
+    <updated>2007-12-05T13:44:00-07:00</updated>
+    <id>http://mkmurray.com/blog/2007/12/05/insertguid-visual-studio-macro</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>If you ever work on a project or installer that requires you to create some GUIDs frequently, you should make your life easier by creating a Visual Studio macro that will insert a GUID wherever your cursor is. Here's how to do it:</p> <span class="fullpost">   <h4>Create the Macro</h4>    <ul>     <li>Bring up the &quot;Macro IDE&quot; window in Visual Studio by pressing <span style="font-family: courier new">Alt+F11</span>. </li>      <li>Right-click on <span style="font-family: courier new">MyMacros</span> and select <span style="font-family: courier new">Add Module</span>; alternatively, you can just rename <span style="font-family: courier new">Module1</span> instead of creating a new module. Enter in <span style="font-family: courier new">GuidModule</span> as the name. </li>      <li>Copy and paste the following code between <span style="font-family: courier new">Public Module GuidModule</span> and <span style="font-family: courier new">End Module</span>: </li>   </ul>    <div style="border-bottom: gray 1px solid; border-left: gray 1px solid; padding-bottom: 4px; line-height: 12pt; background-color: #f4f4f4; margin: 20px 0px 10px; padding-left: 4px; width: 97.5%; padding-right: 4px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; max-height: 200px; font-size: 8pt; border-top: gray 1px solid; cursor: text; border-right: gray 1px solid; padding-top: 4px">     <pre style="border-bottom-style: none; padding-bottom: 0px; line-height: 12pt; border-right-style: none; background-color: #f4f4f4; margin: 0em; padding-left: 0px; width: 100%; padding-right: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-top-style: none; height: 105px; color: black; font-size: 8pt; border-left-style: none; padding-top: 0px"><span style="color: #008000">REM Insert a new Guid at whatever the cursor has selected</span>
+<span style="color: #0000ff">Sub</span> InsertGuid()
+   <span style="color: #0000ff">Dim</span> ts <span style="color: #0000ff">As</span> TextSelection = ActiveDocument().Selection
+   <span style="color: #0000ff">Dim</span> guid <span style="color: #0000ff">As</span> System.Guid = System.Guid.NewGuid()
+   ts.Insert(guid.ToString().ToUpper())
+<span style="color: #0000ff">End</span> Sub</pre>
+  </div>
+
+  <ul>
+    <li>Be sure to save the changes and close the &quot;Macro IDE&quot; window. </li>
+  </ul>
+
+  <h4>Assign a Keyboard Combination</h4>
+
+  <ul>
+    <li>Back at the main Visual Studio window, go to <span style="font-family: courier new">Tools Options...</span> and then navigate to <span style="font-family: courier new">Environment Keyboard</span>. </li>
+
+    <li>Type <span style="font-family: courier new">InsertGuid</span> into the <span style="font-family: courier new">Show Commands Containing</span> text field and select the macro you just created (<span style="font-family: courier new">Macros.MyMacros.GuidModule.InsertGuid</span>). </li>
+
+    <li>Put the cursor in the <span style="font-family: courier new">Press shortcut keys</span> text field and type a keyboard combination (I have opted to use <span style="font-family: courier new">Alt+G</span>). </li>
+
+    <li>Click on <span style="font-family: courier new">Assign</span> (be careful, as it will replace any existing binding for that key). </li>
+  </ul>
+</span></div>
+
+
+<h2>Comments</h2>
+
+
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Eyal</div>
+<div class='content'>
+great macro thanks</div>
+</div>
+</div>
+
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: MSI | Mike Murray]]></title>
+  <link href="http://mkmurray.com/blog/categories/msi/atom.xml" rel="self"/>
+  <link href="http://mkmurray.com/"/>
+  <updated>2012-10-29T14:47:08-06:00</updated>
+  <id>http://mkmurray.com/</id>
+  <author>
+    <name><![CDATA[Mike Murray]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Custom Setup Bootstrappers]]></title>
+    <link href="http://mkmurray.com/blog/2009/11/11/custom-setup-bootstrappers/"/>
+    <updated>2009-11-11T15:03:00-07:00</updated>
+    <id>http://mkmurray.com/blog/2009/11/11/custom-setup-bootstrappers</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>At work, we have a line of desktop products for one of clients installed on the user’s Windows machine via MSI installers.&#160; We use Visual Studio Setup Projects to create the MSI installers.&#160; Visual Studio also provides the ability to create setup bootstrappers to make sure the user has all the prerequisites needed for the MSI install technology and any dependencies required by your desktop product.&#160; These bootstrappers are unmanaged code, because you can’t always depend on the .NET framework already being there (at least not until everyone is off of XP and lower).&#160; I have developed a solution that has worked for the last year or more, but has felt clumsy and slapped together.&#160; Recently I found the <a href="http://dotnetinstaller.codeplex.com/">open source project called dotNetInstaller</a> which has better provided me with the control and flexibility I need for custom logic during bootstrap and install time.&#160; I’ll first introduce you to my “hack” solution.</p> <span class="fullpost">   <p>It has been difficult for me to find ways to tie into the bootstrapper logic workflow to add in custom logic during installs, and Visual Studio is very rigid in its flexibility and basic in its configuration options in this regard.&#160; Until recently, I had settled on writing managed, C# code for this custom logic meant to run before or after the MSI installer, and then creating another unmanaged <font face="Courier New">setup.exe</font> bootstrapper to ensure the .NET framework was installed just so that executable could run.&#160; So the user would run this new unmanaged <font face="Courier New">setup.exe</font> bootstrapper (making sure .NET framework was installed), which would then call my managed custom logic executable, which would then call the MSI installer’s unmanaged, Visual Studio-generated <font face="Courier New">setup.exe</font> bootstrapper (ensuring more prerequisites were installed), which would then finally install the MSI, and which would then lastly return to my managed custom logic executable for any post-install, clean up logic.&#160; I describe this solution in full (and how to generate the same bootstrappers that Visual Studio creates using MSBuild outside the IDE) in a StackOverflow.com answer that I submitted:</p>    <p><a title="http://stackoverflow.com/questions/1106768/how-can-i-reverse-engineer-an-installer-that-was-written-with-ghost-installer/1121846#1121846" href="http://stackoverflow.com/questions/1106768/how-can-i-reverse-engineer-an-installer-that-was-written-with-ghost-installer/1121846#1121846">http://stackoverflow.com/questions/1106768/how-can-i-reverse-engineer-an-installer-that-was-written-with-ghost-installer/1121846#1121846</a></p>    <p>Well, recently I found the <a href="http://dotnetinstaller.codeplex.com/">dotNetInstaller project on CodePlex.com</a> and have found it to be the control and flexibility I need for custom logic when bootstrapping installers.&#160; Not only does it give you great control over prerequisite install order, it also gives you the ability to run code after MSI install and to also filter on CPU architecture types, OS versions, and other registry or file system conditions.&#160; I have currently setup branching scenarios for the prerequisites based on if the user has a 32-bit (x86) or 64-bit (x64) OS.&#160; This utility will even let you brand the bootstrapper with a banner and icon, which is a change of pace from the plain and unlabeled bootstrapper that Visual Studio and MSBuild produce.</p>    <p>If you have custom bootstrapping needs, I have to highly recommend you give dotNetInstaller a look.&#160; Hopefully it will prove as flexible and powerful for your needs as it has for mine.</p> </span>  </div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Web Deployment Tool]]></title>
+    <link href="http://mkmurray.com/blog/2009/09/29/web-deployment-tool/"/>
+    <updated>2009-09-29T17:45:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2009/09/29/web-deployment-tool</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>It appears that the IIS team at Microsoft has officially completed a 1.0 version of the deployment utility I mentioned at the end of <a title="Visual Studio Web Deployment Projects" href="http://murrayon.net/2008/02/visual-studio-web-deployment-projects.html">my previous post about Visual Studio Web Deployment Projects</a> almost two years ago.&#160; It includes a command-line tool named MSDeploy that helps with deploying and syncing web projects across all of the web servers in your server farm.&#160; The installation also includes all kinds of packaging and deployment features that seem really handy.&#160; You can even do migrations from IIS 6 to IIS 7 or package your apps to be distributed via the <a href="http://www.microsoft.com/web/downloads/platform.aspx">Microsoft Web Platform Installer</a>.</p>  <p>I thought that maybe the tool creates MSI installers, but it appears the package may actually just be a ZIP file that you can import and export through the IIS Manager or various other command-line tools or PowerShell Cmdlets.</p>  <p>Here is the page where you can read more about the toolset and download the installer:&#160; <a title="http://www.iis.net/extensions/WebDeploymentTool" href="http://www.iis.net/extensions/WebDeploymentTool">http://www.iis.net/extensions/WebDeploymentTool</a></p>  </div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Build Problems with a Very Large Visual Studio Deployment Project]]></title>
+    <link href="http://mkmurray.com/blog/2008/06/18/build-problems-with-a-very-large-visual-studio-deployment-project/"/>
+    <updated>2008-06-18T17:24:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2008/06/18/build-problems-with-a-very-large-visual-studio-deployment-project</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>So I have been tackling a build problem with some humongous deployment builds in Visual Studio.&#160; In reality, VS Deployment Projects are not ideal for even slightly sophisticated MSI installers; but we've gone far enough down this path that we can't make the switch at the moment.&#160; So please choose something with more control like the <a href="http://wix.sourceforge.net/">Microsoft-sponsored open-source project WiX</a> or a well-established, paid product like <a href="http://www.acresso.com/products/installation/installshield.htm">InstallShield</a>.</p>  <p>So the error I kept getting was &quot;<font face="Courier New">Not enough storage is available to complete this operation</font>&quot; and it would list some file (not the same every time).&#160; It appears the error means the build process ran out of virtual memory or something.&#160; So I found something interesting about default limit of 2 GB for any Windows process and how to raise that limit.&#160; That process is discussed in this post:&#160; <a title="http://murrayon.net/2007/12/building-monster-vs-2005-or-2008.html" href="http://murrayon.net/2007/12/building-monster-vs-2005-or-2008.html">http://murrayon.net/2007/12/building-monster-vs-2005-or-2008.html</a></p> <span class='fullpost'> <p>Well, it has worked on one guy's laptop this whole time and it only worked for about 2 days on my machine (then it started getting an error that said &quot;<font face="Courier New">Unrecoverable build error</font>&quot; and was accompanied with a &quot;<font face="Courier New">Send Error Report</font>&quot; dialog).&#160; I also tried the fix on like 3 other machines without any success at all (in fact many of the machines become highly unstable with the <font face="Courier New">3GB</font> Windows boot switch).&#160; So for 6 months, I couldn't figure out why it would work on that one machine and none of the others.&#160; Well, just recently that guy's laptop joined the domain and started using a domain user account (I have no clue why he wasn't from the beginning, but I digress).&#160; His machine didn't become unstable, but it did quit building our monster deployment build.&#160; We thought we were up a creek with no box to build the MSI installer and a deadline fast approaching.&#160; We got it working on his laptop by going back to a local user account.</p>  <p>Well, that got me thinking about how we could get another PC to be able to do the darn build.&#160; I tried the build on my PC with just a local user account, but that didn't work because I don't currently have the other fix named above.&#160; So I created a virtual machine (in case things got unstable again) and didn't add it to the domain, just to be safe.&#160; I did the fix named above, and am now able to successfully build this MSI install consistently under a local user account without getting the &quot;<font face="Courier New">Not enough storage is available</font>&quot; error message.&#160; The details of this adventure are discussed in this post:&#160; <a title="http://murrayon.net/2007/12/build-error-when-building-very-large-vs.html" href="http://murrayon.net/2007/12/build-error-when-building-very-large-vs.html">http://murrayon.net/2007/12/build-error-when-building-very-large-vs.html</a></p>  <p>Maybe in a few months we'll move this installer build process to WiX and avoid the inflexibility we are running into with Visual Studio Deployment Projects.</p> </span>  </div>
+
+
+<h2>Comments</h2>
+
+
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>
+I was running into the same 'Unrecoverable build error' when trying to build a VS2008 deployment project. Tried all of the fixes you mentioned - regsrv32, MSDN knowledge base fixes, etc. Nothing worked. Then just on a hunch I went into the $User\AppData\Local\Temp directory and noticed that there were about 6GB of temp files there. Deleted those, and bingo - working build!</div>
+</div>
+</div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Display Name in Add/Remove Programs, MSI-Installed Products, and Compressed GUIDs]]></title>
+    <link href="http://mkmurray.com/blog/2008/06/12/display-name-in-add-remove-programs-msi-installed-products-and-compressed-guids/"/>
+    <updated>2008-06-12T15:52:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2008/06/12/display-name-in-add-remove-programs-msi-installed-products-and-compressed-guids</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>I was trying to rename a product's display name found in its ARP (Add/Remove Programs) entry.&#160; There is a registry key that lists just about every product installed on your machine:</p>  <p><font face="Courier New">HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall</font></p>  <p>Most (if not all) MSI-installed products have an entry under this key that is the <font face="Courier New">ProductCode</font> GUID.&#160; Every product under this key seems to have a <font face="Courier New">DisplayName</font> value, some of which you can modify and it will show the change in ARP.&#160; However, it appeared any product installed via MSI did not work this way.&#160; So I went registry hunting for any other entries the MSI installers might create.&#160; I found the following location:</p>  <p><font face="Courier New">HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Installer</font></p>  <p>This key has many helpful sub-keys (including <font face="Courier New">Assemblies</font>, <font face="Courier New">Components</font>, <font face="Courier New">Features</font>, <font face="Courier New">Patches</font>, <font face="Courier New">Products</font>, and <font face="Courier New">UpgradeCodes</font>); the <font face="Courier New">Products</font> sub-key is the most important to me at the moment.&#160; Under this sub-key there are many entries (not as many as the first location I mentioned; these appear to MSI only products) that appear to be GUIDs without hyphens and braces.&#160; However, the key that represented the product I was interested in didn't match the <font face="Courier New">ProductCode</font> I had.&#160; But in one of the values, there was a <font face="Courier New">PackageCode</font> that was indeed the correct package GUID (different than <font face="Courier New">ProductCode</font>) and the <font face="Courier New">ProductName</font> matched as well.&#160; Turns out for MSI-installed products I could change this <font face="Courier New">ProductName</font> value and it would make the change to its ARP entry.</p> <span class='fullpost'> <p>But I was puzzled how I would know which entry to pick for any given product under this <font face="Courier New">Products</font> sub-key.&#160; I ended up coming across this blog post that explained what these different GUIDs are (called <font face="Courier New">Compressed GUIDs</font>); focus on the &quot;<strong>UPDATE</strong>&quot; section by John Walker:</p>  <p><a title="http://www.hanselman.com/blog/BATCHFILEVOODOODetermineIfMultipleAndWhichVersionsOfAnMSIinstalledProductAreInstalledUsingUpgradeCode.aspx" href="http://www.hanselman.com/blog/BATCHFILEVOODOODetermineIfMultipleAndWhichVersionsOfAnMSIinstalledProductAreInstalledUsingUpgradeCode.aspx">http://www.hanselman.com/blog/BATCHFILEVOODOODeterm.....UsingUpgradeCode.aspx</a></p>  <p>And then John Walker's update mentions this link that explains how to convert back and forth between regular and Compressed GUIDs:</p>  <p><a title="http://www.appdeploy.com/messageboards/tm.asp?m=11996&amp;mpage=1⼅" href="http://www.appdeploy.com/messageboards/tm.asp?m=11996&amp;mpage=1⼅">http://www.appdeploy.com/messageboards/tm.asp?m=11996&amp;mpage=1&amp;#12037</a></p>  <p>Basically you break up the GUID into groupings and reverse them.&#160; See below:</p>  <ul>   <li><u>Original GUID</u>:&#160; {abcdefgh-ijkl-mnop-qrst-uvwxyz123456} </li>    <li><u>Groupings</u>:&#160; abcdefgh ijkl mnop qr st uv wx yz 12 34 56 </li>    <li><u>Reversed Groupings</u>:&#160; hgfedcba lkji ponm rq ts vu xw zy 21 43 65 </li>    <li><u>Compressed GUID</u>:&#160; hgfedcbalkjiponmrqtsvuxwzy214365 </li> </ul>  <p>Don't know why Microsoft chose to butcher up GUIDs like this, but it's nice to know.</p> </span>  </div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Launching MSIExec.exe From C#]]></title>
+    <link href="http://mkmurray.com/blog/2008/06/12/launching-msiexec-exe-from-c/"/>
+    <updated>2008-06-12T13:21:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2008/06/12/launching-msiexec-exe-from-c</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>I ran into a problem with trying to spawn off a process to launch an <font face="Courier New">MSIExec.exe</font> command from C#.&#160; I wanted to launch the process and then wait for it to finish before proceeding; however,&#160; it was always returned immediately before the install or uninstall was really finished.&#160; I confirmed this behavior with this blog entry:&#160; <a title="http://blogs.msdn.com/heaths/archive/2005/11/15/493236.aspx" href="http://blogs.msdn.com/heaths/archive/2005/11/15/493236.aspx">http://blogs.msdn.com/heaths/archive/2005/11/15/493236.aspx</a></p>  <p>The author suggests &quot;<font face="Courier New">start /wait</font>&quot; which works from the command line or a batch file.&#160; I did verify it works launching a batch file or two from C#, but I preferred to keep in C# as much as possible.&#160; Also, I was trying to accomplish a silent background process running the <font face="Courier New">MSIExec</font> commands.&#160; However, C# can't just start a process calling &quot;<font face="Courier New">start</font>,&quot; which is an internal command to the Command Prompt I guess.</p>  <p>Someone reminded me on a message board that you can start a process using <font face="Courier New">CMD.exe</font>, calling &quot;<font face="Courier New">start</font>&quot; like this:</p> <span class='fullpost'> <p><pre class="code"><span style="color: #2b91af">ProcessStartInfo </span>startInfo = <span style="color: blue">new </span><span style="color: #2b91af">ProcessStartInfo</span>(
+    <span style="color: #a31515">&quot;cmd.exe&quot;</span>,
+    <span style="color: blue">string</span>.Format(<span style="color: #a31515">&quot;/c start /MIN /wait msiexec.exe /x {0} /quiet&quot;</span>, guid));
+startInfo.WindowStyle = <span style="color: #2b91af">ProcessWindowStyle</span>.Hidden;
+
+<span style="color: #2b91af">Process </span>process = <span style="color: #2b91af">Process</span>.Start(startInfo);
+process.WaitForExit();</pre></p> <p>It works like a charm.&#160; I don't think you even need the &quot;<font face="Courier New">/MIN</font>&quot; flag for &quot;<font face="Courier New">start</font>&quot; anyway.</p>
+</span>  </div>
+
+
+<h2>Comments</h2>
+
+
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Tyler Collier</div>
+<div class='content'>
+Thanks for this.  Great idea.  Worked for me.</div>
+</div>
+<div class='comment'>
+<div class='author'>chavakiran</div>
+<div class='content'>
+You could use process.WaitForExit() isn&#39;t it?</div>
+</div>
+</div>
+
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,335 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Mike Murray</title>
+	<meta name="author" content="Mike Murray">
+
+	
+	<meta name="description" content="Many .NET developers are aware of the idea of partial Classes, as they have existed since .NET 2.0.&#160; The primary purpose is to allow you the &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="http://feeds.feedburner.com/mkmurray/" rel="alternate" title="Mike Murray" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	
+</head>
+
+<body>
+	<div class="container">
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/10/24/c-partial-classes-can-enhance-code-organization/">C# Partial Classes Can Enhance Code Organization</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-10-24T14:23:00-06:00" pubdate data-updated="true">Oct 24<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/code-organization/'>Code Organization</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/threading/'>Threading</a>, <a class='category' href='/blog/categories/ui/'>UI</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/10/24/c-partial-classes-can-enhance-code-organization/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>Many .NET developers are aware of the idea of partial Classes, as they have existed since .NET 2.0.&#160; The primary purpose is to allow you the developer to share claim on a C# Class with Visual Studio&#8217;s automated code generators (mainly used by the many designers included in Visual Studio), without the automated code generator stomping all over your code additions every time it runs.&#160; For instance, in a Windows Forms application, you get a code-behind Class where you can put your logic, properties, methods, and event handlers; it is a partial Class of the one Visual Studio&#8217;s Windows Form designer creates and manages for all the UI objects you dragged around in the designer.&#160; A good summarization of this feature is given by <a title="Bart De Smet&#39;s Blog" href="http://community.bartdesmet.net/blogs/bart/default.aspx">Bart De Smet</a>:</p>  <blockquote>   <p>&quot;In short, partial classes allow you to split the definition of a class across multiple files, or alternatively you could think about it as a code compilation unit separated over multiple files.&quot;</p> </blockquote>  <p>As another practical application of this feature, I have occasionally implemented a practice using partial Classes that I learned from a previous coworker.&#160; Occasionally you find yourself with a Class that is inescapably large.&#160; Perhaps it is a web service that has been in use for a while by customers or other groups within your company, and you can&#8217;t just deprecate the service very easily; so you just keep extending it and adding more web methods to it for additional, similar functionality.&#160; Another potential situation could be that you began designing a simple application all in one file but it grew to be a little bigger than expected, but it doesn&#8217;t quite merit a whole major redesign into appropriate classes.&#160; I know how this all sounds, but these scenarios aren&#8217;t exactly uncommon in real-world practice, where there are other factors in consideration.&#160; I suppose many would resort to <a href="http://msdn.microsoft.com/en-us/library/9a1ybwek.aspx">C# <font face="Courier New">regions</font></a>, but I&#8217;m not a fan of them as it really only gives the illusion that your code file is better grouped and somehow shorter.</p> <span class='fullpost'> <p>So if you need some decent semblance of organization in a messy class file with little effort, the partial Class feature can come to your rescue.&#160; You can basically create a partial Class file for each grouping of code that you would probably be putting in a C# <font face="Courier New">region</font>.&#160; For instance, a relatively small Windows Form application could be broken up into the following sub-files (all partial Classes of the same <font face="Courier New">MainForm</font> class):</p>  <ul>   <li><strong>MainForm.cs</strong> = contains the constructor and a few rare global enumerations, properties, or sub-classes </li>    <li><strong>MainForm.UI.cs</strong> = contains the event handlers and other supporting methods that interact directly with the UI </li>    <li><strong>MainForm.Processing.cs</strong> = contains the application logic designed to be spun off in a separate worker thread in order to keep the UI thread from blocking while waiting </li>    <li><strong>MainForm.Designer.cs</strong> = the auto-generated UI file from the Windows Form designer </li> </ul>  <p>Obviously you should try to architect your code better from the get-go, but perhaps what you are looking at is legacy code you have inherited from previous developers and the deadline is fast approaching.&#160; There are reasonable circumstances I can think of (and have encountered) where this quick &amp; dirty organization lets you keep an ounce of sanity, so that you can keep moving forward.</p> </span>  </div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/09/03/recursion-quote/">Recursion Quote</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-09-03T15:29:00-06:00" pubdate data-updated="true">Sep 3<span>rd</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/humor/'>Humor</a>, <a class='category' href='/blog/categories/quote/'>Quote</a>, <a class='category' href='/blog/categories/recursion/'>Recursion</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/09/03/recursion-quote/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>I saw this quote on a message board in someone&#8217;s signature and thought it was just hilarious:</p>  <blockquote>   <p>&quot;In order to understand recursion, one must first understand recursion.&quot;</p> </blockquote>  <p>I can&#8217;t seem to find who originally said it.</p>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>dave</div>
+<div class='content'>
+That was my email signature for many, many years, starting around 1991 &#8230; but I got it from some BBS&#39;s random tagline generator, so I can&#39;t take credit for it.</div>
+</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/08/20/microsoft-windows-update-fails-on-every-update/">Microsoft/Windows Update Fails on Every Update</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-08-20T09:51:00-06:00" pubdate data-updated="true">Aug 20<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/error/'>Error</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/patching-updating/'>Patching/Updating</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/08/20/microsoft-windows-update-fails-on-every-update/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>Occasionally, Windows Update (or Microsoft Update) will see all of the updates you need (and possibly even download them) but will immediately fail all of the updates when trying to install them.&#160; Sometimes I have seen Windows Update error off after the green progress bar and before it can show me if there are any updates at all.</p>  <p>Every time this happens, I end up Googling the error code and finding the same fix every time (since I forget what the fix is each time).&#160; The error code I get is <font face="Courier New">0x80004002</font>.&#160; If you are unable to find the error code through the UI, you can check the Windows Update log at <font face="Courier New">%WINDIR%\WindowsUpdate.log</font> (which in my case, <font face="Courier New">%WINDIR%</font> translated to <font face="Courier New">C:\WINDOWS\</font>); you can even just type <font face="Courier New">%WINDIR%\WindowsUpdate.log</font> right into the &quot;<font face="Courier New">Run&#8230;</font>&quot; dialog.&#160; You can find the error code near the bottom of the log; just find the lines of text that have the same timestamp as when you unsuccessfully ran Windows Update.</p>  <p>Well, anyway, here&#8217;s the fix; run the following commands in a Command Prompt window (type <font face="Courier New">cmd</font> in the &quot;<font face="Courier New">Run&#8230;</font>&quot; dialog):</p>  <p><font face="Courier New">net stop wuauserv     <br />regsvr32 wups2.dll      <br />net start wuauserv</font></p>  <p>That&#8217;s all there is to it!&#160; It has worked every time for me.&#160; It may even be helpful to put these commands in a batch script (copy and paste the commands into <font face="Courier New">Notepad</font> and then save the text file with a <font face="Courier New">.bat</font> file extension) and keep the file in a place where you can easily find it again.</p>  </div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/08/19/linq-to-sql-debug-visualizer/">LINQ to SQL Debug Visualizer</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-08-19T17:10:00-06:00" pubdate data-updated="true">Aug 19<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/linq/'>LINQ</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/sql/'>SQL</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/08/19/linq-to-sql-debug-visualizer/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>If you are using LINQ-to-SQL, it is often helpful to see the SQL generated and the resultant query results.&#160; You can do this, even while debugging, with the LINQ to SQL Debug Visualizer.&#160; Debug Visualizers are the dialogs that pop up when you hover over a statement and click the little magnifying glass in the hovering menu.</p>  <p>I believe by default Visual Studio will show you the generated SQL when you over over a LINQ statement, but there is no way Debug Visualizer to help see the SQL in a more user-friendly view.&#160; Scott Guthrie gave a blog post describing a simple download that can give you this enhanced view of the SQL, and even the ability to execute the query and see the raw data returned from your database:</p>  <p><a title="http://weblogs.asp.net/scottgu/archive/2007/07/31/linq-to-sql-debug-visualizer.aspx" href="http://weblogs.asp.net/scottgu/archive/2007/07/31/linq-to-sql-debug-visualizer.aspx">http://weblogs.asp.net/scottgu/archive/2007/07/31/linq-to-sql-debug-visualizer.aspx</a></p>  <p>Included in the post are instructions of how to extract the necessary DLL library, and where to place it in Visual Studio&#8217;s file hierarchy.</p>  <p>A really simple enhancement for working with and debugging LINQ-to-SQL that is definitely worth the minimal effort to acquire it.</p>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Raja Venkatesh</div>
+<div class='content'>
+Hi, A similar visualizer for L2E is available at http://visualstudiogallery.msdn.microsoft.com/en-us/99468ece-689b-481c-868c-19e00e0a4e69<br />This works for any database.<br /><br />Regards<br />Venkat</div>
+</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/08/08/irena-sendler-s-story/">Irena Sendler&#8217;s Story</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-08-08T15:04:00-06:00" pubdate data-updated="true">Aug 8<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/news-and-politics/'>News and Politics</a>, <a class='category' href='/blog/categories/personal/'>Personal</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/08/08/irena-sendler-s-story/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>Again, I promise I won&#8217;t do this very often (since this is a programming blog), but the world needs to know&#8230;</p>  <p>Irena Sendler (<a title="http://en.wikipedia.org/wiki/Irena_Sendler" href="http://en.wikipedia.org/wiki/Irena_Sendler">http://en.wikipedia.org/wiki/Irena_Sendler</a>), a Polish Catholic social worker, risked her very own life to save 2,500 Jewish children from certain death at the hands of the Nazi genocide.&#160; She did it by smuggling the children out of the Warsaw ghettos and placing them in new homes with new identities.&#160; Then when the Holocaust was over, she spent her life reuniting these children with loved ones and extended family members (because many of the children&#8217;s parents had been executed).</p>  <p>An amazing woman, worthy of an amazing recognition.&#160; The Nobel Peace Prize would be fitting, wouldn&#8217;t you say?&#160; It is awarded &quot;to the person who shall have done the most or the best work for fraternity between nations, for the abolition or reduction of standing armies, and for the holding and promotion of peace congresses.&quot;</p>  <p>She was indeed nominated for the prize in 2007.&#160; However, she lost&#8230;and guess who won instead?&#160; A propagandist and environmental alarmist, who has placed himself in a position to benefit greatly (financially and politically) from the &quot;Green Movement&quot; (in truth, it is nothing more than a <u>theory</u> that greenhouse gases are the cause of Global Warming).&#160; Al Gore won the Nobel Peace Prize for creating a slide show movie.&#160; I think I would be less irritated if he had won for his invention of the Internet or something.</p>  <p>Here is a tribute to Irena Sendler that everyone should watch:&#160; </p> <span class='fullpost'> <div class="wlWriterEditableSmartContent" id="scid:5737277B-5D6D-4f48-ABFC-DD9C333F4C5D:425be2e7-e30a-43d8-aa56-48a65b862f90" style="padding-right: 0px; display: inline; padding-left: 0px; padding-bottom: 0px; margin: 0px; padding-top: 0px"><div id="cb495db8-dacb-4ed8-8fc6-6bfa1b5bc49d" style="margin: 0px; padding: 0px; display: inline;"><div><a href="http://www.youtube.com/watch?v=OVw1PANUcdg" target="_new"><img src="http://lh4.ggpht.com/_rps657FzHZ0/SujVvA5fjrI/AAAAAAAAADI/P1YlI2mylCg/videod77a2dbc4c7a.jpg?imgmax=800" style="border-style: none" galleryimg="no" width="340" height="280" onload="var downlevelDiv = document.getElementById('cb495db8-dacb-4ed8-8fc6-6bfa1b5bc49d'); downlevelDiv.innerHTML = &quot;&lt;div&gt;&lt;object width=\&quot;340\&quot; height=\&quot;280\&quot;&gt;&lt;param name=\&quot;movie\&quot; value=\&quot;http://www.youtube.com/v/OVw1PANUcdg\&quot;&gt;&lt;\/param&gt;&lt;param name=\&quot;wmode\&quot; value=\&quot;transparent\&quot;&gt;&lt;\/param&gt;&lt;embed src=\&quot;http://www.youtube.com/v/OVw1PANUcdg\&quot; type=\&quot;application/x-shockwave-flash\&quot; wmode=\&quot;transparent\&quot; width=\&quot;340\&quot; height=\&quot;280\&quot;&gt;&lt;\/embed&gt;&lt;\/object&gt;&lt;\/div&gt;&quot;;" alt=""></a></div></div></div>  <p>The question I have to ask is how can Al Gore accept the Nobel Peace Prize, knowing that he was up against a real hero and freedom fighter?&#160; She risked her life for peace and saved 2,500 Jewish children.&#160; Al Gore has done nothing but shoot off his mouth.&#160; How can he even think he deserved the prize more than her?&#160; Why didn&#8217;t he decline the prize and offer up the name of Irena instead?&#160; Because it didn&#8217;t quite fit into his political agenda.</p>  <p>On behalf of those that can appreciate true selfless and compassionate service to mankind, I have just four words for Irena Sendler:</p>  <p>Thank you so much.</p> </span>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>
+The 2007 Nobel Peace Prize was shared.</div>
+</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+<nav id="pagenavi">
+    
+        <a href="/blog/page/8/" class="prev">Prev</a>
+    
+    
+        <a href="/blog/page/10/" class="next">Next</a>
+    
+    <div class="center"><a href="/blog/archives">Blog Archives</a></div>
+</nav></div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2012
+
+    Mike Murray
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a>
+</footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'mkmurray';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+		</div>
+		<div class="left-col">
+			<header id="header" class="inner"><div class="profilepic">	
+	<img src="/images/mkmurray.jpg" alt="Profile Picture">
+</div>
+<h1><a href="/">Mike Murray</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<br/>
+<h3 class="alignleft">please code responsibly</h3>
+<br/>
+<br/>
+<br/>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		<a class="facebook" href="http://www.facebook.com/mkmurray" title="Facebook">Facebook</a>
+		
+		
+		<a class="google" href="https://plus.google.com/109073345657761090655?rel=author" title="Google+">Google+</a>
+		
+		
+		<a class="twitter" href="http://twitter.com/mkmurray" title="Twitter">Twitter</a>
+		
+		
+		<a class="github" href="https://github.com/mkmurray" title="GitHub">GitHub</a>
+		
+		
+		<a class="linkedin" href="http://www.linkedin.com/in/mkmurray">LinkedIn</a>
+		
+		
+		
+		
+		<a class="rss" href="http://feeds.feedburner.com/mkmurray/" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+
+</header>				
+		</div>	
+	</div>
+</body>
+</html>

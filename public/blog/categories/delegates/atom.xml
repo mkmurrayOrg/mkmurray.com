@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Delegates | Mike Murray]]></title>
+  <link href="http://mkmurray.com/blog/categories/delegates/atom.xml" rel="self"/>
+  <link href="http://mkmurray.com/"/>
+  <updated>2012-10-29T14:47:08-06:00</updated>
+  <id>http://mkmurray.com/</id>
+  <author>
+    <name><![CDATA[Mike Murray]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[LINQ Query Syntax and Type Argument Inference]]></title>
+    <link href="http://mkmurray.com/blog/2010/12/03/linq-query-syntax-and-type-argument-inference/"/>
+    <updated>2010-12-03T15:29:00-07:00</updated>
+    <id>http://mkmurray.com/blog/2010/12/03/linq-query-syntax-and-type-argument-inference</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>In LINQ, you can query in-memory data collections using <a href="http://msdn.microsoft.com/en-us/library/bb397947.aspx">Method Syntax (the <font face="Courier New">IEnumerable</font> extension methods) or Query Syntax (the SQL-like, declarative syntactic sugar on top of the underlying method calls)</a>.&#160; I was using the query syntax to join a few in-memory collections and then project (like a SQL <font face="Courier New">SELECT</font>) the denormalized data into a new object that only contained a few pieces of information from each of the separate data collections.&#160; The code could look similar to this (we'll go with a shopping example in honor of the upcoming holiday season):</p>  <pre class="brush: csharp">var shoppingLists =
+    from person in people
+    join wishlist in wishlists on person.Id equals wishlist.personId
+    join store in stores on store.Id equals wishlist.storeId
+    select new
+    {
+        PersonName = person.Name,
+        StoreName = store.Name,
+        NumItems = wishlist.Items.Count
+    };</pre>
+
+<p>However, I ran into the following intellisense red squiggly error in the Visual Studio C# code editor on the second <font face="Courier New">join</font> statement:</p>
+
+<blockquote>
+  <p><font face="Courier New">The type arguments for method 'IEnumerable&lt;TResult&gt; System.Linq.Enumerable.Join&lt;TOuter,TInner,TKey,TResult&gt;(this IEnumerable&lt;TOuter&gt;, IEnumerable&lt;TInner&gt;, Func&lt;TOuter,TKey&gt;, Func&lt;TInner,TKey&gt;, Func&lt;TOuter,TInner,TResult&gt;)' cannot be inferred from the query.</font></p>
+</blockquote>
+
+<p>The error might also end with a statement that says &quot;<font face="Courier New">Try specifiying the type arguments explicitly</font>.&quot;</p>
+<span class="fullpost">
+  <h3>Let’s Take a Closer Look…</h3>
+
+  <p>The underlying problem is best understood by examining the method signature of the <a href="http://msdn.microsoft.com/en-us/library/bb534675.aspx">LINQ <font face="Courier New">Join</font> extension method</a> and how the LINQ query syntax for the keyword <font face="Courier New">join</font> maps to that method call in the compiler.&#160; The type signature for the extension method is as follows:</p>
+
+  <pre class="brush: csharp">public static IEnumerable&lt;TResult&gt; Join&lt;TOuter,TInner,TKey,TResult&gt;(
+    this IEnumerable&lt;TOuter&gt; outer,
+    IEnumerable&lt;TInner&gt; inner,
+    Func&lt;TOuter,TKey&gt; outerKeySelector,
+    Func&lt;TInner,TKey&gt; innerKeySelector,
+    Func&lt;TOuter,TInner,TResult&gt; resultSelector)</pre>
+
+  <p>Consistent with all <a href="http://msdn.microsoft.com/en-us/library/bb383977.aspx">extension methods</a>, it is <font face="Courier New">public static</font> and has a <font face="Courier New">this</font> keyword in front of the first method parameter, allowing you to call the <font face="Courier New">Join</font> method as if it had been declared in the original definition of the <font face="Courier New">IEnumerable&lt;&gt;</font> class or one of its inheriting children classes.</p>
+
+  <p>The first two parameters are the two data collections being joined, and in the case of my LINQ query above, they would be the joined collection of <font face="Courier New">people</font> &amp; <font face="Courier New">wishlists</font> and then the <font face="Courier New">stores</font> collection, respectively.</p>
+
+  <p>The next two method parameters take delegates or lambda expressions that select the key value from each collection participating in the join, <font face="Courier New">outer</font> collection key selector first and then the <font face="Courier New">inner</font> key selector second.&#160; The key values of each item in each collection will compared to each other for equality.&#160; It will use the normal definition of the <font face="Courier New">Equals</font> method for your object type (or if you specified a custom one in your class definition), or there is another <font face="Courier New">Join</font> extension method signature that takes in another method parameter that an object that conforms to the <font face="Courier New"><a href="http://msdn.microsoft.com/en-us/library/ms132151.aspx">IEqualityComparer&lt;TKey&gt; <font face="Arial">interface</font></a></font>.&#160; The key selectors from our LINQ query sample would be the two member access expressions in the &quot;<font face="Courier New">on store.Id equals wishlist.storeId</font><font face="Arial">&quot; statement.</font></p>
+
+  <p>The last parameter is a delegate or lambda expression that takes in a item from each participating data collection and projects the items into a new form (like the <font face="Courier New">Select</font> LINQ query method and its SQL equivalent).&#160; The two items being passed into the <font face="Courier New">Func</font> have passed the equality comparison of each item’s key value, exactly the same as how rows from two tables match up in an <font face="Courier New">inner join</font> statement in SQL.</p>
+
+  <p>As for the <a href="http://msdn.microsoft.com/en-us/library/0zk36dx2.aspx">generic type parameters</a> in this extension method definition, <font face="Courier New">TOuter</font> and <font face="Courier New">TInner</font> are the types from the two collections participating in the join.&#160; <font face="Courier New">TKey</font> is the type returned by the key selectors; notice that in order to compare the equality of each key selected, they need to be of the same type.&#160; In our example, <font face="Courier New">TKey</font> is likely <font face="Courier New">int</font> or <font face="Courier New">long</font> (or maybe <font face="Courier New">Guid</font>) since we’re dealing with <font face="Courier New">Id</font> properties of all of our objects.&#160; <font face="Courier New">TResult</font> is the type returned by the projection <font face="Courier New">Func&lt;TOuter,TInner,TResult&gt; resultSelector</font>; in our case, we returned an <a href="http://msdn.microsoft.com/en-us/library/bb397696.aspx">anonymous type</a> consisting of three properties (<font face="Courier New">PersonName</font>, <font face="Courier New">StoreName</font>, and <font face="Courier New">NumItems</font>).</p>
+
+  <h3>Ok, So Where Did I Screw Up Then?</h3>
+
+  <p>To answer this, let’s take a look one more time at my LINQ query syntax, how it would map to LINQ method syntax, and the <font face="Courier New">Join</font> method signature again all side-by-side:</p>
+
+  <pre class="brush: csharp; highlight: [4,19,20]">var shoppingLists =
+    from person in people
+    join wishlist in wishlists on person.Id equals wishlist.personId
+    join store in stores on store.Id equals wishlist.storeId
+    select new
+    {
+        PersonName = person.Name,
+        StoreName = store.Name,
+        NumItems = wishlist.Items.Count
+    };
+
+// Equivalent LINQ method syntax
+var shoppingLists2 = people
+    .Join(wishlists,
+        person =&gt; person.Id,
+        wishlist =&gt; wishlist.personId,
+        (person, wishlist) =&gt; new { person, wishlist })
+    .Join(stores,
+        store =&gt; store.Id,
+        something =&gt; something.wishlist.storeId,
+        (obj, store) =&gt; new
+        {
+            PersonName = obj.person.Name,
+            StoreName = store.Name,
+            NumItems = obj.wishlist.Items.Count
+        });
+
+public static IEnumerable&lt;TResult&gt; Join&lt;TOuter,TInner,TKey,TResult&gt;(
+    this IEnumerable&lt;TOuter&gt; outer,
+    IEnumerable&lt;TInner&gt; inner,
+    Func&lt;TOuter,TKey&gt; outerKeySelector,
+    Func&lt;TInner,TKey&gt; innerKeySelector,
+    Func&lt;TOuter,TInner,TResult&gt; resultSelector)</pre>
+
+  <p>The issue is lines 19 and 20 above; they need to be switched.&#160; The compiler can’t properly infer the generic type parameters because we have our key selectors out of order in the argument list when invoking the <font face="Courier New">Join</font> method.&#160; If you wanted to be explicit about your generic type parameters assignments, then <font face="Courier New">Join&lt;TOuter, TInner, TKey, TResult&gt;</font> would be <font face="Courier New">Join&lt;Temp1, Store, int, Temp2&gt;</font>, where <font face="Courier New">Temp1</font> and <font face="Courier New">Temp2</font> represent the magical type definitions that the compiler creates underneath the covers when you use anonymous types in your C# code.&#160; Notice the <font face="Courier New">outerKeySelector</font> needs to come before the <font face="Courier New">innerKeySelector</font>.&#160; It appears the &quot;<font face="Courier New">on store.Id equals wishlist.storeId</font><font face="Arial">&quot; syntax is not a </font><a href="http://en.wikipedia.org/wiki/Commutativity">commutative operation</a>.</p>
+
+  <p>One last thing, I just realized that the error(s) given in Visual Studio when you actually compile the code are different than the intellisense red squiggly error message.&#160; It appears an actual build of the code is able to be a little more omniscient than the quick compile that intellisense does as you type.&#160; The error (and intelligent suggestion) the compiler offers says something like this:</p>
+
+  <blockquote>
+    <p><font face="Courier New">The name 'store' is not in scope on the left side of 'equals'.&#160; Consider swapping the expressions on either side of 'equals'.</font></p>
+  </blockquote>
+
+  <h3>Additional Info</h3>
+
+  <p>While reading the <a href="http://msdn.microsoft.com/en-us/library/bb534675.aspx">MSDN article on the LINQ <font face="Courier New">Join</font> method</a>, I thought the &quot;<font face="Courier New">Remarks</font><font face="Arial">&quot;</font> section has some really great stuff about deferred execution, default equality comparison, differences from <font face="Courier New">SelectMany</font>, sort order perseverance, and so on:</p>
+
+  <blockquote>
+    <p>This method is implemented by using deferred execution. The immediate return value is an object that stores all the information that is required to perform the action. The query represented by this method is not executed until the object is enumerated either by calling its <strong>GetEnumerator</strong> method directly or by using foreach in Visual C# or For Each in Visual Basic.</p>
+
+    <p>The default equality comparer, <a href="http://msdn.microsoft.com/en-us/library/ms224763.aspx">Default</a>, is used to hash and compare keys.</p>
+
+    <p>A join refers to the operation of correlating the elements of two sources of information based on a common key. <a href="http://msdn.microsoft.com/en-us/library/system.linq.enumerable.join.aspx">Join</a> brings the two information sources and the keys by which they are matched together in one method call. This differs from the use of <strong>SelectMany</strong>, which requires more than one method call to perform the same operation.</p>
+
+    <p><a href="http://msdn.microsoft.com/en-us/library/system.linq.enumerable.join.aspx">Join</a> preserves the order of the elements of outer, and for each of these elements, the order of the matching elements of inner.</p>
+
+    <p>In query expression syntax, a join (Visual C#) or Join (Visual Basic) clause translates to an invocation of <a href="http://msdn.microsoft.com/en-us/library/system.linq.enumerable.join.aspx">Join</a>.</p>
+
+    <p>In relational database terms, the <a href="http://msdn.microsoft.com/en-us/library/system.linq.enumerable.join.aspx">Join</a> method implements an inner equijoin. 'Inner' means that only elements that have a match in the other sequence are included in the results. An 'equijoin' is a join in which the keys are compared for equality. A left outer join operation has no dedicated standard query operator, but can be performed by using the <a href="http://msdn.microsoft.com/en-us/library/system.linq.enumerable.groupjoin.aspx">GroupJoin</a> method. See <a href="http://msdn.microsoft.com/en-us/library/bb397908.aspx">Join Operations</a>.</p>
+  </blockquote>
+
+  <p>Thanks, I hope this proves helpful to someone, as it was certainly eye-opening to me.</p>
+</span></div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Reactive Framework Finally Explained]]></title>
+    <link href="http://mkmurray.com/blog/2010/07/14/reactive-framework-finally-explained/"/>
+    <updated>2010-07-14T17:59:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2010/07/14/reactive-framework-finally-explained</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>I have been intrigued by the <a href="http://msdn.microsoft.com/en-us/devlabs/ee794896.aspx">Reactive Extensions for .NET (Rx Framework)</a> for quite a while now, especially the fundamental shift from a “push” data model as opposed to the “pull” model most familiar to us.&#160; I have thought to myself that this must be a game changer in how data and events are consumed in every-day software.&#160; I didn’t quite understand how it all works or how to use it from the few samples I had seen, but I knew if I gave myself a little time to really sit down and look at it, my life would be changed forever.</p>  <p>However, after reading some articles, watching some recorded presentations, and even <a href="http://live.visitmix.com/MIX10/Sessions/FTL01">attending a MIX ‘10 session in-person</a> on the Reactive Extensions, I felt increasingly lost and confused by what this framework could offer me.&#160; I wasn’t understanding some fundamental ideology of the framework and it was jading my learning experience when watching/reading sample code.&#160; Well, I think I have finally figured out what the mental roadblock was and will attempt to explain the framework here as I best as I understand it, in hopes that it can be of help to others not getting what the fuss is all about.&#160; I can sense that I’m not the only one who has been turned off by the unsuccessful attempts by Microsoft to explain this revolutionary framework to the average developer.&#160; Apparently those who had a hand in designing the framework are just so incredibly intelligent that they are having a hard time discerning that the common man is not immediately getting it.</p> <span class="fullpost">   <h3><font face="Courier New">IEnumerable&lt;T&gt;</font>, Meet <font face="Courier New">IObservable&lt;T&gt;</font></h3>    <p>Essentially what Microsoft did is create a <a href="http://en.wikipedia.org/wiki/Duality_(mathematics)">mathematical dual</a> of the <font face="Courier New">IEnumerable</font> and <font face="Courier New">IEnumerator</font> interfaces using <a href="http://en.wikipedia.org/wiki/Category_theory">Category Theory</a>, and named them <font face="Courier New">IObservable</font> and <font face="Courier New">IObserver</font> respectively.&#160; In its bare simplicity, this is done by merely reversing the direction of your arrows in your mathematical functions and compositions.&#160; The following images of a few slides from <a href="http://live.visitmix.com/MIX10/Sessions/FTL01">Erik Meijer’s MIX ‘10 Session</a> that were the best visual explanation I have seen:</p>    <p>Duality Example with De Morgan’s Laws</p>    <p><a href="http://lh6.ggpht.com/_rps657FzHZ0/TD5QDKjrqpI/AAAAAAAAADo/_LP_XWkDId4/s1600-h/rxSlide23.png"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="rxSlide2" border="0" alt="rxSlide2" src="http://lh5.ggpht.com/_rps657FzHZ0/TD5QDjfchiI/AAAAAAAAADs/etW1caiUFHA/rxSlide2_thumb1.png?imgmax=800" width="441" height="334" /></a></p>    <p>Creating a Dual of <font face="Courier New">IEnumerable</font></p>    <p><a href="http://lh4.ggpht.com/_rps657FzHZ0/TD5QD9tyhyI/AAAAAAAAADw/CG9FYEFDB4Y/s1600-h/rxSlide33.png"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="rxSlide3" border="0" alt="rxSlide3" src="http://lh4.ggpht.com/_rps657FzHZ0/TD5QEm7T9hI/AAAAAAAAAD0/t_pfOknuY3o/rxSlide3_thumb1.png?imgmax=800" width="441" height="334" /></a></p>    <p>Creating a Dual of <font face="Courier New">IEnumerator</font></p>    <p><a href="http://lh4.ggpht.com/_rps657FzHZ0/TD5QE7KuUwI/AAAAAAAAAD4/tpV314oMx5g/s1600-h/rxSlide43.png"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="rxSlide4" border="0" alt="rxSlide4" src="http://lh3.ggpht.com/_rps657FzHZ0/TD5QFZd3VjI/AAAAAAAAAD8/9jaGTsA76jQ/rxSlide4_thumb1.png?imgmax=800" width="441" height="333" /></a>&#160;</p>    <p>The reason the mathematical proof part is significant is because we can guarantee that LINQ syntax and operators will work on these new collection and data subscriber interfaces, just like they did with <font face="Courier New">IEnumerable</font> collections in LINQ-to-Objects.&#160; This new LINQ provider is commonly called “LINQ over Events.”</p>    <h3>Reacting to Data is Asynchronous</h3>    <p>This is actually where I think some of the confusion came in for me.&#160; Mostly what I didn’t understand is how you can write LINQ queries into pushed data (already sent and also yet to be sent), when essentially that task is indeterminate by nature.&#160; What I have figured out is that the LINQ syntax is not entirely for the data being pushed, but also used for molding the subscriptions themselves.&#160; What the LINQ syntax provides you is a way to compose, filter, project, aggregate, and throttle data and event subscriptions in a powerful, declarative way.</p>    <p>A common workflow seems to be to create one or more observable collections (and there are <a title="16 Ways to Create IObservables Without Implementing IObservable" href="http://weblogs.asp.net/sweinstein/archive/2010/01/10/16-ways-to-create-iobservables-without-implementing-iobservable.aspx">many ways to do so</a>) and then customize and compose a subscription based on the subscription(s) using LINQ syntax.&#160; All that’s left then is to set the subscription in motion, giving it some sort of callback or lambda expression to be called as data is asynchronously pushed in and processed.</p>    <p>Here is a very simple code example that illustrates this process quite plainly:</p>    <pre class="brush: csharp">using System;
+using System.Linq;
+
+namespace TestRX
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            var oneNumberPerSecond = Observable.Interval(TimeSpan.FromSeconds(1));
+
+            var numbersTimesTwo = from n in oneNumberPerSecond
+                                  select n * 2;
+
+            Console.WriteLine(&quot;Numbers * 2:&quot;);
+
+            numbersTimesTwo.Subscribe(num =&gt;
+            {
+                Console.WriteLine(num);
+            });
+
+            Console.ReadKey();
+        }
+    }
+}</pre>
+
+  <p>It is interesting to watch the code run and think about what it’s actually doing.&#160; It sits on the <font face="Courier New">Console.ReadKey()</font> line while the observable collection is asynchronously pushing data to the lambda expression containing the <font face="Courier New">Console.WriteLine()</font> statement.</p>
+
+  <p>It looks like the Reactive Framework is not just a better way to handle events and pushed data, but it also appears from what I’ve read that it could be used as a nicer API for sending off asynchronous process threads.</p>
+
+  <h3>Additional Reading</h3>
+
+  <p><a href="http://msdn.microsoft.com/en-us/devlabs/default.aspx">Microsoft DevLabs</a> has created the <a href="http://msdn.microsoft.com/en-us/devlabs/ee794896.aspx">Reactive Extensions for .NET</a> (and it’s associated languages), but it has also came up with the Reactive Extensions for Silverlight and JavaScript (<a href="http://msdn.microsoft.com/en-us/devlabs/ee794896.aspx">can be found on same webpage</a>).&#160; This proves very interesting as JavaScript (and Silverlight) tends to be quite event driven because of its close interactions to UI elements in HTML (or XAML).&#160; In fact, one of the most encouraging example use cases that I’ve heard was that of having some HTML text field that you wanted to auto-search as the user types, but not until the user pauses for a second; they can also hit Enter.&#160; What the Reactive Framework could provide you is a way to aggregate more than one event source (alphabetic and Enter key strokes and the timer) into a single event handler using clear, declarative framework statements.</p>
+
+  <p>Here are other links I would recommend for additional examples and explanation:</p>
+
+  <ul>
+    <li><a href="http://rxwiki.wikidot.com/101samples">(not yet) 101 Rx Samples – Reactive Framework (Rx) Wiki</a> </li>
+
+    <li><a href="http://www.codeproject.com/KB/Parallel_Programming/RxByExample.aspx">The Reactive Framework by Example – The Code Project</a> </li>
+
+    <li><a href="http://live.visitmix.com/MIX10/Sessions/FTL01">Reactive Extensions for JavaScript – Erik Meijer’s MIX ‘10 Session</a> </li>
+
+    <li><a href="http://www.virtualaltnet.com/Recordings/Show/99">Making the Most of the Reactive Extensions for .NET – Virtual Alt.NET recording with Scott Weinstein</a></li>
+
+    <li><a href="http://channel9.msdn.com/shows/Going+Deep/Expert-to-Expert-Brian-Beckman-and-Erik-Meijer-Inside-the-NET-Reactive-Framework-Rx/">Channel 9 Video with Brian Beckman and Erik Meijer</a></li>
+  </ul>
+
+  <p>Enjoy!&#160; Let me know via comments if you start using it for something real cool and useful.</p>
+</span>  </div>
+
+
+<h2>Comments</h2>
+
+
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Michael</div>
+<div class='content'>
+Nice post on a complex topic.  You are indeed correct that there has been confusion around explaining the why and how of Reactive Extensions.  Thanks Mike.</div>
+</div>
+<div class='comment'>
+<div class='author'>Paul</div>
+<div class='content'>
+Great post on getting started with Rx!  One of the things I&#39;ve been working on is a MVVM framework for Silverlight / WPF that uses the Reactive Extensions - I&#39;ve written about it quite a bit in my blog at http://blog.paulbetts.org/index.php/category/programming/reactive-extensions/ and the code is at github.com/xpaulbettsx/ReactiveXaml ; it&#39;s got some great examples of doing more than just handling events together, I&#39;d love to hear any feedback you&#39;ve got on the project</div>
+</div>
+</div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[BeginInvoke Methods and OneWay Attribute]]></title>
+    <link href="http://mkmurray.com/blog/2009/05/21/begininvoke-methods-and-oneway-attribute/"/>
+    <updated>2009-05-21T16:29:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2009/05/21/begininvoke-methods-and-oneway-attribute</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>In a previous post I talked about <a href="http://murrayon.net/2008/01/windows-forms-ui-threading.html">Windows Forms UI Threading</a> using delegates.&#160; Recently I needed to replicate what I had learned, and I happened to do so without reviewing my notes in the former blog post.&#160; Apparently I didn’t remember everything I had learned and became confused over thread invocation techniques, introducing a bug into my thread messaging.&#160; The UI thread was blocking while the background worker thread was processing.</p>  <p>The cause was related to figuring out which <font face="Courier New">BeginInvoke</font> method to call when kicking off the worker thread, the <font face="Courier New">BeginInvoke</font> of the <font face="Courier New">Form</font> object or the <font face="Courier New">BeginInvoke</font> of the delegate.&#160; The answer is the <font face="Courier New">BeginInvoke</font> method of the delegate.&#160; All of the examples linked to in the previous post had it right, but I got it mixed up with making <font face="Courier New">Invoke</font> or <font face="Courier New">BeginInvoke</font> calls from the background thread using the <font face="Courier New">Form</font> object’s version of these methods.&#160; If you don’t care whether your messaging from the background thread is synchronous or asynchronous, then you can use either methods and you can use the ones from the <font face="Courier New">Form</font> object.</p>  <p>The problem is using these <font face="Courier New">Form</font> object methods in order to kick off your background worker thread.&#160; The description of the <font face="Courier New">BeginInvoke</font> method on the <font face="Courier New">Form</font> object states that it <font face="Courier New">“executes the specified delegate asynchronously on the thread that the control’s underlying handle was created on.”</font>&#160; I translate this to mean that calling your <font face="Courier New">Form</font> object’s <font face="Courier New">BeginInvoke</font> will process on your UI thread.&#160; Apparently the delegate <font face="Courier New">BeginInvoke</font> method has no such wording in its description.</p> <span class='fullpost'> <p>Rereading <a title="Safe, Simple Multithreading in Windows Forms, Part 1" href="http://msdn.microsoft.com/en-us/library/ms951089.aspx">this MSDN article</a> from the former post and reading the <font face="Courier New">Form</font> object’s <font face="Courier New">BeginInvoke</font> method description which I quoted above set me straight and got rid of my blocking UI problem (again).</p>  <p>During this research session, I came across another informative resource when trying to figure out what was meant by potential resource leaks when using <font face="Courier New">BeginInvoke</font> with out later calling <font face="Courier New">EndInvoke</font>.&#160; From reading the article, I gather you can substitute the <font face="Courier New">EndInvoke</font> call with the <a title="OneWayAttribute Class" href="http://msdn.microsoft.com/en-us/library/system.runtime.remoting.messaging.onewayattribute.aspx"><font face="Courier New">OneWay</font> attribute</a><font face="Courier New"><font color="#333333"><font face="Verdana"></font></font></font> on the method being invoked, as long as it has a <font face="Courier New">void</font> return signature and no <font face="Courier New">ref</font> nor <font face="Courier New">out</font> parameters.&#160; Please let me know if my interpretation is wrong.&#160; I added the attribute to my code in the applicable spots and have seen no side effects of doing so.&#160; Here is the article on read mentioning this attribute:</p>  <p><a href="http://weblogs.asp.net/rosherove/pages/DefensiveEventPublishing.aspx">Defensive Event Publishing in .NET – Part I</a></p> </span>  </div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[C# 4.0: Covariance and Contravariance]]></title>
+    <link href="http://mkmurray.com/blog/2008/10/31/c-4-0-covariance-and-contravariance/"/>
+    <updated>2008-10-31T13:28:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2008/10/31/c-4-0-covariance-and-contravariance</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>Someone just sent me a link to a blog post talking about one of the new features of C# 4.0 that will be included with Visual Studio 2010.&#160; It is regarding <a href="http://en.wikipedia.org/wiki/Covariance_and_contravariance_(computer_science)">covariance and contravariance</a> support within the C# language.&#160; This support has been included since C# 2.0 (and consequently, .NET 2.0).&#160; However, it is currently flawed for delegates and interfaces using <a title="Generic Programming" href="http://en.wikipedia.org/wiki/Generic_programming">generics</a>.&#160; Follow this link to find out more about the proposed improvements for the future version of C#:</p>  <p><a title="http://blogs.msdn.com/charlie/archive/2008/10/28/linq-farm-covariance-and-contravariance-in-visual-studio-2010.aspx" href="http://blogs.msdn.com/charlie/archive/2008/10/28/linq-farm-covariance-and-contravariance-in-visual-studio-2010.aspx">http://blogs.msdn.com/charlie/archive/2008/10/28/linq-farm-covariance-and-contravariance-in-visual-studio-2010.aspx</a></p>  </div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Windows Forms UI Threading]]></title>
+    <link href="http://mkmurray.com/blog/2008/01/18/windows-forms-ui-threading/"/>
+    <updated>2008-01-18T16:34:00-07:00</updated>
+    <id>http://mkmurray.com/blog/2008/01/18/windows-forms-ui-threading</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>I fixed a UI issue we were having where some work was being done and it was updating a progress bar, but it wasn't correctly painting the rest of the labels and other static UI elements.&#160; It's best to let the UI do it's thing on the main thread, and then spawn off a worker thread in the background, allowing them to communicate with each other through delegates.</p> <span class='fullpost'> <p>Here is a very nicely done, informative article about delegates that I should have read (I probably would have gotten to my solution quicker and surpassed my trial and error issues):&#160; <a title="http://www.ondotnet.com/pub/a/dotnet/2002/11/04/delegates.htm" href="http://www.ondotnet.com/pub/a/dotnet/2002/11/04/delegates.htm">http://www.ondotnet.com/pub/a/dotnet/2002/11/04/delegates.htm</a></p>  <p>I used the following two articles as a basis for my fix:</p>  <ul>   <li><a title="http://msdn2.microsoft.com/en-us/library/ms951089.aspx" href="http://msdn2.microsoft.com/en-us/library/ms951089.aspx">http://msdn2.microsoft.com/en-us/library/ms951089.aspx</a> </li>    <li><a title="http://www.ondotnet.com/pub/a/dotnet/2003/02/24/asyncdelegates.html?page=1" href="http://www.ondotnet.com/pub/a/dotnet/2003/02/24/asyncdelegates.html?page=1">http://www.ondotnet.com/pub/a/dotnet/2003/02/24/asyncdelegates.html?page=1</a> </li> </ul>  <p>However, I didn't end up using the <font face="Courier New">MulticastDelegate</font> class at all in my solution.&#160; It's not really necessary, and I couldn't get it to work when I tried to extend or inherit from it.&#160; The following article says you can't anyway, unless you are a compiler or some similar tool:&#160; <a title="http://msdn2.microsoft.com/en-us/library/system.multicastdelegate.aspx" href="http://msdn2.microsoft.com/en-us/library/system.multicastdelegate.aspx">http://msdn2.microsoft.com/en-us/library/system.multicastdelegate.aspx</a></p>  <p>This link has a cool helper class for asynchronous delegates, though I didn't use it:&#160; <a title="http://peach.ease.lsoft.com/scripts/wa.exe?A2=ind0302B&amp;L=ADVANCED-DOTNET&amp;T=0&amp;F=&amp;S=&amp;P=31992" href="http://peach.ease.lsoft.com/scripts/wa.exe?A2=ind0302B&amp;L=ADVANCED-DOTNET&amp;T=0&amp;F=&amp;S=&amp;P=31992">http://peach.ease.lsoft.com/scripts/wa.exe?A2=ind0302B&amp;L=ADVANCED-DOTNET&amp;T=0&amp;F=&amp;S=&amp;P=31992</a></p>  <p>Good luck.</p>  <p><strong><u>FOLLOWUP (05/21/09)</u>:&#160; </strong>I have some further clarifications about how to properly invoke delegates to a new background thread in this post:</p>  <p><a href="http://murrayon.net/2009/05/begininvoke-methods-and-oneway.html">BeginInvoke Methods and OneWay Attribute</a></p> </span>  </div>
+
+]]></content>
+  </entry>
+  
+</feed>

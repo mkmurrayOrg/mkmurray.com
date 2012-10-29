@@ -1,0 +1,311 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Mike Murray</title>
+	<meta name="author" content="Mike Murray">
+
+	
+	<meta name="description" content="Vista has a security &quot;feature&quot; that locks down certain system folders (for instance Program Files) from programmatic modifications.&#160; &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="http://feeds.feedburner.com/mkmurray/" rel="alternate" title="Mike Murray" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	
+</head>
+
+<body>
+	<div class="container">
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/02/11/windows-vista-virtual-store/">Windows Vista Virtual Store</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-02-11T16:15:00-07:00" pubdate data-updated="true">Feb 11<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/isolated-storage/'>Isolated Storage</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/virtual-store/'>Virtual Store</a>, <a class='category' href='/blog/categories/vista/'>Vista</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/02/11/windows-vista-virtual-store/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>Vista has a security &quot;feature&quot; that locks down certain system folders (for instance <font face="Courier New">Program Files</font>) from programmatic modifications.&#160; However, it doesn&#8217;t just deny your IO requests; instead it <u>may or may not</u> redirect it to some virtual store elsewhere on the file system (it&#8217;s per-user too, so that could further screw your code up if you were writing out something global or machine-wide).&#160; The best part is you don&#8217;t know if you were redirected or not.&#160; I&#8217;ve had it where I was being redirected to the virtualized location for writes and then when I attempted to read later, it wouldn&#8217;t redirect me and I would be reading from the real <font face="Courier New">Program Files</font>.&#160; Another odd thing is that it appeared to always read and write from the real <font face="Courier New">Program Files</font> location if the context was that of a locally-hosted web site.</p> <span class='fullpost'> <p>Here&#8217;s another blogger&#8217;s discovery of it for further information:&#160; <a title="http://www.hanselman.com/blog/VistasShowCompatibilityFilesAndTheScrumptiousWonderThatIsFileVirtualization.aspx" href="http://www.hanselman.com/blog/VistasShowCompatibilityFilesAndTheScrumptiousWonderThatIsFileVirtualization.aspx">http://www.hanselman.com/blog/VistasShowCompatibilityFilesAndTheScrumptiousWonderThatIsFileVirtualization.aspx</a></p>  <p>I don&#8217;t know why I didn&#8217;t know anything about this until now, but I quickly learned about .NET&#8217;s Isolated Storage APIs.&#160; Pretty useful for persisting configurations and such.&#160; It was the solution to my problem in this case.&#160; Here is a good article on it:&#160; <a title="http://www.developer.com/net/net/article.php/3430541" href="http://www.developer.com/net/net/article.php/3430541">http://www.developer.com/net/net/article.php/3430541</a></p>  <p>I will warn you though that you should try to do the reading and writing from the same assembly from within the same application; otherwise, you end up getting different isolated storage stores for each call.&#160; According to the many documents I read there is a way to call into a certain store even if .NET doesn&#8217;t normally map your assembly and/or application to that location (you have to provide something called <font face="Courier New">Evidence</font>).&#160; I couldn&#8217;t get it to work and was running short on time.</p> </span>  </div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/02/11/windows-installer-tools/">Windows Installer Tools</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-02-11T15:58:00-07:00" pubdate data-updated="true">Feb 11<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/deployment-and-installers/'>Deployment and Installers</a>, <a class='category' href='/blog/categories/msi/'>MSI</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/02/11/windows-installer-tools/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>Here is a site with a pretty thorough list of tools that help in creating and modifying MSI files:&#160; <a title="http://www.installsite.org/pages/en/msi/authoring.htm" href="http://www.installsite.org/pages/en/msi/authoring.htm">http://www.installsite.org/pages/en/msi/authoring.htm</a></p>  </div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/01/29/ever-accidentally-kicked-off-a-build-in-vs/">Ever Accidentally Kicked Off a Build in Vs?</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-01-29T09:43:00-07:00" pubdate data-updated="true">Jan 29<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/build/'>Build</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/01/29/ever-accidentally-kicked-off-a-build-in-vs/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>If you&#8217;ve ever kicked off a way long build on accident in Visual Studio, I&#8217;m sure you&#8217;ve considered doing an <font face="Courier New">End Task</font> on it (or perhaps something far more drastic and rash).&#160; Well, there is a keyboard shortcut that will cancel the current build in progress.&#160; Just hit <font face="Courier New">Ctrl+Break</font>, and hand me the sledgehammer before you do something you regret.&#160; Computers are your friend.&#160; Repeat after me&#8230;</p>  </div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/01/24/some-pending-microsoft-technologies/">Some Pending Microsoft Technologies</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-01-24T15:50:00-07:00" pubdate data-updated="true">Jan 24<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>, <a class='category' href='/blog/categories/ui/'>UI</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/01/24/some-pending-microsoft-technologies/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>A cool new technology Microsoft is working on in its Live Labs is called Volta.&#160; It is a way to develop web applications all in one tier, and then late in the development process decide which parts of the code should be client-side and which parts should be server side.&#160; The idea is that you can easily move code fragments back and forth between client-side and server-side at will.&#160; You write your web application in any language of your choice that compiles to .NET and Volta will turn it completely and solely into HTML and JavaScript, meaning your resulting site will be compatible with any browser.&#160; And your site can have all of this with an AJAX look-and-feel.&#160; Check it out here:&#160; <a title="http://labs.live.com/volta/" href="http://labs.live.com/volta/">http://labs.live.com/volta/</a></p>  <p>A different Microsoft team is working on a download called ASP.NET 3.5 Extensions (<a title="http://www.asp.net/downloads/3.5-extensions/" href="http://www.asp.net/downloads/3.5-extensions/">http://www.asp.net/downloads/3.5-extensions/</a>).&#160; It is in &quot;public preview&quot; right now.&#160; It contains some new additions to ASP.NET AJAX, some new Silverlight controls, and a few other cool additions.&#160; Most interesting to me is an MVC Framework&#160; (Model-View-Controller).&#160; One of the managers has a blog that I frequent, and he has written a 5-part series of blogs about this new framework.&#160; This link will send you directly to Part 1 (skipping Part 0):&#160; <a title="http://weblogs.asp.net/scottgu/archive/2007/11/13/asp-net-mvc-framework-part-1.aspx" href="http://weblogs.asp.net/scottgu/archive/2007/11/13/asp-net-mvc-framework-part-1.aspx">http://weblogs.asp.net/scottgu/archive/2007/11/13/asp-net-mvc-framework-part-1.aspx</a></p>  <p>Also, it appears Microsoft recently released a training kit for Visual Studio 2008 and .NET Framework 3.5 available for download now at the following location:&#160; <a title="http://www.microsoft.com/downloads/details.aspx?FamilyID=8bdaa836-0bba-4393-94db-6c3c4a0c98a1&amp;DisplayLang=en" href="http://www.microsoft.com/downloads/details.aspx?FamilyID=8bdaa836-0bba-4393-94db-6c3c4a0c98a1&amp;DisplayLang=en">http://www.microsoft.com/downloads/details.aspx?FamilyID=8bdaa836-0bba-4393-94db-6c3c4a0c98a1&amp;DisplayLang=en</a></p>  <p>Enjoy.</p>  </div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/01/18/registry-launch-condition-in-vs-2005-deployment-project/">Registry Launch Condition in vs 2005 Deployment Project</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-01-18T17:09:00-07:00" pubdate data-updated="true">Jan 18<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/deployment-and-installers/'>Deployment and Installers</a>, <a class='category' href='/blog/categories/launch-condition/'>Launch Condition</a>, <a class='category' href='/blog/categories/msi/'>MSI</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/registry/'>Registry</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/01/18/registry-launch-condition-in-vs-2005-deployment-project/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>I have a Visual Studio 2005 deployment project where I wanted to add a launch condition that would check the registry for a key before continuing.&#160; This article is really straight forward about how to do that:&#160; <a title="http://msdn2.microsoft.com/en-us/library/4awx1f1d(VS.80).aspx" href="http://msdn2.microsoft.com/en-us/library/4awx1f1d(VS.80).aspx">http://msdn2.microsoft.com/en-us/library/4awx1f1d(VS.80).aspx</a></p>  <p>However, every time I put the registry path in, it would never find the key upon install.&#160; So the key was located at something like <font face="Courier New">HKLM\SOFTWARE\MyCompany\MyProduct</font> and then there was a Value named <font face="Courier New">Target Path</font> that I wanted to check if it existed.&#160; My understanding (and perhaps I&#8217;m wrong) that keys are keys but the values are keys also (at least it seems that way when doing registry stuff through the .NET APIs in C#).&#160; So when I saw the following statement in the above article, I thought the property was for testing the value of a <font face="Courier New">Value</font> (AKA key?):</p>  <blockquote>   <p><font face="Courier New">&quot;Optionally, set the <strong><u>Value</u></strong> property to search for a specific value in the registry key.&quot;</font></p> </blockquote>  <p>Essentially I tried to append the <font face="Courier New">Value</font> to the <font face="Courier New">RegKey</font> path, because I thought the <font face="Courier New">Value</font> property was only for testing the value of the <font face="Courier New">Value</font>.&#160; If you want to test the value of the <font face="Courier New">Value</font>, you do it in the <font face="Courier New">Condition</font> property of the <font face="Courier New">Property</font> created by the registry launch condition.&#160; Is that as clear as mud? </p>  <p>This article is what cleared up my confusion (the 2nd post, the one by Phil Wilson):&#160; <a title="http://www.dotnet247.com/247reference/msgs/49/246890.aspx" href="http://www.dotnet247.com/247reference/msgs/49/246890.aspx">http://www.dotnet247.com/247reference/msgs/49/246890.aspx</a> </p>  <p>I realized that a registry <font face="Courier New">Value</font> should not be part of the <font face="Courier New">RegKey</font> path.</p>  </div>
+
+		
+		
+	</div>
+
+</article>
+
+<nav id="pagenavi">
+    
+        <a href="/blog/page/12/" class="prev">Prev</a>
+    
+    
+        <a href="/blog/page/14/" class="next">Next</a>
+    
+    <div class="center"><a href="/blog/archives">Blog Archives</a></div>
+</nav></div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2012
+
+    Mike Murray
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a>
+</footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'mkmurray';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+		</div>
+		<div class="left-col">
+			<header id="header" class="inner"><div class="profilepic">	
+	<img src="/images/mkmurray.jpg" alt="Profile Picture">
+</div>
+<h1><a href="/">Mike Murray</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<br/>
+<h3 class="alignleft">please code responsibly</h3>
+<br/>
+<br/>
+<br/>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		<a class="facebook" href="http://www.facebook.com/mkmurray" title="Facebook">Facebook</a>
+		
+		
+		<a class="google" href="https://plus.google.com/109073345657761090655?rel=author" title="Google+">Google+</a>
+		
+		
+		<a class="twitter" href="http://twitter.com/mkmurray" title="Twitter">Twitter</a>
+		
+		
+		<a class="github" href="https://github.com/mkmurray" title="GitHub">GitHub</a>
+		
+		
+		<a class="linkedin" href="http://www.linkedin.com/in/mkmurray">LinkedIn</a>
+		
+		
+		
+		
+		<a class="rss" href="http://feeds.feedburner.com/mkmurray/" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+
+</header>				
+		</div>	
+	</div>
+</body>
+</html>

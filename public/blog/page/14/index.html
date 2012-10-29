@@ -1,0 +1,324 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Mike Murray</title>
+	<meta name="author" content="Mike Murray">
+
+	
+	<meta name="description" content="So I&#8217;m really excited to start using Visual Studio 2008 and LINQ.&#160; A few of the guys here at work are learning it and will hopefully be &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="http://feeds.feedburner.com/mkmurray/" rel="alternate" title="Mike Murray" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	
+</head>
+
+<body>
+	<div class="container">
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/01/18/linq-tutorial/">LINQ Tutorial</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-01-18T16:47:00-07:00" pubdate data-updated="true">Jan 18<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/linq/'>LINQ</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/01/18/linq-tutorial/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>So I&#8217;m really excited to start using Visual Studio 2008 and LINQ.&#160; A few of the guys here at work are learning it and will hopefully be giving us a little presentation in the next few weeks about how they used it in one of our projects.&#160; They have been learning it with the help of the following tutorial, which I hope to read through in the next few days:&#160; <a title="http://weblogs.asp.net/scottgu/archive/2007/05/19/using-linq-to-sql-part-1.aspx" href="http://weblogs.asp.net/scottgu/archive/2007/05/19/using-linq-to-sql-part-1.aspx">http://weblogs.asp.net/scottgu/archive/2007/05/19/using-linq-to-sql-part-1.aspx</a></p>  <p>By the way, it&#8217;s a 9-part series of blog posts (if you care to get that into it).</p>  </div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/01/18/windows-forms-ui-threading/">Windows Forms UI Threading</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-01-18T16:34:00-07:00" pubdate data-updated="true">Jan 18<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/delegates/'>Delegates</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/threading/'>Threading</a>, <a class='category' href='/blog/categories/ui/'>UI</a>, <a class='category' href='/blog/categories/windows-forms/'>Windows Forms</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/01/18/windows-forms-ui-threading/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>I fixed a UI issue we were having where some work was being done and it was updating a progress bar, but it wasn&#8217;t correctly painting the rest of the labels and other static UI elements.&#160; It&#8217;s best to let the UI do it&#8217;s thing on the main thread, and then spawn off a worker thread in the background, allowing them to communicate with each other through delegates.</p> <span class='fullpost'> <p>Here is a very nicely done, informative article about delegates that I should have read (I probably would have gotten to my solution quicker and surpassed my trial and error issues):&#160; <a title="http://www.ondotnet.com/pub/a/dotnet/2002/11/04/delegates.htm" href="http://www.ondotnet.com/pub/a/dotnet/2002/11/04/delegates.htm">http://www.ondotnet.com/pub/a/dotnet/2002/11/04/delegates.htm</a></p>  <p>I used the following two articles as a basis for my fix:</p>  <ul>   <li><a title="http://msdn2.microsoft.com/en-us/library/ms951089.aspx" href="http://msdn2.microsoft.com/en-us/library/ms951089.aspx">http://msdn2.microsoft.com/en-us/library/ms951089.aspx</a> </li>    <li><a title="http://www.ondotnet.com/pub/a/dotnet/2003/02/24/asyncdelegates.html?page=1" href="http://www.ondotnet.com/pub/a/dotnet/2003/02/24/asyncdelegates.html?page=1">http://www.ondotnet.com/pub/a/dotnet/2003/02/24/asyncdelegates.html?page=1</a> </li> </ul>  <p>However, I didn&#8217;t end up using the <font face="Courier New">MulticastDelegate</font> class at all in my solution.&#160; It&#8217;s not really necessary, and I couldn&#8217;t get it to work when I tried to extend or inherit from it.&#160; The following article says you can&#8217;t anyway, unless you are a compiler or some similar tool:&#160; <a title="http://msdn2.microsoft.com/en-us/library/system.multicastdelegate.aspx" href="http://msdn2.microsoft.com/en-us/library/system.multicastdelegate.aspx">http://msdn2.microsoft.com/en-us/library/system.multicastdelegate.aspx</a></p>  <p>This link has a cool helper class for asynchronous delegates, though I didn&#8217;t use it:&#160; <a title="http://peach.ease.lsoft.com/scripts/wa.exe?A2=ind0302B&amp;L=ADVANCED-DOTNET&amp;T=0&amp;F=&amp;S=&amp;P=31992" href="http://peach.ease.lsoft.com/scripts/wa.exe?A2=ind0302B&amp;L=ADVANCED-DOTNET&amp;T=0&amp;F=&amp;S=&amp;P=31992">http://peach.ease.lsoft.com/scripts/wa.exe?A2=ind0302B&amp;L=ADVANCED-DOTNET&amp;T=0&amp;F=&amp;S=&amp;P=31992</a></p>  <p>Good luck.</p>  <p><strong><u>FOLLOWUP (05/21/09)</u>:&#160; </strong>I have some further clarifications about how to properly invoke delegates to a new background thread in this post:</p>  <p><a href="http://murrayon.net/2009/05/begininvoke-methods-and-oneway.html">BeginInvoke Methods and OneWay Attribute</a></p> </span>  </div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2007/12/18/-unrecoverable-build-error-when-building-very-large-vs-deployment-project/">&#8220;Unrecoverable Build Error&#8221; When Building Very Large vs Deployment Project</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2007-12-18T15:07:00-07:00" pubdate data-updated="true">Dec 18<span>th</span>, 2007</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/build/'>Build</a>, <a class='category' href='/blog/categories/deployment-and-installers/'>Deployment and Installers</a>, <a class='category' href='/blog/categories/error/'>Error</a>, <a class='category' href='/blog/categories/msi/'>MSI</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2007/12/18/-unrecoverable-build-error-when-building-very-large-vs-deployment-project/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>So after being able to successfully build that large deployment project I was talking about by <a title="Building a Monster VS 2005 (or 2008) Deployment Project" href="http://murrayon.net/2007/12/building-monster-vs-2005-or-2008.html">using the 3GB switch</a>, a day or two later I began getting an &quot;<font face="Courier New">Unrecoverable build error</font>&quot; message accompanied with a &quot;<font face="Courier New">Send Error Report</font>&quot; dialog.&#160; It didn&#8217;t kill the IDE process, but did stop the installer build.&#160; I verified that I was able to build other deployment and non-deployment projects without any problems.</p> <span class='fullpost'> <p>So after searching around, I tried a few solutions people said helped them solve the problem.&#160; Some of the simple and straight forward ones I tried were simply restarting the IDE and doing a clean on the solution; I even resorted to a machine reboot.&#160; I next tried all of the applicable solutions from this Microsoft article:&#160; <a title="http://support.microsoft.com/kb/329214" href="http://support.microsoft.com/kb/329214">http://support.microsoft.com/kb/329214</a> (or this one says the same thing basically:&#160; <a title="http://msdn2.microsoft.com/en-us/library/ms228633(VS.80).aspx" href="http://msdn2.microsoft.com/en-us/library/ms228633(VS.80).aspx">http://msdn2.microsoft.com/en-us/library/ms228633(VS.80).aspx</a>).&#160; I also found another guy that said to try doing a <font face="Courier New">regsvr32</font> on <font face="Courier New">ole32.dll</font>.&#160; By the way, here is the typical location of <font face="Courier New">mergemod.dll</font>:&#160; <font face="Courier New">C:\Program Files\Common Files\Microsoft Shared\MSI Tools\</font> and here is the typical location of <font face="Courier New">ole32.dll</font>:&#160; <font face="Courier New">C:\WINDOWS\System32\</font>.</p>  <p>None of it seemed to help my situation.&#160; So I tried uninstalling Visual Studio, and then uninstalling all versions of the .NET Framework with the help of this handy tool:&#160; <a title="http://blogs.msdn.com/astebner/archive/2006/05/30/611355.aspx" href="http://blogs.msdn.com/astebner/archive/2006/05/30/611355.aspx">http://blogs.msdn.com/astebner/archive/2006/05/30/611355.aspx</a>.Then I went ahead and reinstalled everything and gave it a nice machine reboot.&#160; Even this charade proved unsuccessful.</p>  <p>The good news in all of this was that I am still currently the only developer that cannot build this deployment project.&#160; So it is definitely something with my machine that is the problem and not with the actual deployment project itself (we were concerned for a little while about the &quot;multiple folders with the same name&quot; issue mentioned in the Microsoft articles).</p>  <p>So when I get time, I may try to do an OS reinstall and be extra careful of what and when stuff gets installed.&#160; Luckily I have got my personal files on a separate partition, so only the system partition will have to be blown away.&#160; If this proves successful, which it should, I will make an additional note to this post.&#160; Good luck if you ever get this same problem.</p>  <p><strong><u>FOLLOWUP (01/18/08)</u></strong>:&#160; So it turns out that my computer actually crashed a few days later.&#160; When I formatted my hard drive and did a fresh install of Windows, everything seemed to be fine again so I didn&#8217;t question the hardware anymore.&#160; Then I turned on the <font face="Courier New">3GB</font> Windows switch for Windows and everything went haywire.&#160; I removed 2 of my 4 GB of RAM and then everything was fine.&#160; I tried all kinds of combinations with different memory sticks in different memory slots with different totals of RAM.&#160; It seemed I could only run in <font face="Courier New">3GB</font> Windows mode with 2 GB of RAM; however, in normal Windows mode, I could successfully run with all 4 GB of RAM.&#160; So I opted for the 4 GB and will continue to allow someone else to build the monster deployment project, which he has been able to do every time without any issues using the <font face="Courier New">3GB</font> Windows switch.</p>  <p><u><strong>FOLLOWUP (06/17/08)</strong></u>:&#160; For the last 6 months, I have tried two or three times to get another machine to build these installers using the <font face="Courier New">3GB</font> Windows boot switch and modifying the <font face="Courier New">DevEnv.exe</font> executable to be &quot;<font face="Courier New">Large Address Aware</font>&quot;; all of my attempts have been unsuccessful.&#160; Currently, we only have one guy&#8217;s laptop that can handle the build and is running stable with the <font face="Courier New">3GB</font> switch (and we have no clue why it works).&#160; He has been using a local account on his machine for like 9 months and he just recently switched to a domain account.&#160; The interesting thing is that we could no longer build the installers anymore.&#160; But when we went back to using a regular local account (not on the domain), his laptop was able to build the installers again.&#160; With that knowledge, I just now tried building the installers on my machine using a local account; unfortunately, it was unsuccessful.&#160; However, I also don&#8217;t have the <font face="Courier New">3GB</font> switch turned on.&#160; Perhaps the combination of the two is why his laptop is able to build the installers.&#160; I may finish this test of my hypothesis soon, but not right now.</p>  <p><strong><u>FOLLOWUP (06/18/08)</u></strong>:&#160; <strong>I got it working!!!</strong>&#160; The problem was being logged in with a domain user account for some reason.&#160; I am really not sure why; there must be something different about using a domain user account (perhaps during the login process or some restriction set on our domain user accounts or policies).&#160; I did test it without the changes involving the <font face="Courier New">3GB</font> switch, but they are necessary as well.&#160; In fact in my setup, I also didn&#8217;t put the box on the domain at all, just to be sure.&#160; The box runs very stable as far as I can tell with these modifications to Windows and the Visual Studio executable.</p> </span>  </div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2007/12/14/building-a-monster-vs-2005-or-2008-deployment-project/">Building a Monster vs 2005 (or 2008) Deployment Project</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2007-12-14T14:47:00-07:00" pubdate data-updated="true">Dec 14<span>th</span>, 2007</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/build/'>Build</a>, <a class='category' href='/blog/categories/deployment-and-installers/'>Deployment and Installers</a>, <a class='category' href='/blog/categories/error/'>Error</a>, <a class='category' href='/blog/categories/msi/'>MSI</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2007/12/14/building-a-monster-vs-2005-or-2008-deployment-project/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>So I don&#8217;t think I want to get into the details of why we have a solution with over 50,000 unchanging content files in it, but basically we were handed a legacy set of Java/Apache web products and were asked to migrate it to .NET with an aggressive deadline.&#160; Anyway, we try to compress this thing up into an MSI file using a deployment project.&#160; We were getting an error before it would start packaging the files that said &quot;<font face="Courier New">Not enough storage is available to complete this operation</font>&quot; and it would be on a different file every time.&#160; It appears it means the process ran out of virtual memory.</p>  <p>When trying to figure out why, we tried a few things that would sometimes work, most notably, restarting the IDE and/or the whole machine.&#160; Then we came upon the following article that informed us that Windows has a hard-coded 2 GB limit for any given process:&#160; <a href="http://www.microsoft.com/whdc/system/platform/server/PAE/PAEmem.mspx">http://www.microsoft.com/whdc/system/platform/server/PAE/PAEmem.mspx</a>    <p>So here are the steps to up the process virtual memory limit to 3 GB and also to make the Visual Studio executable aware of this raised limit:</p> <span class='fullpost'>   <ol>     <li>I would first back up your <font face="Courier New">boot.ini</font> before making this edit.&#160; It is located right in the root of your <font face="Courier New">C:</font> drive and it is a hidden, system file (so change your folder options to display hidden files).&#160; You will need to add the <font face="Courier New">/3GB</font> switch to the end of the line with the OS that you will be using to build your deployment project, found under the <font face="Courier New">[operating systems]</font> section.&#160; Again, refer to the above link for more information about where exactly to put the switch. </li>      <li>It would be wise to also back up your <font face="Courier New">devenv.exe</font> (Visual Studio executable) before making this change as well.&#160; It is located under the <font face="Courier New">C:\Program Files\Microsoft Visual Studio 8\Common7\IDE</font> (or <font face="Courier New">Microsoft Visual Studio 9.0</font> for VS 2008) directory if you went with the default installation location.&#160; You will need to open a <font face="Courier New">Visual Studio 2005 Command Prompt </font><font face="Verdana">(or 2008 works too),</font> which loads some custom paths and environment variables different from a standard command prompt.&#160; It&#8217;s found by going to <font face="Courier New">Start Menu | All Programs | Microsoft Visual Studio 2005 | Visual Studio Tools</font>.&#160; When the command window comes up, change your directory to where the VS executable is (e.g., <font face="Courier New">cd ..\Common7\IDE</font>).&#160; Next run the following command:&#160; <font face="Courier New">editbin.exe /LARGEADDRESSAWARE devenv.exe</font> </li>      <li>Now reboot the machine and try rebuilding the deployment project again. </li>   </ol>    <p>If you have time, change the whole architecture of your program and development solution; otherwise, good luck.</p>    <p><strong><u>FOLLOWUP (06/17/08)</u></strong>:&#160; You should check out <a title="" href="http://murrayon.net/2007/12/build-error-when-building-very-large-vs.html" project?="Project?" Deployment="Deployment" VS="VS" Large="Large" Very="Very" Building="Building" When="When" error?="error?" build="build" unrecoverable="unrecoverable">the next blog post after this one</a> about an error I got later using this fix.&#160; We do have a guy&#8217;s laptop in our company that is stable using this fix, but I have tried without success to get 2 or 3 other machines to do the same.&#160; It also might have something to do with domain user accounts vs. local user accounts.</p>    <p><strong><u>FOLLOWUP (06/18/08)</u></strong>:&#160; <strong>I got it working!!!</strong>&#160; The problem was being logged in with a domain user account for some reason.&#160; I am really not sure why; there must be something different about using a domain user account (perhaps during the login process or some restriction set on our domain user accounts or policies).&#160; I did test it without the changes involving the <font face="Courier New">3GB</font> switch, but they are necessary as well.&#160; In fact in my setup, I also didn&#8217;t put the box on the domain at all, just to be sure.&#160; The box runs very stable as far as I can tell with these modifications to Windows and the Visual Studio executable.</p> </span>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Mike Murray</div>
+<div class='content'>
+If you truly followed my instructions, you would have had backups of every change you made.  That would make it very easy to revert your changes.<BR/><BR/>Also, I wouldn&#8217;t attempt to make these changes unless you really are having the <B>EXACT</B> same issue I described in the blog post.  I had many serious issues if I did something different then the <B>EXACT</B> procedure I outlined above.<BR/><BR/>Now that you&#8217;ve made the changes (and are apparently regretting it), I think the most important change to be undone is to remove the /3GB switch in your boot file.  I don&#8217;t think the modified Visual Studio executable is as crucial to the stability of your sysetm as that boot flag is.<BR/><BR/>If you have more specific questions, please elaborate better and I&#8217;ll try to help as much as I can.  Good luck!</div>
+</div>
+<div class='comment'>
+<div class='author'>Rahul</div>
+<div class='content'>
+How do I undo these changes?<BR/>Please Help!!<BR/><BR/>Rahul</div>
+</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2007/12/05/linux-quote/">Linux Quote</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2007-12-05T14:19:00-07:00" pubdate data-updated="true">Dec 5<span>th</span>, 2007</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/c-c-/'>C/C++</a>, <a class='category' href='/blog/categories/humor/'>Humor</a>, <a class='category' href='/blog/categories/linux/'>Linux</a>, <a class='category' href='/blog/categories/quote/'>Quote</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2007/12/05/linux-quote/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>I don&#8217;t know who said it, and I&#8217;m not really quoting it verbatim either; but who cares I still like it:</p>  <blockquote>   <p>&quot;Linux is great, just like C is great; it&#8217;s useful, powerful, and can blow your leg off if you&#8217;re not careful.&quot;</p></blockquote>  </div>
+
+		
+		
+	</div>
+
+</article>
+
+<nav id="pagenavi">
+    
+        <a href="/blog/page/13/" class="prev">Prev</a>
+    
+    
+        <a href="/blog/page/15/" class="next">Next</a>
+    
+    <div class="center"><a href="/blog/archives">Blog Archives</a></div>
+</nav></div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2012
+
+    Mike Murray
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a>
+</footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'mkmurray';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+		</div>
+		<div class="left-col">
+			<header id="header" class="inner"><div class="profilepic">	
+	<img src="/images/mkmurray.jpg" alt="Profile Picture">
+</div>
+<h1><a href="/">Mike Murray</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<br/>
+<h3 class="alignleft">please code responsibly</h3>
+<br/>
+<br/>
+<br/>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		<a class="facebook" href="http://www.facebook.com/mkmurray" title="Facebook">Facebook</a>
+		
+		
+		<a class="google" href="https://plus.google.com/109073345657761090655?rel=author" title="Google+">Google+</a>
+		
+		
+		<a class="twitter" href="http://twitter.com/mkmurray" title="Twitter">Twitter</a>
+		
+		
+		<a class="github" href="https://github.com/mkmurray" title="GitHub">GitHub</a>
+		
+		
+		<a class="linkedin" href="http://www.linkedin.com/in/mkmurray">LinkedIn</a>
+		
+		
+		
+		
+		<a class="rss" href="http://feeds.feedburner.com/mkmurray/" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+
+</header>				
+		</div>	
+	</div>
+</body>
+</html>

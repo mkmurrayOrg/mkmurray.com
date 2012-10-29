@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Humor | Mike Murray]]></title>
+  <link href="http://mkmurray.com/blog/categories/humor/atom.xml" rel="self"/>
+  <link href="http://mkmurray.com/"/>
+  <updated>2012-10-29T14:47:08-06:00</updated>
+  <id>http://mkmurray.com/</id>
+  <author>
+    <name><![CDATA[Mike Murray]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[If Programming Languages Were Religions...]]></title>
+    <link href="http://mkmurray.com/blog/2008/12/16/if-programming-languages-were-religions/"/>
+    <updated>2008-12-16T11:48:00-07:00</updated>
+    <id>http://mkmurray.com/blog/2008/12/16/if-programming-languages-were-religions</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>This is hilarious and really creative:</p>  <p><a title="http://www.aegisub.net/2008/12/if-programming-languages-were-religions.html" href="http://www.aegisub.net/2008/12/if-programming-languages-were-religions.html">http://www.aegisub.net/2008/12/if-programming-languages-were-religions.html</a></p></div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Recursion Quote]]></title>
+    <link href="http://mkmurray.com/blog/2008/09/03/recursion-quote/"/>
+    <updated>2008-09-03T15:29:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2008/09/03/recursion-quote</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>I saw this quote on a message board in someone's signature and thought it was just hilarious:</p>  <blockquote>   <p>&quot;In order to understand recursion, one must first understand recursion.&quot;</p> </blockquote>  <p>I can't seem to find who originally said it.</p>  </div>
+
+
+<h2>Comments</h2>
+
+
+<div class='comments'>
+<div class='comment'>
+<div class='author'>dave</div>
+<div class='content'>
+That was my email signature for many, many years, starting around 1991 ... but I got it from some BBS&#39;s random tagline generator, so I can&#39;t take credit for it.</div>
+</div>
+</div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Catastrophic Failure]]></title>
+    <link href="http://mkmurray.com/blog/2008/03/07/catastrophic-failure/"/>
+    <updated>2008-03-07T10:04:00-07:00</updated>
+    <id>http://mkmurray.com/blog/2008/03/07/catastrophic-failure</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>So I got a &quot;<font face="Courier New">Catastrophic Failure</font>&quot; in the Silverlight 2 beta 1 designer in VS 2008 this morning.&#160; Have no clue what it means, but it seemed temporary (I was in the middle of typing in the XAML view and the designer didn't like something I did).&#160; Here is a screenshot, it's pretty amusing:</p> <span class='fullpost'> <p><a href="http://lh4.ggpht.com/charliebrown928/SFqfdiP7PEI/AAAAAAAAABU/vG6KlZ5yB0c/s1600-h/screenshot7.jpg"><img style="border-top-width: 0px; border-left-width: 0px; border-bottom-width: 0px; border-right-width: 0px" height="407" alt="screenshot" src="http://lh3.ggpht.com/charliebrown928/SFqfeTgD8eI/AAAAAAAAABc/CZxSdmcnaCY/screenshot_thumb5.jpg?imgmax=800" width="784" border="0" /></a></p> </span>  </div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Linux Quote]]></title>
+    <link href="http://mkmurray.com/blog/2007/12/05/linux-quote/"/>
+    <updated>2007-12-05T14:19:00-07:00</updated>
+    <id>http://mkmurray.com/blog/2007/12/05/linux-quote</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>I don't know who said it, and I'm not really quoting it verbatim either; but who cares I still like it:</p>  <blockquote>   <p>&quot;Linux is great, just like C is great; it's useful, powerful, and can blow your leg off if you're not careful.&quot;</p></blockquote>  </div>
+
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,204 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Maybe from Murray Monads - Mike Murray</title>
+	<meta name="author" content="Mike Murray">
+
+	
+	<meta name="description" content="Off and on for the last six months, I have probably seen and read at least a half dozen introductions and tutorials on monads, a functional &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="http://feeds.feedburner.com/mkmurray/" rel="alternate" title="Mike Murray" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	
+</head>
+
+<body>
+	<div class="container">
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post">
+	<h1 class="title">Maybe From Murray Monads</h1>
+	<div class="entry-content"><div class='post'>
+<p>Off and on for the last six months, I have probably seen and read at least a half dozen introductions and tutorials on <a href="http://en.wikipedia.org/wiki/Monad_(functional_programming)">monads</a>, a functional programming construct based on the mathematical monads from category theory.&#160; Monads are known for their headache-inducing explanations, and I’ve had my fair share.&#160; Every tutorial I’ve committed time to mentions the endless possibilities of using such constructs to improve your code, but I’ve had a hard time finding real-world examples of using this stuff out in the wild (<a href="http://stackoverflow.com/questions/866912/what-is-the-compelling-scenario-for-using-monads-in-c">much like this Stack Overflow poster</a>, whose link I only found just now).&#160; It has recently become a quest of mine to find some C# code we all write that could be improved by a monad.</p>  <p>I am now going to attempt to introduce a Maybe monad that I cooked up, but I warn you that I have no idea what I’m doing or if I’m staying within the rules for what makes a monad by definition a monad.&#160; Don’t worry though, you have nothing to lose; I’m the only one taking a risk at looking foolish, and it’s all at the expense of my reputation and not yours.&#160; Should be fun!</p> <span class="fullpost">   <h3>“It is not the spoon that bends, it is only yourself”</h3>    <p>From the <a href="http://en.wikipedia.org/wiki/Monad_(functional_programming)">Wikipedia article linked to above</a>:</p>    <blockquote>     <p>“In functional programming, a monad is a kind of abstract data type constructor used to represent computations (instead of data in the domain model). Monads allow the programmer to chain actions together to build a pipeline, in which each action is decorated with additional processing rules provided by the monad. Programs written in functional style can make use of monads to structure procedures that include sequenced operations, or to define arbitrary control flows (like handling concurrency, continuations, or exceptions).</p>      <p>…</p>      <p>“A programmer will compose monadic functions to define a data-processing pipeline. The monad acts as a framework, as it&#8217;s a reusable behavior that decides the order in which the specific monadic functions in the pipeline are called, and manages all the undercover work required by the computation.”</p>   </blockquote>    <p>The promised tenets of monads are increased code readability and algorithm composability, an example of preferring declarative code over imperative, procedural code.&#160; In the case of the Maybe monad, it is a wrapper around types that might have an invalid state like <font face="Courier New">null</font> or <font face="Courier New">nothing</font>.&#160; The lure of the Maybe monad is the ability to deal with values that might be in this invalid state without having to explicitly check for null before continuing or exceptions being thrown in your algorithms.</p>    <p>I first found <a href="http://abdullin.com/journal/2009/10/6/zen-development-practices-c-maybe-monad.html">a post by Rinat Abdullin</a> where he introduced his version of a C# Maybe monad.&#160; I downloaded the library and attempted to figure out how to use it in code I could possibly write any given day.&#160; I tried mimicking the <font face="Courier New">HttpContext.Request.Params</font> collection commonly used in ASP.NET pages and HTTP handlers to retrieve the passed in query string or post values on the <font face="Courier New">Request</font> object.&#160; If you ask that collection for a parameter that was not passed in on the request, it returns a null instead of the string value.&#160; Common practice is to then use a bunch of <font face="Courier New">if</font> statements and key off the fact that certain query string or post parameters may or may not exist.</p>    <p>The problem I ran into with Rinat’s implemenation is that I wrote the code using the monad how I thought it should help me, and then ran into compiler errors and runtime exceptions because of the expectation that Maybe objects couldn’t be constructed around null values.&#160; Here is the twitter conversation I had with Rinat in regard to this misconception that I had:</p>   <span style="widows: 2; text-transform: none; text-indent: 0px; border-collapse: separate; font: medium &#39;Times New Roman&#39;; white-space: normal; orphans: 2; letter-spacing: normal; color: rgb(0,0,0); word-spacing: 0px; -webkit-border-horizontal-spacing: 0px; -webkit-border-vertical-spacing: 0px; -webkit-text-decorations-in-effect: none; -webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px" class="Apple-style-span"><span style="font-family: verdana, tahoma, arial, &#39;Trebuchet MS&#39;, sans-serif, georgia, courier, &#39;Times New Roman&#39;, serif; color: rgb(0,58,126); font-size: 12px; font-weight: bold" class="Apple-style-span">       <div style="padding-bottom: 15px; background-color: rgb(234,242,249); margin: 0px; padding-left: 15px; width: 550px; padding-right: 15px; padding-top: 15px; background-origin: initial; background-clip: initial" class="post1">         <div style="padding-bottom: 0px; margin: 0px 15px 0px 0px; padding-left: 0px; width: 80px; padding-right: 0px; display: block; float: left; height: 80px; padding-top: 0px" class="avatar"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View murrayondotnet&#39;s Twitter Page" href="http://www.twitter.com/murrayondotnet" target="_blank"><img style="border-bottom: rgb(204,204,204) 1px solid; border-left: rgb(204,204,204) 1px solid; padding-bottom: 3px; margin: 0px; padding-left: 3px; padding-right: 3px; border-top: rgb(204,204,204) 1px solid; border-right: rgb(204,204,204) 1px solid; padding-top: 3px" alt="murrayondotnet&#39;s avatar" src="http://a1.twimg.com/profile_images/547516901/profilepic_bigger.PNG" width="73" height="73" /></a></div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; float: left; padding-top: 0px" class="post">           <h5 style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; font: bold 16px verdana, tahoma, arial, &#39;Trebuchet MS&#39;, sans-serif, georgia, courier, &#39;Times New Roman&#39;, serif; color: rgb(98,98,98); padding-top: 0px"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View murrayondotnet&#39;s Twitter Page" href="http://www.twitter.com/murrayondotnet" target="_blank">murrayondotnet</a><span class="Apple-converted-space">&#160;</span>says:</h5>            <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; width: 450px; padding-right: 0px; font: 14px/19px tahoma, arial; color: rgb(98,98,98); padding-top: 0px" class="mainpost">@abdullin Can you make your MaybeMonad in Lokad lib accept null at construct or explicit/implicit cast? Maybe&lt;SomeType&gt; monad = varThatsNull</div>         </div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; clear: both; padding-top: 0px" class="clear"></div>       </div>        <div style="padding-bottom: 15px; background-color: rgb(255,255,255); margin: 0px; padding-left: 15px; width: 550px; padding-right: 15px; padding-top: 15px; background-origin: initial; background-clip: initial" class="post2">         <div style="padding-bottom: 0px; margin: 0px 15px 0px 0px; padding-left: 0px; width: 80px; padding-right: 0px; display: block; float: left; height: 80px; padding-top: 0px" class="avatar"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View abdullin&#39;s Twitter Page" href="http://www.twitter.com/abdullin" target="_blank"><img style="border-bottom: rgb(204,204,204) 1px solid; border-left: rgb(204,204,204) 1px solid; padding-bottom: 3px; margin: 0px; padding-left: 3px; padding-right: 3px; border-top: rgb(204,204,204) 1px solid; border-right: rgb(204,204,204) 1px solid; padding-top: 3px" alt="abdullin&#39;s avatar" src="http://a3.twimg.com/profile_images/755788123/0_1f297_e07be068_orig_bigger.jpg" width="73" height="73" /></a></div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; float: left; padding-top: 0px" class="post">           <h5 style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; font: bold 16px verdana, tahoma, arial, &#39;Trebuchet MS&#39;, sans-serif, georgia, courier, &#39;Times New Roman&#39;, serif; color: rgb(98,98,98); padding-top: 0px"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View abdullin&#39;s Twitter Page" href="http://www.twitter.com/abdullin" target="_blank">abdullin</a><span class="Apple-converted-space">&#160;</span>says:</h5>            <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; width: 450px; padding-right: 0px; font: 14px/19px tahoma, arial; color: rgb(98,98,98); padding-top: 0px" class="mainpost">@murrayondotnet No, this would violate the idea of MaybeMonad (as in Lokad libs). But you can copy code and tweak it to your needs locally.</div>         </div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; clear: both; padding-top: 0px" class="clear"></div>       </div>        <div style="padding-bottom: 15px; background-color: rgb(234,242,249); margin: 0px; padding-left: 15px; width: 550px; padding-right: 15px; padding-top: 15px; background-origin: initial; background-clip: initial" class="post1">         <div style="padding-bottom: 0px; margin: 0px 15px 0px 0px; padding-left: 0px; width: 80px; padding-right: 0px; display: block; float: left; height: 80px; padding-top: 0px" class="avatar"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View murrayondotnet&#39;s Twitter Page" href="http://www.twitter.com/murrayondotnet" target="_blank"><img style="border-bottom: rgb(204,204,204) 1px solid; border-left: rgb(204,204,204) 1px solid; padding-bottom: 3px; margin: 0px; padding-left: 3px; padding-right: 3px; border-top: rgb(204,204,204) 1px solid; border-right: rgb(204,204,204) 1px solid; padding-top: 3px" alt="murrayondotnet&#39;s avatar" src="http://a1.twimg.com/profile_images/547516901/profilepic_bigger.PNG" width="73" height="73" /></a></div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; float: left; padding-top: 0px" class="post">           <h5 style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; font: bold 16px verdana, tahoma, arial, &#39;Trebuchet MS&#39;, sans-serif, georgia, courier, &#39;Times New Roman&#39;, serif; color: rgb(98,98,98); padding-top: 0px"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View murrayondotnet&#39;s Twitter Page" href="http://www.twitter.com/murrayondotnet" target="_blank">murrayondotnet</a><span class="Apple-converted-space">&#160;</span>says:</h5>            <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; width: 450px; padding-right: 0px; font: 14px/19px tahoma, arial; color: rgb(98,98,98); padding-top: 0px" class="mainpost">@abdullin Figured this was case; what does it violate? I&#8217;m still new to monads. Thought one would be able construct monad around maybe null</div>         </div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; clear: both; padding-top: 0px" class="clear"></div>       </div>        <div style="padding-bottom: 15px; background-color: rgb(255,255,255); margin: 0px; padding-left: 15px; width: 550px; padding-right: 15px; padding-top: 15px; background-origin: initial; background-clip: initial" class="post2">         <div style="padding-bottom: 0px; margin: 0px 15px 0px 0px; padding-left: 0px; width: 80px; padding-right: 0px; display: block; float: left; height: 80px; padding-top: 0px" class="avatar"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View abdullin&#39;s Twitter Page" href="http://www.twitter.com/abdullin" target="_blank"><img style="border-bottom: rgb(204,204,204) 1px solid; border-left: rgb(204,204,204) 1px solid; padding-bottom: 3px; margin: 0px; padding-left: 3px; padding-right: 3px; border-top: rgb(204,204,204) 1px solid; border-right: rgb(204,204,204) 1px solid; padding-top: 3px" alt="abdullin&#39;s avatar" src="http://a3.twimg.com/profile_images/755788123/0_1f297_e07be068_orig_bigger.jpg" width="73" height="73" /></a></div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; float: left; padding-top: 0px" class="post">           <h5 style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; font: bold 16px verdana, tahoma, arial, &#39;Trebuchet MS&#39;, sans-serif, georgia, courier, &#39;Times New Roman&#39;, serif; color: rgb(98,98,98); padding-top: 0px"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View abdullin&#39;s Twitter Page" href="http://www.twitter.com/abdullin" target="_blank">abdullin</a><span class="Apple-converted-space">&#160;</span>says:</h5>            <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; width: 450px; padding-right: 0px; font: 14px/19px tahoma, arial; color: rgb(98,98,98); padding-top: 0px" class="mainpost">@murrayondotnet check out the article on Maybe monads in Lokad libs: http://bit.ly/1GJlNN</div>         </div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; clear: both; padding-top: 0px" class="clear"></div>       </div>        <div style="padding-bottom: 15px; background-color: rgb(234,242,249); margin: 0px; padding-left: 15px; width: 550px; padding-right: 15px; padding-top: 15px; background-origin: initial; background-clip: initial" class="post1">         <div style="padding-bottom: 0px; margin: 0px 15px 0px 0px; padding-left: 0px; width: 80px; padding-right: 0px; display: block; float: left; height: 80px; padding-top: 0px" class="avatar"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View murrayondotnet&#39;s Twitter Page" href="http://www.twitter.com/murrayondotnet" target="_blank"><img style="border-bottom: rgb(204,204,204) 1px solid; border-left: rgb(204,204,204) 1px solid; padding-bottom: 3px; margin: 0px; padding-left: 3px; padding-right: 3px; border-top: rgb(204,204,204) 1px solid; border-right: rgb(204,204,204) 1px solid; padding-top: 3px" alt="murrayondotnet&#39;s avatar" src="http://a1.twimg.com/profile_images/547516901/profilepic_bigger.PNG" width="73" height="73" /></a></div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; float: left; padding-top: 0px" class="post">           <h5 style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; font: bold 16px verdana, tahoma, arial, &#39;Trebuchet MS&#39;, sans-serif, georgia, courier, &#39;Times New Roman&#39;, serif; color: rgb(98,98,98); padding-top: 0px"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View murrayondotnet&#39;s Twitter Page" href="http://www.twitter.com/murrayondotnet" target="_blank">murrayondotnet</a><span class="Apple-converted-space">&#160;</span>says:</h5>            <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; width: 450px; padding-right: 0px; font: 14px/19px tahoma, arial; color: rgb(98,98,98); padding-top: 0px" class="mainpost">@abdullin Thanks for the link, thats actually how I found your lib. I didnt see where you say why cant construct maybe monad on null. Help?</div>         </div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; clear: both; padding-top: 0px" class="clear"></div>       </div>        <div style="padding-bottom: 15px; background-color: rgb(255,255,255); margin: 0px; padding-left: 15px; width: 550px; padding-right: 15px; padding-top: 15px; background-origin: initial; background-clip: initial" class="post2">         <div style="padding-bottom: 0px; margin: 0px 15px 0px 0px; padding-left: 0px; width: 80px; padding-right: 0px; display: block; float: left; height: 80px; padding-top: 0px" class="avatar"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View abdullin&#39;s Twitter Page" href="http://www.twitter.com/abdullin" target="_blank"><img style="border-bottom: rgb(204,204,204) 1px solid; border-left: rgb(204,204,204) 1px solid; padding-bottom: 3px; margin: 0px; padding-left: 3px; padding-right: 3px; border-top: rgb(204,204,204) 1px solid; border-right: rgb(204,204,204) 1px solid; padding-top: 3px" alt="abdullin&#39;s avatar" src="http://a3.twimg.com/profile_images/755788123/0_1f297_e07be068_orig_bigger.jpg" width="73" height="73" /></a></div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; float: left; padding-top: 0px" class="post">           <h5 style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; font: bold 16px verdana, tahoma, arial, &#39;Trebuchet MS&#39;, sans-serif, georgia, courier, &#39;Times New Roman&#39;, serif; color: rgb(98,98,98); padding-top: 0px"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View abdullin&#39;s Twitter Page" href="http://www.twitter.com/abdullin" target="_blank">abdullin</a><span class="Apple-converted-space">&#160;</span>says:</h5>            <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; width: 450px; padding-right: 0px; font: 14px/19px tahoma, arial; color: rgb(98,98,98); padding-top: 0px" class="mainpost">@murrayondotnet in essence monad in Lokad guarantees: there will be no nulls around (hence no need to check for them), it replaces null.</div>         </div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; clear: both; padding-top: 0px" class="clear"></div>       </div>        <div style="padding-bottom: 15px; background-color: rgb(234,242,249); margin: 0px; padding-left: 15px; width: 550px; padding-right: 15px; padding-top: 15px; background-origin: initial; background-clip: initial" class="post1">         <div style="padding-bottom: 0px; margin: 0px 15px 0px 0px; padding-left: 0px; width: 80px; padding-right: 0px; display: block; float: left; height: 80px; padding-top: 0px" class="avatar"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View murrayondotnet&#39;s Twitter Page" href="http://www.twitter.com/murrayondotnet" target="_blank"><img style="border-bottom: rgb(204,204,204) 1px solid; border-left: rgb(204,204,204) 1px solid; padding-bottom: 3px; margin: 0px; padding-left: 3px; padding-right: 3px; border-top: rgb(204,204,204) 1px solid; border-right: rgb(204,204,204) 1px solid; padding-top: 3px" alt="murrayondotnet&#39;s avatar" src="http://a1.twimg.com/profile_images/547516901/profilepic_bigger.PNG" width="73" height="73" /></a></div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; float: left; padding-top: 0px" class="post">           <h5 style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; font: bold 16px verdana, tahoma, arial, &#39;Trebuchet MS&#39;, sans-serif, georgia, courier, &#39;Times New Roman&#39;, serif; color: rgb(98,98,98); padding-top: 0px"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View murrayondotnet&#39;s Twitter Page" href="http://www.twitter.com/murrayondotnet" target="_blank">murrayondotnet</a><span class="Apple-converted-space">&#160;</span>says:</h5>            <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; width: 450px; padding-right: 0px; font: 14px/19px tahoma, arial; color: rgb(98,98,98); padding-top: 0px" class="mainpost">@abdullin I may try to create my own implementation that hides whether null or not. If so probably base mine off of the nice things in yours</div>         </div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; clear: both; padding-top: 0px" class="clear"></div>       </div>     </span></span>    <p>And so I did.</p>    <h3>Introducing MurrayMonads</h3>    <p>I don’t even like the name.&#160; I’m also not sure this code will ever be used again…by anyone, let alone me (especially since I like some other guy’s implementation better; read on to watch me embarrass myself).&#160; But whatever, Visual Studio asks for a project/solution name and so there it is.&#160; I need some cool theme like Rhino, as used by <a href="http://ayende.com/blog/default.aspx">Ayende</a>.</p>    <p>Speaking of Oren (I will use his proper name instead so that he doesn’t <a href="http://ayende.com/Blog/archive/2010/08/13/how-to-pay-3-times-for-the-same-flight-ticket.aspx">get stuck at the airport unable to board his flight</a>), he posted a link on Twitter to <a href="http://devtalk.net/csharp/chained-null-checks-and-the-maybe-monad/">an article where Dmitri Nesteruk created his own version of the Maybe monad</a>, just as I was starting my experiment.&#160; He used extension methods instead of an explicit monad object wrapper in order to enable the pipelining composability that you can also do with Rinat’s implementation.&#160; Really clever, but there was one small thing that bothered me a bit, and that is how the monad chaining begins with Dmitri’s API.&#160; (Actually, I’ll prove I’m wrong by the end of the post; this is the cause of upcoming embarrassment mentioned above, hooray!)&#160; Because of this, I decided to use his example problem as the basis for my sample that I will show, in order to increase comparability.</p>    <p>So I set off to try and merge the good points of both Rinat’s and Dmitri’s implementations.&#160; I have put my source code up for viewing at Bitbucket.org:&#160; <a href="http://bitbucket.org/murrayondotnet/murraymonads">http://bitbucket.org/murrayondotnet/murraymonads</a></p>    <h3>Are We There Yet?!</h3>    <p>Yes, we are.&#160; Let’s see some code finally.</p>    <p>Here is the code we don’t like writing all the time:</p>    <pre class="brush: csharp">string postCode;
+if (person != null)
+{
+  if (HasMedicalRecord(person) &amp;&amp; person.Address != null)
+  {
+    CheckAddress(person.Address);
+    if (person.Address.PostCode != null)
+      postCode = person.Address.PostCode.ToString();
+    else
+      postCode = &quot;UNKNOWN&quot;;
+  }
+}</pre>
+
+  <p>This is actually code that you wrote; I took it just yesterday from your current project at work.&#160; I know you’re feeling a bit defensive because of this, but I’m here to help so put down the attitude please.&#160; We’re gonna make your life easier…I hope…</p>
+
+  <p>All in all, it’s code you see every day and there’s not much really wrong with it per se.&#160; I just think it could be cleaner I suppose.&#160; So using Dmitri’s extension methods, you can get that logic down to this:</p>
+
+  <pre class="brush: csharp">string postCode = this.With(x =&gt; person)
+  .If(x =&gt; HasMedicalRecord(x))
+  .With(x =&gt; x.Address)
+  .Do(x =&gt; CheckAddress(x))
+  .With(x =&gt; x.PostCode)
+  .Return(x =&gt; x.ToString(), &quot;UNKNOWN&quot;);</pre>
+
+  <p>As long as that last <font face="Courier New">ToString</font> method call doesn’t return a null (which one of my use cases does in the <font face="Courier New">TestConsoleApp</font> included in my source code), you will either get the value or <font face="Courier New">“UNKNOWN”</font>.&#160; Looking good!</p>
+
+  <p>So my version of the Maybe monad comes out pretty close to this last one:</p>
+
+  <pre class="brush: csharp">string postCode = person.If(p =&gt; HasMedicalRecord(p))
+  .Access(p =&gt; p.Address)
+  .Apply(a =&gt; CheckAddress(a))
+  .Access(a =&gt; a.PostCode)
+  .Convert(pc =&gt; pc.ToString(), &quot;UNKNOWN&quot;);
+
+// or even
+string postalCode = person.If(HasMedicalRecord)
+  .Access(p =&gt; p.Address)
+  .Apply(CheckAddress)
+  .Access(a =&gt; a.PostCode)
+  .Convert(pc =&gt; pc.ToString(), &quot;UNKNOWN&quot;);</pre>
+
+  <p>The difference between Dmitri’s and mine being how the chain is first started, on the Maybe <font face="Courier New">person</font> object instead of Dmitri’s use of the <font face="Courier New">this</font> keyword.</p>
+
+  <p>Here’s what you’ve been really waiting for where I eat my own words.&#160; Dmitri’s code can also be written like this:</p>
+
+  <pre class="brush: csharp">string postCode = person.If(HasMedicalRecord)
+  .With(x =&gt; x.Address)
+  .Do(CheckAddress)
+  .With(x =&gt; x.PostCode)
+  .Return(x =&gt; x.ToString(), &quot;UNKNOWN&quot;);</pre>
+
+  <p>…which appears to take away any advantage of my library.&#160; I officially like his solution better, I just don’t like some of the method names.&#160; So perhaps <a href="http://murrayon.net/2010/09/maybe-monad-extensions.html" target="_blank">I will create another blog post</a> and <a href="http://bitbucket.org/murrayondotnet/maybemonadextensions/" target="_blank">Bitbucket repo with a new library of extension methods</a> instead.&#160; I will leave up this mess-of-a-post public (as well as the source code) so that perhaps others can see the process I went through and learn from my mistakes.</p>
+
+  <h3>Your Turn to Criticize Now</h3>
+
+  <p>Let me have it.&#160; Let me know how crazy I am or if this is even useful.&#160; Let me know if I’m completely misusing the monad principles.&#160; Or, by some weird miracle, let me know if I’m on to something.&#160; Actually, if Dmitri is on to something.&#160; Either way, I want to hear from you.&#160; Thanks.</p>
+
+  <h3>Additional Monad Learning Resources</h3>
+
+  <ul>
+    <li><a href="http://blogs.msdn.com/b/wesdyer/archive/2008/01/11/the-marvels-of-monads.aspx">http://blogs.msdn.com/b/wesdyer/archive/2008/01/11/the-marvels-of-monads.aspx</a> </li>
+
+    <li><a href="http://www.infoq.com/presentations/Demystifying-Monads">http://www.infoq.com/presentations/Demystifying-Monads</a> </li>
+
+    <li><a href="http://importantshock.wordpress.com/2009/01/18/jquery-is-a-monad/">http://importantshock.wordpress.com/2009/01/18/jquery-is-a-monad/</a> </li>
+
+    <li>Also, LINQ is based on monadic principles. </li>
+  </ul>
+</span>  </div>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2012
+
+    Mike Murray
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a>
+</footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'mkmurray';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+		</div>
+		<div class="left-col">
+			<header id="header" class="inner"><div class="profilepic">	
+	<img src="/images/mkmurray.jpg" alt="Profile Picture">
+</div>
+<h1><a href="/">Mike Murray</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<br/>
+<h3 class="alignleft">please code responsibly</h3>
+<br/>
+<br/>
+<br/>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		<a class="facebook" href="http://www.facebook.com/mkmurray" title="Facebook">Facebook</a>
+		
+		
+		<a class="google" href="https://plus.google.com/109073345657761090655?rel=author" title="Google+">Google+</a>
+		
+		
+		<a class="twitter" href="http://twitter.com/mkmurray" title="Twitter">Twitter</a>
+		
+		
+		<a class="github" href="https://github.com/mkmurray" title="GitHub">GitHub</a>
+		
+		
+		<a class="linkedin" href="http://www.linkedin.com/in/mkmurray">LinkedIn</a>
+		
+		
+		
+		
+		<a class="rss" href="http://feeds.feedburner.com/mkmurray/" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+
+</header>				
+		</div>	
+	</div>
+</body>
+</html>

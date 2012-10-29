@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Visual Studio | Mike Murray]]></title>
+  <link href="http://mkmurray.com/blog/categories/visual-studio/atom.xml" rel="self"/>
+  <link href="http://mkmurray.com/"/>
+  <updated>2012-10-29T14:47:08-06:00</updated>
+  <id>http://mkmurray.com/</id>
+  <author>
+    <name><![CDATA[Mike Murray]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Develop with Passion bootcamp course - Denver 2011]]></title>
+    <link href="http://mkmurray.com/blog/2011/05/31/develop-with-passion-bootcamp-course-denver-2011/"/>
+    <updated>2011-05-31T09:27:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2011/05/31/develop-with-passion-bootcamp-course-denver-2011</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p><a href="http://paceyourself.net/" target="_blank">A very talented coworker</a> and I recently went to JP Boodhoo’s <a href="http://www.jpboodhoo.com/training.oo" target="_blank">Develop with Passion bootcamp training course</a> (previously known as Nothin but .NET). I had originally heard of the course from <a href="http://www.davesquared.net/" target="_blank">Dave Tchepak</a> who <a href="http://www.davesquared.net/2009/08/nothin-but-net-sydney-2009-day-1.html" target="_blank">attended the course nearly two years ago</a>. This blog post is a wrap-up of my thoughts and feelings about the course itself, <a href="http://www.jpboodhoo.com/" target="_blank">JP Boodhoo</a> as the instructor &amp; experienced craftsman, and the .NET development community in general.</p> <span class="fullpost">   <p>My prior impressions of the course from what I had read was that I would be in awe of JP's coding and design skills and very overwhelmed with the feeling that I didn't really know how to code; also that I would get no sleep at all that week, going from early morning to past midnight every day. I had also heard from a previous course member (off the record) that JP’s organization and direction with course material was a bit disorganized back then (luckily this has changed significantly since he had taken the course). I was really excited to see some good BDD in action, get my TDD passion ignited again (I had actually mentioned on twitter recently that my motivation for test was waning as of late), and see JP's mad Vim skills (since I have gotten into that the last few months).</p>    <p>Overall, I was pleasantly surprised with the fulfillment of most of my positive expectations and initial impressions going into the course. JP's personality and passion are infectious, and his teaching skills are pretty top-notch. The course material was well-structured and there was a clear direction for what we hoped to cover throughout the week (and yet, he was still flexible enough to be able to briefly entertain an off-topic direction the students wanted to take the course). He stayed true to the advertised 9am-9pm every day no matter what. He said that when he did the late nighters with previous courses, people came back the next day with little sleep and trashed as far as coding &amp; learning capabilities go.</p>    <p>Watching him code so efficiently is quite a treat. He automates anything he does more than once so that a particular task doesn’t ever get in his way and hold him back the next time. His <a href="http://www.autohotkey.com/" target="_blank">AutoHotkey</a> scripts and automation tools that he has put together are absolutely incredible. He briefly touched the mouse two times the entire week, and it only for when one of his programs or Windows VM was wigging out. Screens and dialogs flew by so fast, you could tell he wasn't going to let any UI (even Visual Studio) get in the way of his productivity to code. He mentioned he will be open sourcing some of his scripts that he uses to keep his development environment consistent across OS platforms. Definitely cool stuff.</p>    <p>As far as JP's actual coding/design skills, I am absolutely floored. He certainly understands C# and .NET well. But it's his Object-Oriented design skills that blew us away. I've realized I don't really know OO design. I think too mechanically about the implementation of the solution instead of focusing on breaking down the problem into smaller manageable chunks. His TDD skills (both Top Down Design and Test Driven Development) are amazing. I've never been a fan of the TDD samples and intros I've seen (where the instructors do the absolute dumbest thing to make the test pass; JP admitted that style didn’t jive with him either). I've always thought that Behavior Driven Development and Top-Down Design were the way to go if I were to have tests drive my designs (or have tests at all for that matter; I'm still having trouble finding enthusiasm for tests written after development for modules and units). So it was great to see a master at that particular craft. It made me excited to use tests as a tool to guide my OO design, behavior discovery, and problem solving.</p>    <p>Some of you may recall that I had <a href="http://murrayon.net/2009/11/anagram-code-kata-bdd-mspec.html" target="_blank">previously investigated BDD, Machine.Specifications, and Top-Down Design a year and a half ago doing the Anagram Code Kata</a>. I think I can recognize better design and responsibility break-up and assignment nowadays. I likely will blog on these subjects again this year with new &amp; improved passion and knowledge.</p>    <p>There was one sad takeaway for me personally from the course, which was a sense of disappointment in the .NET development community in general. Giving myself some time since the course to really think it through, I’m realizing I’m probably being too tough on our community, as I know each Dev community out there suffers from it’s own set of problems. But I don’t want to excuse our shortcomings either; rather, I would like to point them out so that we can focus on them and root those weaknesses out. I think our community in specific is unique in that there is a big shot company that dictates the direction our community should take, sometimes taking credit for all the innovation. Things are improving lately no doubt; it appears Microsoft is listening more and more and trying to let outsiders get involved and contribute.</p>    <p>But we as .NET devs need to step up and take matters into our own hands, we need to take better control of the code we write and encourage best practices within the realms of our responsibilities and influence. I believe many .NET shops rely on the tools sent down from above so heavily that we don’t really solve problems anymore. JP’s focus on problem solving and code katas from the course attack this deficiency at its core. I do somewhat blame our university Computer Science programs for not teaching real OO (a great discussion on formalism versus hermeneutics in a book I highly recommend, <a href="http://www.amazon.com/Object-Thinking-DV-Microsoft-Professional-David/dp/0735619654" target="_blank">Object Thinking</a>), but at some point we have to take what we were given and no matter our current standing, focus on sharpening our skills through practice and continuous learning. It boils down to individual responsibility for our current skill set and progression as a software craftsman. JP’s course does a terrific job of waking you up to that realization and inspiring you to be a better professional at your craft.</p>    <p>I have a few takeaways from the course that I’ll publicly spell out now. First, I (and hopefully our whole team) need to better understand design patterns and have them become integral to our code discussions. JP was all about efficiency in keystrokes and related dev tasks, and it seems natural that our language and code discussions could benefit from more efficient communication using design pattern terminology to convey a lot about a specific design concept in only a few words. Second, I hope that I (and our team again) can really put our tests to work for us, helping us recognize the problem to be solved or the behavior that needs to be captured, and then guiding us toward a simple solution. The third takeaway is related to that last part, and that is to have simple solutions that are distributed across simple object implementations (focusing on behaviors) that adhere to SOLID principles. It appears the key is to not focus on implementation specifics until the very last responsible moment; if done right, the implementations to create should be so clear cut and trivial, almost spelled right out in the tests themselves. It’s hard to put into words, but it seems crucial to focus first on the collaborators needed while designing code at the higher levels, finding ways to offload as much responsibility as possible (at least that’s what it felt like) onto dependencies that have yet to be designed and implemented. Designing Top-Down in this way gave such simple and elegant solutions that were totally extensible and adhered to the <a href="http://en.wikipedia.org/wiki/Open/closed_principle" target="_blank">Open/Closed Principle</a> better than any other code I have ever seen before. Perhaps as I blog more about this, I’ll be able to better put this style of coding into words (especially as I try to better understand it myself; it all seems so magical still!).</p>    <p>Overall, a great course that I highly recommend to all. JP has mentioned doing a similar course in Ruby, which I personally find especially interesting, given the same design/coding techniques would seem to run against a lot less friction compared to the heavy reliance on interfaces and mocking that C# require.</p>    <p>Stay tuned as I try to put some of this stuff into practice!</p> </span>  </div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[LINQ Query Syntax and Type Argument Inference]]></title>
+    <link href="http://mkmurray.com/blog/2010/12/03/linq-query-syntax-and-type-argument-inference/"/>
+    <updated>2010-12-03T15:29:00-07:00</updated>
+    <id>http://mkmurray.com/blog/2010/12/03/linq-query-syntax-and-type-argument-inference</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>In LINQ, you can query in-memory data collections using <a href="http://msdn.microsoft.com/en-us/library/bb397947.aspx">Method Syntax (the <font face="Courier New">IEnumerable</font> extension methods) or Query Syntax (the SQL-like, declarative syntactic sugar on top of the underlying method calls)</a>.&#160; I was using the query syntax to join a few in-memory collections and then project (like a SQL <font face="Courier New">SELECT</font>) the denormalized data into a new object that only contained a few pieces of information from each of the separate data collections.&#160; The code could look similar to this (we'll go with a shopping example in honor of the upcoming holiday season):</p>  <pre class="brush: csharp">var shoppingLists =
+    from person in people
+    join wishlist in wishlists on person.Id equals wishlist.personId
+    join store in stores on store.Id equals wishlist.storeId
+    select new
+    {
+        PersonName = person.Name,
+        StoreName = store.Name,
+        NumItems = wishlist.Items.Count
+    };</pre>
+
+<p>However, I ran into the following intellisense red squiggly error in the Visual Studio C# code editor on the second <font face="Courier New">join</font> statement:</p>
+
+<blockquote>
+  <p><font face="Courier New">The type arguments for method 'IEnumerable&lt;TResult&gt; System.Linq.Enumerable.Join&lt;TOuter,TInner,TKey,TResult&gt;(this IEnumerable&lt;TOuter&gt;, IEnumerable&lt;TInner&gt;, Func&lt;TOuter,TKey&gt;, Func&lt;TInner,TKey&gt;, Func&lt;TOuter,TInner,TResult&gt;)' cannot be inferred from the query.</font></p>
+</blockquote>
+
+<p>The error might also end with a statement that says &quot;<font face="Courier New">Try specifiying the type arguments explicitly</font>.&quot;</p>
+<span class="fullpost">
+  <h3>Let’s Take a Closer Look…</h3>
+
+  <p>The underlying problem is best understood by examining the method signature of the <a href="http://msdn.microsoft.com/en-us/library/bb534675.aspx">LINQ <font face="Courier New">Join</font> extension method</a> and how the LINQ query syntax for the keyword <font face="Courier New">join</font> maps to that method call in the compiler.&#160; The type signature for the extension method is as follows:</p>
+
+  <pre class="brush: csharp">public static IEnumerable&lt;TResult&gt; Join&lt;TOuter,TInner,TKey,TResult&gt;(
+    this IEnumerable&lt;TOuter&gt; outer,
+    IEnumerable&lt;TInner&gt; inner,
+    Func&lt;TOuter,TKey&gt; outerKeySelector,
+    Func&lt;TInner,TKey&gt; innerKeySelector,
+    Func&lt;TOuter,TInner,TResult&gt; resultSelector)</pre>
+
+  <p>Consistent with all <a href="http://msdn.microsoft.com/en-us/library/bb383977.aspx">extension methods</a>, it is <font face="Courier New">public static</font> and has a <font face="Courier New">this</font> keyword in front of the first method parameter, allowing you to call the <font face="Courier New">Join</font> method as if it had been declared in the original definition of the <font face="Courier New">IEnumerable&lt;&gt;</font> class or one of its inheriting children classes.</p>
+
+  <p>The first two parameters are the two data collections being joined, and in the case of my LINQ query above, they would be the joined collection of <font face="Courier New">people</font> &amp; <font face="Courier New">wishlists</font> and then the <font face="Courier New">stores</font> collection, respectively.</p>
+
+  <p>The next two method parameters take delegates or lambda expressions that select the key value from each collection participating in the join, <font face="Courier New">outer</font> collection key selector first and then the <font face="Courier New">inner</font> key selector second.&#160; The key values of each item in each collection will compared to each other for equality.&#160; It will use the normal definition of the <font face="Courier New">Equals</font> method for your object type (or if you specified a custom one in your class definition), or there is another <font face="Courier New">Join</font> extension method signature that takes in another method parameter that an object that conforms to the <font face="Courier New"><a href="http://msdn.microsoft.com/en-us/library/ms132151.aspx">IEqualityComparer&lt;TKey&gt; <font face="Arial">interface</font></a></font>.&#160; The key selectors from our LINQ query sample would be the two member access expressions in the &quot;<font face="Courier New">on store.Id equals wishlist.storeId</font><font face="Arial">&quot; statement.</font></p>
+
+  <p>The last parameter is a delegate or lambda expression that takes in a item from each participating data collection and projects the items into a new form (like the <font face="Courier New">Select</font> LINQ query method and its SQL equivalent).&#160; The two items being passed into the <font face="Courier New">Func</font> have passed the equality comparison of each item’s key value, exactly the same as how rows from two tables match up in an <font face="Courier New">inner join</font> statement in SQL.</p>
+
+  <p>As for the <a href="http://msdn.microsoft.com/en-us/library/0zk36dx2.aspx">generic type parameters</a> in this extension method definition, <font face="Courier New">TOuter</font> and <font face="Courier New">TInner</font> are the types from the two collections participating in the join.&#160; <font face="Courier New">TKey</font> is the type returned by the key selectors; notice that in order to compare the equality of each key selected, they need to be of the same type.&#160; In our example, <font face="Courier New">TKey</font> is likely <font face="Courier New">int</font> or <font face="Courier New">long</font> (or maybe <font face="Courier New">Guid</font>) since we’re dealing with <font face="Courier New">Id</font> properties of all of our objects.&#160; <font face="Courier New">TResult</font> is the type returned by the projection <font face="Courier New">Func&lt;TOuter,TInner,TResult&gt; resultSelector</font>; in our case, we returned an <a href="http://msdn.microsoft.com/en-us/library/bb397696.aspx">anonymous type</a> consisting of three properties (<font face="Courier New">PersonName</font>, <font face="Courier New">StoreName</font>, and <font face="Courier New">NumItems</font>).</p>
+
+  <h3>Ok, So Where Did I Screw Up Then?</h3>
+
+  <p>To answer this, let’s take a look one more time at my LINQ query syntax, how it would map to LINQ method syntax, and the <font face="Courier New">Join</font> method signature again all side-by-side:</p>
+
+  <pre class="brush: csharp; highlight: [4,19,20]">var shoppingLists =
+    from person in people
+    join wishlist in wishlists on person.Id equals wishlist.personId
+    join store in stores on store.Id equals wishlist.storeId
+    select new
+    {
+        PersonName = person.Name,
+        StoreName = store.Name,
+        NumItems = wishlist.Items.Count
+    };
+
+// Equivalent LINQ method syntax
+var shoppingLists2 = people
+    .Join(wishlists,
+        person =&gt; person.Id,
+        wishlist =&gt; wishlist.personId,
+        (person, wishlist) =&gt; new { person, wishlist })
+    .Join(stores,
+        store =&gt; store.Id,
+        something =&gt; something.wishlist.storeId,
+        (obj, store) =&gt; new
+        {
+            PersonName = obj.person.Name,
+            StoreName = store.Name,
+            NumItems = obj.wishlist.Items.Count
+        });
+
+public static IEnumerable&lt;TResult&gt; Join&lt;TOuter,TInner,TKey,TResult&gt;(
+    this IEnumerable&lt;TOuter&gt; outer,
+    IEnumerable&lt;TInner&gt; inner,
+    Func&lt;TOuter,TKey&gt; outerKeySelector,
+    Func&lt;TInner,TKey&gt; innerKeySelector,
+    Func&lt;TOuter,TInner,TResult&gt; resultSelector)</pre>
+
+  <p>The issue is lines 19 and 20 above; they need to be switched.&#160; The compiler can’t properly infer the generic type parameters because we have our key selectors out of order in the argument list when invoking the <font face="Courier New">Join</font> method.&#160; If you wanted to be explicit about your generic type parameters assignments, then <font face="Courier New">Join&lt;TOuter, TInner, TKey, TResult&gt;</font> would be <font face="Courier New">Join&lt;Temp1, Store, int, Temp2&gt;</font>, where <font face="Courier New">Temp1</font> and <font face="Courier New">Temp2</font> represent the magical type definitions that the compiler creates underneath the covers when you use anonymous types in your C# code.&#160; Notice the <font face="Courier New">outerKeySelector</font> needs to come before the <font face="Courier New">innerKeySelector</font>.&#160; It appears the &quot;<font face="Courier New">on store.Id equals wishlist.storeId</font><font face="Arial">&quot; syntax is not a </font><a href="http://en.wikipedia.org/wiki/Commutativity">commutative operation</a>.</p>
+
+  <p>One last thing, I just realized that the error(s) given in Visual Studio when you actually compile the code are different than the intellisense red squiggly error message.&#160; It appears an actual build of the code is able to be a little more omniscient than the quick compile that intellisense does as you type.&#160; The error (and intelligent suggestion) the compiler offers says something like this:</p>
+
+  <blockquote>
+    <p><font face="Courier New">The name 'store' is not in scope on the left side of 'equals'.&#160; Consider swapping the expressions on either side of 'equals'.</font></p>
+  </blockquote>
+
+  <h3>Additional Info</h3>
+
+  <p>While reading the <a href="http://msdn.microsoft.com/en-us/library/bb534675.aspx">MSDN article on the LINQ <font face="Courier New">Join</font> method</a>, I thought the &quot;<font face="Courier New">Remarks</font><font face="Arial">&quot;</font> section has some really great stuff about deferred execution, default equality comparison, differences from <font face="Courier New">SelectMany</font>, sort order perseverance, and so on:</p>
+
+  <blockquote>
+    <p>This method is implemented by using deferred execution. The immediate return value is an object that stores all the information that is required to perform the action. The query represented by this method is not executed until the object is enumerated either by calling its <strong>GetEnumerator</strong> method directly or by using foreach in Visual C# or For Each in Visual Basic.</p>
+
+    <p>The default equality comparer, <a href="http://msdn.microsoft.com/en-us/library/ms224763.aspx">Default</a>, is used to hash and compare keys.</p>
+
+    <p>A join refers to the operation of correlating the elements of two sources of information based on a common key. <a href="http://msdn.microsoft.com/en-us/library/system.linq.enumerable.join.aspx">Join</a> brings the two information sources and the keys by which they are matched together in one method call. This differs from the use of <strong>SelectMany</strong>, which requires more than one method call to perform the same operation.</p>
+
+    <p><a href="http://msdn.microsoft.com/en-us/library/system.linq.enumerable.join.aspx">Join</a> preserves the order of the elements of outer, and for each of these elements, the order of the matching elements of inner.</p>
+
+    <p>In query expression syntax, a join (Visual C#) or Join (Visual Basic) clause translates to an invocation of <a href="http://msdn.microsoft.com/en-us/library/system.linq.enumerable.join.aspx">Join</a>.</p>
+
+    <p>In relational database terms, the <a href="http://msdn.microsoft.com/en-us/library/system.linq.enumerable.join.aspx">Join</a> method implements an inner equijoin. 'Inner' means that only elements that have a match in the other sequence are included in the results. An 'equijoin' is a join in which the keys are compared for equality. A left outer join operation has no dedicated standard query operator, but can be performed by using the <a href="http://msdn.microsoft.com/en-us/library/system.linq.enumerable.groupjoin.aspx">GroupJoin</a> method. See <a href="http://msdn.microsoft.com/en-us/library/bb397908.aspx">Join Operations</a>.</p>
+  </blockquote>
+
+  <p>Thanks, I hope this proves helpful to someone, as it was certainly eye-opening to me.</p>
+</span></div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Maybe Monad Extensions]]></title>
+    <link href="http://mkmurray.com/blog/2010/09/30/maybe-monad-extensions/"/>
+    <updated>2010-09-30T17:35:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2010/09/30/maybe-monad-extensions</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>I learned a lot from <a href="http://murrayon.net/2010/09/maybe-from-murray-monads.html" target="_blank">my last foray into implementing my own Maybe Monad</a>.&#160; Apparently, it got noticed by and was actually useful to <a href="http://www.lostechies.com/members/derick.bailey/default.aspx" target="_blank">Derick Bailey</a>, as it was one of the resources he used in <a href="http://www.lostechies.com/blogs/derickbailey/archive/2010/09/29/monads-in-c-which-part-is-the-monad.aspx" target="_blank">his own personal exploration into Monads</a>.&#160; Of course, Derick did the topic a bit more justice, as he has a propensity to do.</p>  <p>Nonetheless, I have done as I said I would and reworked my Murray Monads into a cleaner, more concise implementation using extension methods, much like the implementation I introduced from Dmitri Nesteruk in the last post.&#160; So without further ado, I’d like to introduce you to the MaybeMonadExtensions.</p> <span class="fullpost">   <h4>Monads 2.0 - <a href="http://www.youtube.com/watch?v=ll7rWiY5obI&amp;t=1m19s" target="_blank">“These Go To Eleven”</a></h4>    <p>If you want to get an introduction to what Monads are and how I got to where I am today with this little library, then you really should check out <a href="http://murrayon.net/2010/09/maybe-from-murray-monads.html" target="_blank">the previous post on this topic</a>.&#160; I will however give a few brief code samples to show you what it can do to tidy up all those null checks using the Maybe Monad.</p>    <p>Here is code we tend to write all the time:</p>    <pre class="brush: csharp">string postCode;
+if (person != null)
+{
+  if (HasMedicalRecord(person) &amp;&amp; person.Address != null)
+  {
+    CheckAddress(person.Address);
+    if (person.Address.PostCode != null)
+      postCode = person.Address.PostCode.ToString();
+    else
+      postCode = &quot;UNKNOWN&quot;;
+  }
+}</pre>
+
+  <p>It can look like this with some Maybe Monad love:</p>
+
+  <pre class="brush: csharp">string postalCode = person.If(HasMedicalRecord)
+  .Access(p =&gt; p.Address)
+  .Apply(CheckAddress)
+  .Access(a =&gt; a.PostCode)
+  .Convert(pc =&gt; pc.ToString(), &quot;UNKNOWN&quot;);</pre>
+
+  <p>I know!&#160; Groovy, huh?!</p>
+
+  <p>The source can be found here:&#160; <a href="http://bitbucket.org/murrayondotnet/maybemonadextensions/">http://bitbucket.org/murrayondotnet/maybemonadextensions/</a></p>
+
+  <p>Let me know if you put this to good use!</p>
+</span>  </div>
+
+
+<h2>Comments</h2>
+
+
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Omer Mor</div>
+<div class='content'>
+I see your point.<br />However, even Rx is sharing many LINQ operators with its IObservable &amp; IQbservable monads.<br />So we already have 4 different monads (IEnumerable, IQueryable, IObservable, IQbservable) using those operators. I don&#39;t think any more would hurt :-)</div>
+</div>
+<div class='comment'>
+<div class='author'>Mike Murray</div>
+<div class='content'>
+Great question. I suppose I could have used those names and it would likely be a familiar vernacular for .NET developers. I guess my only hesitation would be that I wouldn&#39;t necessarily want to confuse others who read the code into thinking that they are LINQ extension methods. My first thought when I saw your code was that somehow person was an IQueryable or IEnumerable, just because of those familiar method names.<br /><br />Great point though, and it does make me second guess my chosen names a bit. I did like Derick&#39;s method names too (especially just plain old &quot;Get&quot;). Thanks for posting!</div>
+</div>
+<div class='comment'>
+<div class='author'>Omer Mor</div>
+<div class='content'>
+Nice.<br /><br />Why didn&#39;t you choose the Linq terminology here?<br />I&#39;d write your example as this (Linq + Rx&#39;s Do operator):<br /><br /><br />string postalCode = person.Where(HasMedicalRecord)<br />  .Select(p =&gt; p.Address)<br />  .Do(CheckAddress)<br />  .Select(a =&gt; a.PostCode)<br />  .Select(pc =&gt; pc.ToString(), &quot;UNKNOWN&quot;);</div>
+</div>
+</div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Maybe from Murray Monads]]></title>
+    <link href="http://mkmurray.com/blog/2010/09/21/maybe-from-murray-monads/"/>
+    <updated>2010-09-21T18:33:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2010/09/21/maybe-from-murray-monads</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>Off and on for the last six months, I have probably seen and read at least a half dozen introductions and tutorials on <a href="http://en.wikipedia.org/wiki/Monad_(functional_programming)">monads</a>, a functional programming construct based on the mathematical monads from category theory.&#160; Monads are known for their headache-inducing explanations, and I’ve had my fair share.&#160; Every tutorial I’ve committed time to mentions the endless possibilities of using such constructs to improve your code, but I’ve had a hard time finding real-world examples of using this stuff out in the wild (<a href="http://stackoverflow.com/questions/866912/what-is-the-compelling-scenario-for-using-monads-in-c">much like this Stack Overflow poster</a>, whose link I only found just now).&#160; It has recently become a quest of mine to find some C# code we all write that could be improved by a monad.</p>  <p>I am now going to attempt to introduce a Maybe monad that I cooked up, but I warn you that I have no idea what I’m doing or if I’m staying within the rules for what makes a monad by definition a monad.&#160; Don’t worry though, you have nothing to lose; I’m the only one taking a risk at looking foolish, and it’s all at the expense of my reputation and not yours.&#160; Should be fun!</p> <span class="fullpost">   <h3>“It is not the spoon that bends, it is only yourself”</h3>    <p>From the <a href="http://en.wikipedia.org/wiki/Monad_(functional_programming)">Wikipedia article linked to above</a>:</p>    <blockquote>     <p>“In functional programming, a monad is a kind of abstract data type constructor used to represent computations (instead of data in the domain model). Monads allow the programmer to chain actions together to build a pipeline, in which each action is decorated with additional processing rules provided by the monad. Programs written in functional style can make use of monads to structure procedures that include sequenced operations, or to define arbitrary control flows (like handling concurrency, continuations, or exceptions).</p>      <p>…</p>      <p>“A programmer will compose monadic functions to define a data-processing pipeline. The monad acts as a framework, as it's a reusable behavior that decides the order in which the specific monadic functions in the pipeline are called, and manages all the undercover work required by the computation.”</p>   </blockquote>    <p>The promised tenets of monads are increased code readability and algorithm composability, an example of preferring declarative code over imperative, procedural code.&#160; In the case of the Maybe monad, it is a wrapper around types that might have an invalid state like <font face="Courier New">null</font> or <font face="Courier New">nothing</font>.&#160; The lure of the Maybe monad is the ability to deal with values that might be in this invalid state without having to explicitly check for null before continuing or exceptions being thrown in your algorithms.</p>    <p>I first found <a href="http://abdullin.com/journal/2009/10/6/zen-development-practices-c-maybe-monad.html">a post by Rinat Abdullin</a> where he introduced his version of a C# Maybe monad.&#160; I downloaded the library and attempted to figure out how to use it in code I could possibly write any given day.&#160; I tried mimicking the <font face="Courier New">HttpContext.Request.Params</font> collection commonly used in ASP.NET pages and HTTP handlers to retrieve the passed in query string or post values on the <font face="Courier New">Request</font> object.&#160; If you ask that collection for a parameter that was not passed in on the request, it returns a null instead of the string value.&#160; Common practice is to then use a bunch of <font face="Courier New">if</font> statements and key off the fact that certain query string or post parameters may or may not exist.</p>    <p>The problem I ran into with Rinat’s implemenation is that I wrote the code using the monad how I thought it should help me, and then ran into compiler errors and runtime exceptions because of the expectation that Maybe objects couldn’t be constructed around null values.&#160; Here is the twitter conversation I had with Rinat in regard to this misconception that I had:</p>   <span style="widows: 2; text-transform: none; text-indent: 0px; border-collapse: separate; font: medium &#39;Times New Roman&#39;; white-space: normal; orphans: 2; letter-spacing: normal; color: rgb(0,0,0); word-spacing: 0px; -webkit-border-horizontal-spacing: 0px; -webkit-border-vertical-spacing: 0px; -webkit-text-decorations-in-effect: none; -webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px" class="Apple-style-span"><span style="font-family: verdana, tahoma, arial, &#39;Trebuchet MS&#39;, sans-serif, georgia, courier, &#39;Times New Roman&#39;, serif; color: rgb(0,58,126); font-size: 12px; font-weight: bold" class="Apple-style-span">       <div style="padding-bottom: 15px; background-color: rgb(234,242,249); margin: 0px; padding-left: 15px; width: 550px; padding-right: 15px; padding-top: 15px; background-origin: initial; background-clip: initial" class="post1">         <div style="padding-bottom: 0px; margin: 0px 15px 0px 0px; padding-left: 0px; width: 80px; padding-right: 0px; display: block; float: left; height: 80px; padding-top: 0px" class="avatar"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View murrayondotnet&#39;s Twitter Page" href="http://www.twitter.com/murrayondotnet" target="_blank"><img style="border-bottom: rgb(204,204,204) 1px solid; border-left: rgb(204,204,204) 1px solid; padding-bottom: 3px; margin: 0px; padding-left: 3px; padding-right: 3px; border-top: rgb(204,204,204) 1px solid; border-right: rgb(204,204,204) 1px solid; padding-top: 3px" alt="murrayondotnet&#39;s avatar" src="http://a1.twimg.com/profile_images/547516901/profilepic_bigger.PNG" width="73" height="73" /></a></div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; float: left; padding-top: 0px" class="post">           <h5 style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; font: bold 16px verdana, tahoma, arial, &#39;Trebuchet MS&#39;, sans-serif, georgia, courier, &#39;Times New Roman&#39;, serif; color: rgb(98,98,98); padding-top: 0px"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View murrayondotnet&#39;s Twitter Page" href="http://www.twitter.com/murrayondotnet" target="_blank">murrayondotnet</a><span class="Apple-converted-space">&#160;</span>says:</h5>            <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; width: 450px; padding-right: 0px; font: 14px/19px tahoma, arial; color: rgb(98,98,98); padding-top: 0px" class="mainpost">@abdullin Can you make your MaybeMonad in Lokad lib accept null at construct or explicit/implicit cast? Maybe&lt;SomeType&gt; monad = varThatsNull</div>         </div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; clear: both; padding-top: 0px" class="clear"></div>       </div>        <div style="padding-bottom: 15px; background-color: rgb(255,255,255); margin: 0px; padding-left: 15px; width: 550px; padding-right: 15px; padding-top: 15px; background-origin: initial; background-clip: initial" class="post2">         <div style="padding-bottom: 0px; margin: 0px 15px 0px 0px; padding-left: 0px; width: 80px; padding-right: 0px; display: block; float: left; height: 80px; padding-top: 0px" class="avatar"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View abdullin&#39;s Twitter Page" href="http://www.twitter.com/abdullin" target="_blank"><img style="border-bottom: rgb(204,204,204) 1px solid; border-left: rgb(204,204,204) 1px solid; padding-bottom: 3px; margin: 0px; padding-left: 3px; padding-right: 3px; border-top: rgb(204,204,204) 1px solid; border-right: rgb(204,204,204) 1px solid; padding-top: 3px" alt="abdullin&#39;s avatar" src="http://a3.twimg.com/profile_images/755788123/0_1f297_e07be068_orig_bigger.jpg" width="73" height="73" /></a></div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; float: left; padding-top: 0px" class="post">           <h5 style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; font: bold 16px verdana, tahoma, arial, &#39;Trebuchet MS&#39;, sans-serif, georgia, courier, &#39;Times New Roman&#39;, serif; color: rgb(98,98,98); padding-top: 0px"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View abdullin&#39;s Twitter Page" href="http://www.twitter.com/abdullin" target="_blank">abdullin</a><span class="Apple-converted-space">&#160;</span>says:</h5>            <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; width: 450px; padding-right: 0px; font: 14px/19px tahoma, arial; color: rgb(98,98,98); padding-top: 0px" class="mainpost">@murrayondotnet No, this would violate the idea of MaybeMonad (as in Lokad libs). But you can copy code and tweak it to your needs locally.</div>         </div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; clear: both; padding-top: 0px" class="clear"></div>       </div>        <div style="padding-bottom: 15px; background-color: rgb(234,242,249); margin: 0px; padding-left: 15px; width: 550px; padding-right: 15px; padding-top: 15px; background-origin: initial; background-clip: initial" class="post1">         <div style="padding-bottom: 0px; margin: 0px 15px 0px 0px; padding-left: 0px; width: 80px; padding-right: 0px; display: block; float: left; height: 80px; padding-top: 0px" class="avatar"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View murrayondotnet&#39;s Twitter Page" href="http://www.twitter.com/murrayondotnet" target="_blank"><img style="border-bottom: rgb(204,204,204) 1px solid; border-left: rgb(204,204,204) 1px solid; padding-bottom: 3px; margin: 0px; padding-left: 3px; padding-right: 3px; border-top: rgb(204,204,204) 1px solid; border-right: rgb(204,204,204) 1px solid; padding-top: 3px" alt="murrayondotnet&#39;s avatar" src="http://a1.twimg.com/profile_images/547516901/profilepic_bigger.PNG" width="73" height="73" /></a></div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; float: left; padding-top: 0px" class="post">           <h5 style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; font: bold 16px verdana, tahoma, arial, &#39;Trebuchet MS&#39;, sans-serif, georgia, courier, &#39;Times New Roman&#39;, serif; color: rgb(98,98,98); padding-top: 0px"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View murrayondotnet&#39;s Twitter Page" href="http://www.twitter.com/murrayondotnet" target="_blank">murrayondotnet</a><span class="Apple-converted-space">&#160;</span>says:</h5>            <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; width: 450px; padding-right: 0px; font: 14px/19px tahoma, arial; color: rgb(98,98,98); padding-top: 0px" class="mainpost">@abdullin Figured this was case; what does it violate? I'm still new to monads. Thought one would be able construct monad around maybe null</div>         </div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; clear: both; padding-top: 0px" class="clear"></div>       </div>        <div style="padding-bottom: 15px; background-color: rgb(255,255,255); margin: 0px; padding-left: 15px; width: 550px; padding-right: 15px; padding-top: 15px; background-origin: initial; background-clip: initial" class="post2">         <div style="padding-bottom: 0px; margin: 0px 15px 0px 0px; padding-left: 0px; width: 80px; padding-right: 0px; display: block; float: left; height: 80px; padding-top: 0px" class="avatar"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View abdullin&#39;s Twitter Page" href="http://www.twitter.com/abdullin" target="_blank"><img style="border-bottom: rgb(204,204,204) 1px solid; border-left: rgb(204,204,204) 1px solid; padding-bottom: 3px; margin: 0px; padding-left: 3px; padding-right: 3px; border-top: rgb(204,204,204) 1px solid; border-right: rgb(204,204,204) 1px solid; padding-top: 3px" alt="abdullin&#39;s avatar" src="http://a3.twimg.com/profile_images/755788123/0_1f297_e07be068_orig_bigger.jpg" width="73" height="73" /></a></div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; float: left; padding-top: 0px" class="post">           <h5 style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; font: bold 16px verdana, tahoma, arial, &#39;Trebuchet MS&#39;, sans-serif, georgia, courier, &#39;Times New Roman&#39;, serif; color: rgb(98,98,98); padding-top: 0px"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View abdullin&#39;s Twitter Page" href="http://www.twitter.com/abdullin" target="_blank">abdullin</a><span class="Apple-converted-space">&#160;</span>says:</h5>            <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; width: 450px; padding-right: 0px; font: 14px/19px tahoma, arial; color: rgb(98,98,98); padding-top: 0px" class="mainpost">@murrayondotnet check out the article on Maybe monads in Lokad libs: http://bit.ly/1GJlNN</div>         </div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; clear: both; padding-top: 0px" class="clear"></div>       </div>        <div style="padding-bottom: 15px; background-color: rgb(234,242,249); margin: 0px; padding-left: 15px; width: 550px; padding-right: 15px; padding-top: 15px; background-origin: initial; background-clip: initial" class="post1">         <div style="padding-bottom: 0px; margin: 0px 15px 0px 0px; padding-left: 0px; width: 80px; padding-right: 0px; display: block; float: left; height: 80px; padding-top: 0px" class="avatar"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View murrayondotnet&#39;s Twitter Page" href="http://www.twitter.com/murrayondotnet" target="_blank"><img style="border-bottom: rgb(204,204,204) 1px solid; border-left: rgb(204,204,204) 1px solid; padding-bottom: 3px; margin: 0px; padding-left: 3px; padding-right: 3px; border-top: rgb(204,204,204) 1px solid; border-right: rgb(204,204,204) 1px solid; padding-top: 3px" alt="murrayondotnet&#39;s avatar" src="http://a1.twimg.com/profile_images/547516901/profilepic_bigger.PNG" width="73" height="73" /></a></div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; float: left; padding-top: 0px" class="post">           <h5 style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; font: bold 16px verdana, tahoma, arial, &#39;Trebuchet MS&#39;, sans-serif, georgia, courier, &#39;Times New Roman&#39;, serif; color: rgb(98,98,98); padding-top: 0px"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View murrayondotnet&#39;s Twitter Page" href="http://www.twitter.com/murrayondotnet" target="_blank">murrayondotnet</a><span class="Apple-converted-space">&#160;</span>says:</h5>            <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; width: 450px; padding-right: 0px; font: 14px/19px tahoma, arial; color: rgb(98,98,98); padding-top: 0px" class="mainpost">@abdullin Thanks for the link, thats actually how I found your lib. I didnt see where you say why cant construct maybe monad on null. Help?</div>         </div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; clear: both; padding-top: 0px" class="clear"></div>       </div>        <div style="padding-bottom: 15px; background-color: rgb(255,255,255); margin: 0px; padding-left: 15px; width: 550px; padding-right: 15px; padding-top: 15px; background-origin: initial; background-clip: initial" class="post2">         <div style="padding-bottom: 0px; margin: 0px 15px 0px 0px; padding-left: 0px; width: 80px; padding-right: 0px; display: block; float: left; height: 80px; padding-top: 0px" class="avatar"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View abdullin&#39;s Twitter Page" href="http://www.twitter.com/abdullin" target="_blank"><img style="border-bottom: rgb(204,204,204) 1px solid; border-left: rgb(204,204,204) 1px solid; padding-bottom: 3px; margin: 0px; padding-left: 3px; padding-right: 3px; border-top: rgb(204,204,204) 1px solid; border-right: rgb(204,204,204) 1px solid; padding-top: 3px" alt="abdullin&#39;s avatar" src="http://a3.twimg.com/profile_images/755788123/0_1f297_e07be068_orig_bigger.jpg" width="73" height="73" /></a></div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; float: left; padding-top: 0px" class="post">           <h5 style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; font: bold 16px verdana, tahoma, arial, &#39;Trebuchet MS&#39;, sans-serif, georgia, courier, &#39;Times New Roman&#39;, serif; color: rgb(98,98,98); padding-top: 0px"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View abdullin&#39;s Twitter Page" href="http://www.twitter.com/abdullin" target="_blank">abdullin</a><span class="Apple-converted-space">&#160;</span>says:</h5>            <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; width: 450px; padding-right: 0px; font: 14px/19px tahoma, arial; color: rgb(98,98,98); padding-top: 0px" class="mainpost">@murrayondotnet in essence monad in Lokad guarantees: there will be no nulls around (hence no need to check for them), it replaces null.</div>         </div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; clear: both; padding-top: 0px" class="clear"></div>       </div>        <div style="padding-bottom: 15px; background-color: rgb(234,242,249); margin: 0px; padding-left: 15px; width: 550px; padding-right: 15px; padding-top: 15px; background-origin: initial; background-clip: initial" class="post1">         <div style="padding-bottom: 0px; margin: 0px 15px 0px 0px; padding-left: 0px; width: 80px; padding-right: 0px; display: block; float: left; height: 80px; padding-top: 0px" class="avatar"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View murrayondotnet&#39;s Twitter Page" href="http://www.twitter.com/murrayondotnet" target="_blank"><img style="border-bottom: rgb(204,204,204) 1px solid; border-left: rgb(204,204,204) 1px solid; padding-bottom: 3px; margin: 0px; padding-left: 3px; padding-right: 3px; border-top: rgb(204,204,204) 1px solid; border-right: rgb(204,204,204) 1px solid; padding-top: 3px" alt="murrayondotnet&#39;s avatar" src="http://a1.twimg.com/profile_images/547516901/profilepic_bigger.PNG" width="73" height="73" /></a></div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; float: left; padding-top: 0px" class="post">           <h5 style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; font: bold 16px verdana, tahoma, arial, &#39;Trebuchet MS&#39;, sans-serif, georgia, courier, &#39;Times New Roman&#39;, serif; color: rgb(98,98,98); padding-top: 0px"><a style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; color: rgb(0,58,126); text-decoration: none; padding-top: 0px" title="View murrayondotnet&#39;s Twitter Page" href="http://www.twitter.com/murrayondotnet" target="_blank">murrayondotnet</a><span class="Apple-converted-space">&#160;</span>says:</h5>            <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; width: 450px; padding-right: 0px; font: 14px/19px tahoma, arial; color: rgb(98,98,98); padding-top: 0px" class="mainpost">@abdullin I may try to create my own implementation that hides whether null or not. If so probably base mine off of the nice things in yours</div>         </div>          <div style="padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; clear: both; padding-top: 0px" class="clear"></div>       </div>     </span></span>    <p>And so I did.</p>    <h3>Introducing MurrayMonads</h3>    <p>I don’t even like the name.&#160; I’m also not sure this code will ever be used again…by anyone, let alone me (especially since I like some other guy’s implementation better; read on to watch me embarrass myself).&#160; But whatever, Visual Studio asks for a project/solution name and so there it is.&#160; I need some cool theme like Rhino, as used by <a href="http://ayende.com/blog/default.aspx">Ayende</a>.</p>    <p>Speaking of Oren (I will use his proper name instead so that he doesn’t <a href="http://ayende.com/Blog/archive/2010/08/13/how-to-pay-3-times-for-the-same-flight-ticket.aspx">get stuck at the airport unable to board his flight</a>), he posted a link on Twitter to <a href="http://devtalk.net/csharp/chained-null-checks-and-the-maybe-monad/">an article where Dmitri Nesteruk created his own version of the Maybe monad</a>, just as I was starting my experiment.&#160; He used extension methods instead of an explicit monad object wrapper in order to enable the pipelining composability that you can also do with Rinat’s implementation.&#160; Really clever, but there was one small thing that bothered me a bit, and that is how the monad chaining begins with Dmitri’s API.&#160; (Actually, I’ll prove I’m wrong by the end of the post; this is the cause of upcoming embarrassment mentioned above, hooray!)&#160; Because of this, I decided to use his example problem as the basis for my sample that I will show, in order to increase comparability.</p>    <p>So I set off to try and merge the good points of both Rinat’s and Dmitri’s implementations.&#160; I have put my source code up for viewing at Bitbucket.org:&#160; <a href="http://bitbucket.org/murrayondotnet/murraymonads">http://bitbucket.org/murrayondotnet/murraymonads</a></p>    <h3>Are We There Yet?!</h3>    <p>Yes, we are.&#160; Let’s see some code finally.</p>    <p>Here is the code we don’t like writing all the time:</p>    <pre class="brush: csharp">string postCode;
+if (person != null)
+{
+  if (HasMedicalRecord(person) &amp;&amp; person.Address != null)
+  {
+    CheckAddress(person.Address);
+    if (person.Address.PostCode != null)
+      postCode = person.Address.PostCode.ToString();
+    else
+      postCode = &quot;UNKNOWN&quot;;
+  }
+}</pre>
+
+  <p>This is actually code that you wrote; I took it just yesterday from your current project at work.&#160; I know you’re feeling a bit defensive because of this, but I’m here to help so put down the attitude please.&#160; We’re gonna make your life easier…I hope…</p>
+
+  <p>All in all, it’s code you see every day and there’s not much really wrong with it per se.&#160; I just think it could be cleaner I suppose.&#160; So using Dmitri’s extension methods, you can get that logic down to this:</p>
+
+  <pre class="brush: csharp">string postCode = this.With(x =&gt; person)
+  .If(x =&gt; HasMedicalRecord(x))
+  .With(x =&gt; x.Address)
+  .Do(x =&gt; CheckAddress(x))
+  .With(x =&gt; x.PostCode)
+  .Return(x =&gt; x.ToString(), &quot;UNKNOWN&quot;);</pre>
+
+  <p>As long as that last <font face="Courier New">ToString</font> method call doesn’t return a null (which one of my use cases does in the <font face="Courier New">TestConsoleApp</font> included in my source code), you will either get the value or <font face="Courier New">“UNKNOWN”</font>.&#160; Looking good!</p>
+
+  <p>So my version of the Maybe monad comes out pretty close to this last one:</p>
+
+  <pre class="brush: csharp">string postCode = person.If(p =&gt; HasMedicalRecord(p))
+  .Access(p =&gt; p.Address)
+  .Apply(a =&gt; CheckAddress(a))
+  .Access(a =&gt; a.PostCode)
+  .Convert(pc =&gt; pc.ToString(), &quot;UNKNOWN&quot;);
+
+// or even
+string postalCode = person.If(HasMedicalRecord)
+  .Access(p =&gt; p.Address)
+  .Apply(CheckAddress)
+  .Access(a =&gt; a.PostCode)
+  .Convert(pc =&gt; pc.ToString(), &quot;UNKNOWN&quot;);</pre>
+
+  <p>The difference between Dmitri’s and mine being how the chain is first started, on the Maybe <font face="Courier New">person</font> object instead of Dmitri’s use of the <font face="Courier New">this</font> keyword.</p>
+
+  <p>Here’s what you’ve been really waiting for where I eat my own words.&#160; Dmitri’s code can also be written like this:</p>
+
+  <pre class="brush: csharp">string postCode = person.If(HasMedicalRecord)
+  .With(x =&gt; x.Address)
+  .Do(CheckAddress)
+  .With(x =&gt; x.PostCode)
+  .Return(x =&gt; x.ToString(), &quot;UNKNOWN&quot;);</pre>
+
+  <p>…which appears to take away any advantage of my library.&#160; I officially like his solution better, I just don’t like some of the method names.&#160; So perhaps <a href="http://murrayon.net/2010/09/maybe-monad-extensions.html" target="_blank">I will create another blog post</a> and <a href="http://bitbucket.org/murrayondotnet/maybemonadextensions/" target="_blank">Bitbucket repo with a new library of extension methods</a> instead.&#160; I will leave up this mess-of-a-post public (as well as the source code) so that perhaps others can see the process I went through and learn from my mistakes.</p>
+
+  <h3>Your Turn to Criticize Now</h3>
+
+  <p>Let me have it.&#160; Let me know how crazy I am or if this is even useful.&#160; Let me know if I’m completely misusing the monad principles.&#160; Or, by some weird miracle, let me know if I’m on to something.&#160; Actually, if Dmitri is on to something.&#160; Either way, I want to hear from you.&#160; Thanks.</p>
+
+  <h3>Additional Monad Learning Resources</h3>
+
+  <ul>
+    <li><a href="http://blogs.msdn.com/b/wesdyer/archive/2008/01/11/the-marvels-of-monads.aspx">http://blogs.msdn.com/b/wesdyer/archive/2008/01/11/the-marvels-of-monads.aspx</a> </li>
+
+    <li><a href="http://www.infoq.com/presentations/Demystifying-Monads">http://www.infoq.com/presentations/Demystifying-Monads</a> </li>
+
+    <li><a href="http://importantshock.wordpress.com/2009/01/18/jquery-is-a-monad/">http://importantshock.wordpress.com/2009/01/18/jquery-is-a-monad/</a> </li>
+
+    <li>Also, LINQ is based on monadic principles. </li>
+  </ul>
+</span>  </div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[F# Pipeline Operator in C#?]]></title>
+    <link href="http://mkmurray.com/blog/2010/09/06/f-pipeline-operator-in-c/"/>
+    <updated>2010-09-06T20:22:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2010/09/06/f-pipeline-operator-in-c</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>I am currently reading the <a href="http://www.manning.com/petricek/" target="_blank">Real-World Functional Programming</a> book from <a href="http://www.manning.com/" target="_blank">Manning Publications</a>. It’s mostly an exercise in learning F#, but also to improve my C# code as well. I finally learned what the F# pipelining operator (<font face="Courier New">|&gt;</font>) is all about, and I was so impressed I thought I would try to figure out how to bring it into C# if possible.</p> <span class="fullpost">   <h3>Introducing the F# Pipeline Operator</h3>    <p>Here is some F# code that defines a list of integers and a pair of functions.&#160; They are then used in a few “higher-order” functions (functions that utilize other functions as parameters or return values, according to my book).&#160; <font face="courier new">List.filter</font> is equivalent to the LINQ <font face="Courier New">IEnumerable.Where()</font> extension method, and <font face="Courier New">List.map</font> is equivalent to <font face="Courier New">IEnumerable.Select()</font>.</p>    <pre class="brush: csharp">let numbers = [ 1 .. 10 ]
+let isOdd(n) = n % 2 = 1
+let square(n) = n * n
+
+List.filter isOdd numbers
+List.map square (List.filter isOdd numbers)</pre>
+
+  <p>The interesting part is the last line of code, where it is argued that you lose a little bit of code readability because the function that is actually executed first (<font face="Courier New">List.filter</font>) is found second in the expression statement.&#160; Enter the F# pipelining operator:</p>
+
+  <pre class="brush: csharp">let squared =
+  numbers
+  |&gt; List.filter isOdd
+  |&gt; List.map square</pre>
+
+  <p>Even though we’re no longer a compact, one-liner expression, I think we’ve gained some code readability.&#160; It says to take the list <font face="Courier New">numbers</font> and perform the following manipulations in the exact order listed.&#160; Cool stuff, if I say so myself.</p>
+
+  <h3>“There is No Charge for Awesomeness…or Attractiveness”</h3>
+
+  <p>(Sorry, I’ve been watching the movie <a href="http://www.imdb.com/title/tt0441773/" target="_blank">Kung Fu Panda</a> a lot with my kids lately.&#160; Funny stuff.)&#160; So can this awesomeness be brought over into C#?&#160; I opened up Visual Studio and tried to see if I could figure out how to define my own operator or reuse one of the existing ones.</p>
+
+  <p>I realize C# is a pretty tough language to flip keywords and operators around and invent new syntax with (ok, it’s impossible), but I tried anyway.&#160; The type of code readability issue I wanted to remedy is the same as with the F# code snippet above.&#160; I thought it would be nice to make C# code like the following statement more readable and digestible (especially the execution order):</p>
+
+  <pre class="brush: csharp">Convert.ToInt32(Context.Request[“requestParam”].Trim());</pre>
+
+  <p>As I started to (unsuccessfully) beat out some pretty rough code, I ran into problems with trying to make extension methods that are operator definition overloads and errors saying “<font face="Courier New">One of the parameters of a binary operator must be the containing type.</font>”&#160; It just wasn’t working and then I began to realize that C# already has a pipelining syntax, even if only in one small subset of the .NET API.&#160; You can find a decent pipelining syntax with the <a href="http://en.wikipedia.org/wiki/Fluent_interface" target="_blank">Fluent Interface</a> used for the LINQ extension methods.&#160; Its power is in the fact that the functions return the object type that was passed in and acted upon, so that more functions can be chained on afterward in a composable manner.&#160; The ability to do things like <font face="Courier New">collection.Where().Select().OrderBy()</font> is a much more declarative and functional solution to imperative <font face="Courier New">for</font> loops (and it makes it more readable and intention revealing in my opinion).&#160; It’s a difference in describing more <u><em>what</em></u> you want to be accomplished rather than <em><u>how</u></em> it is to be accomplished (especially when the <u><em>how</em></u> in programming languages is more readable to a computer than it is a human).</p>
+
+  <p>So the good news is that you indeed can have a nice pipelining syntax in C#, especially for APIs that are designed with Fluent Interfaces like LINQ.&#160; However, it doesn’t solve code readability issues with code snippets like the C# fragment I showed above.&#160; For those regular, non-fluent method calls in the rest of the .NET API, you must use old-fashioned Object-Oriented Programming practices of breaking code up into meaningful, atomic units of statements and naming and encapsulating functions cohesively in order to get more readable code.</p>
+</span>  </div>
+
+
+<h2>Comments</h2>
+
+
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Jonas Elfström</div>
+<div class='content'>
+This looks a whole lot like the Thrush Combinator.<br /><a href="http://alicebobandmallory.com/articles/2009/10/06/the-thrush-combinator-in-c" rel="nofollow">I implemented</a> that one in C# a while ago</div>
+</div>
+<div class='comment'>
+<div class='author'>Richard Beauchamp</div>
+<div class='content'>
+This comment has been removed by the author.</div>
+</div>
+<div class='comment'>
+<div class='author'>Mike Murray</div>
+<div class='content'>
+Funny you should mention the Maybe Monad, as I&#39;ve been looking into Monads off and on for several months trying to figure out how I could use them in everyday code.  I likely will be posting something on this in the somewhat near future.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>
+Just a small hint from someone who uses something like this in productive code on a day-to-day basis:<br /><br />Take your time and extend the static methods a bit. It won&#39;t hurt to build something like a maybe-monad in there.<br /><br />You know - check if the input is null and return null if so.<br /><br />For this you need either:<br />- &quot;where U : class&quot;<br />- use Equals<br /><br />For the same reason I give somethink like a &quot;DefaultValue&quot; Funktion that checks the input for null and responses with the default-value if so, if not it will give the original value.</div>
+</div>
+<div class='comment'>
+<div class='author'>Mike Murray</div>
+<div class='content'>
+Very intriguing! Man I wish I had thought about that.  I suppose I&#39;m still new to designing APIs that pass around Funcs.<br /><br />I was able to make the following code work with the type inference (and without having to specify the types to the Then method):<br /><br />var blah = &quot;576 &quot;<br />.Then(x =&gt; x.Trim())<br />.Then(x =&gt; Convert.ToInt32(x));<br /><br />Not too bad really.  A little too much C# syntax though, but I&#39;d argue it might be more readable than what we started with, the code everyone writes.  It appears my code snippet doesn&#39;t even need the second extension method.<br /><br />Thanks for sharing!</div>
+</div>
+<div class='comment'>
+<div class='author'>Yusuf Motara</div>
+<div class='content'>
+You could try this:<br /><br />static class Extn {<br />    public static U Then&lt;T,U&gt;(this T o, Func&lt;T, U&gt; f) { return f(o); }<br />    public static U Then&lt;T, U&gt;(this T o, Func&lt;T, Func&lt;U&gt;&gt; fe) { return fe(o)(); }<br />}<br /><br />... which lets you write the more-readable:<br /><br />var blah = &quot;576  &quot;<br />   .Then&lt;string,string&gt;(x =&gt; x.Trim)<br />   .Then(Convert.ToInt32);<br /><br />Unfortunately, it seems that you need to make the generic parameters explicit; C#&#39;s type inference is nowhere near as good as F#&#39;s.</div>
+</div>
+</div>
+
+]]></content>
+  </entry>
+  
+</feed>

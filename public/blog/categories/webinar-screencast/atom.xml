@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Webinar/Screencast | Mike Murray]]></title>
+  <link href="http://mkmurray.com/blog/categories/webinar-screencast/atom.xml" rel="self"/>
+  <link href="http://mkmurray.com/"/>
+  <updated>2012-10-29T14:47:08-06:00</updated>
+  <id>http://mkmurray.com/</id>
+  <author>
+    <name><![CDATA[Mike Murray]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[FubuMVC Webinar - Compositional and Convention-based Web Development]]></title>
+    <link href="http://mkmurray.com/blog/2011/07/21/fubumvc-webinar-compositional-and-convention-based-web-development/"/>
+    <updated>2011-07-21T12:44:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2011/07/21/fubumvc-webinar-compositional-and-convention-based-web-development</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>I just gave a webinar yesterday for <a href="http://www.jpboodhoo.com/">JP Boodhoo’s</a> <a href="http://webinars.developwithpassion.com/">Develop With Passion® webinar series</a> on Compositional and Convention-based Web Development with <a href="http://fubumvc.com/">FubuMVC</a>. The recorded session is now posted online with a slew of referenced and related links. I apologize for the sound quality and will make corrections if I get another chance to do another webinar/screencast. Here is the link to the recording:</p>  <p><a href="http://webinars.developwithpassion.com/webinars/3">http://webinars.developwithpassion.com/webinars/3</a></p>  <p>I didn’t mention this in the screencast but before we began switching our company’s production website to FubuMVC, we first devised a way to get the benefit of <a href="http://murrayon.net/2011/06/fubumvc-behavior-chains-bmvc-pattern.html">FubuMVC Behavior Chains</a> while still on the ASP.NET MVC framework. Please feel free to read more about that successful venture at <a href="http://paceyourself.net/">Bob Pace’s</a> <a href="http://paceyourself.net/2011/06/11/mvctofubu---transition-your-website-from-aspnet-mvc-to-fubumvc-part-1/">blog post on the MvcToFubu project</a>.</p>  </div>
+
+]]></content>
+  </entry>
+  
+</feed>

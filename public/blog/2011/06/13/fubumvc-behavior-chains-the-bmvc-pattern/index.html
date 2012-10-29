@@ -1,0 +1,149 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>FubuMVC Behavior Chains - The BMVC Pattern - Mike Murray</title>
+	<meta name="author" content="Mike Murray">
+
+	
+	<meta name="description" content="For the last several months at work, we have been gradually migrating our production website to use the .NET open source FubuMVC web framework. &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="http://feeds.feedburner.com/mkmurray/" rel="alternate" title="Mike Murray" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	
+</head>
+
+<body>
+	<div class="container">
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post">
+	<h1 class="title">FubuMVC Behavior Chains - the BMVC Pattern</h1>
+	<div class="entry-content"><div class='post'>
+<p>For the last several months at work, we have been gradually migrating our production website to use the .NET open source <a href="http://fubumvc.com/" target="_blank">FubuMVC web framework</a>. Before committing to a whole new infrastructure for our site, some brilliant talent on our team decided to improve our experience on the ASP.NET MVC framework by integrating in one of FubuMVC’s most compelling features, behavior chains. <a href="https://twitter.com/#!/bob_pace" target="_blank">Bob Pace</a> originally blogged about the process in a two part blog post series (<a href="http://paceyourself.net/2010/08/06/integrating-fubumvc-with-aspnet-mvc-part-1/" target="_blank">part 1</a> and <a href="http://paceyourself.net/2010/08/13/integrating-fubumvc-with-aspnet-mvc-part-2/" target="_blank">part 2</a>); since then, he has <a href="https://github.com/bobpace/MvcToFubu" target="_blank">created a packaged solution called MvcToFubu</a> which he <a href="http://paceyourself.net/2011/06/11/mvctofubu---transition-your-website-from-aspnet-mvc-to-fubumvc-part-1/" target="_blank">just recently started another blog post series about</a>.</p>  <p>Behavior chains are by far my favorite feature of FubuMVC. I believe they single-handedly revolutionized our use of the MVC pattern in a web environment. In fact, I like to think of it as a whole new pattern, the <strong>BMVC Pattern</strong> (I was told by a coworker that the ‘B’ should stand for “Better”, and while that’s true, I’ll stick with “Behaviors”). No, I’m not sincerely trying to coin yet another design or architectural pattern buzzword. However, I am most sincerely not joking when I say behavior chains add a whole new dimension to how I design web architectures. I find myself creating composable pipelines of cohesive, testable components in lieu of monolithic controllers and actions.</p> <span class="fullpost">   <h3>What are Behavior Chains?</h3>    <p>Have you ever looked at your controller actions and thought “Man, there’s a lot going on here!” (validation, authorization, transactions, ORM setup, logging, caching, etc.)? If you haven’t, I urge you to take a conscious look at your controller actions and try to identify code that doesn’t <u>directly</u> relate to the purpose of the page (or sub-view of the page). Shouldn’t there be a way to move some of this secondary infrastructure code out of our controller actions and have it be applied conventionally to the correct actions/routes? Yes, and this is exactly what Behavior Chains are meant to accomplish, the ability to create composable pipelines of reusable behavior nodes for each route in your site.</p>    <p>Behavior chains can be built up in any order you want for each route via Conventions and Policies, which are extension points that allow you to inspect and modify the entire Behavior Graph that was built by FubuMVC during startup bootstrapping. The behavior graph is the modifiable collection of all behavior chains in the site, initially built with just a few default behavior nodes for each route. A typical behavior chain by default usually has an ActionCall node (representing the call to a controller action) and an Output node (often a tie-in to a view rendering engine, but can also be JSON or anything else). Other behavior nodes can be sprinkled into the pipeline in any order in front of or in between the ActionCall and the Output nodes. As mentioned before via the use of Conventions and Policies, it is common practice to filter your list of behavior chains using LINQ extension methods and then add a specific behavior node into the matching chains at a specific location in the chain. This truly elevates coding to conventions to a new level; some of the filtering criteria regarding controller actions that you may come up with could be as follows:</p>    <ul>     <li>Action method names that contain a certain word. </li>      <li>Actions methods that are located in a particular controller or namespace. </li>      <li>Action method signatures that contain an input/output model that implements a specific interface. </li>      <li>Action method signatures that contain an input/output model that contains a property of a certain type or have a particular C# attribute applied to it. </li>      <li>So on, so forth…whatever you can dream up! </li>   </ul>    <p>One more aspect of behavior chains that is important to point out is the logistics in how behavior nodes are chained together. The chains are not merely a linked-list of behavior nodes that are traversed linearly. Instead the makeup of the chains is better conceptualized to be an outer behavior node wrapping around an inner behavior node, which is then itself an outer node wrapped around another inner node, and so on. In fact, the FubuMVC developers like to refer to this chaining architecture as the Onion Layer Model or the Russian Doll Model (conjuring up a mental image of the <a href="http://en.wikipedia.org/wiki/Matryoshka_doll">nesting Russian doll toy called a matryoshka doll or a babushka doll</a>). When an outer behavior node has finished executing it’s logic, it can then optionally execute it’s inner behavior node logic (or stop the behavior chain entirely in order to return early with a response, an error, or even transfer to a different route and behavior chain). One of the key advantages that this wrapping architecture can afford is the ability for an outer behavior to run additional logic or clean up code after all inner behavior nodes have completed (i.e., transactions can be committed, connections can be closed, sessions can be disposed, etc.).</p>    <h3>How does this change the way I code my controllers?</h3>    <p>I find that my controller actions are much thinner and more focused on the base case and the successful code path. All the exceptional code paths and edge cases have been identified and deal with by the other behavior nodes in the chain, prior to my action call being invoked. My action call can now focus on the essential logic that differentiate this route from others. That essential logic doesn’t get lost anymore in the necessary infrastructure code that should be a secondary concern. And all of this logic can be broken up into cohesive, reusable components within a flexible request/response pipeline that can be built up automatically by coding to whatever conventions you deem beneficial. Behavior chains really do add a whole new first-class citizen to the MVC design pattern. Do yourself a favor and check out the MvcToFubu solution mentioned at the top of this post, and bring some FubuMVC behavior chain goodness to your ASP.NET MVC website. I think you might be as impressed as we were and yearn for <a href="http://lostechies.com/chadmyers/2011/05/30/cool-stuff-in-fubucore-and-fubumvc-series/">the other killer features of FubuMVC</a> as well.</p> </span>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Mike Murray</div>
+<div class='content'>
+Thanks for thought! Perhaps I&#39;ll post on the mailing list and see what others think about it being involved in the FubuMVC documentation somewhere.</div>
+</div>
+<div class='comment'>
+<div class='author'>Rex</div>
+<div class='content'>
+Great post, I didn&#39;t see this one when I was writing my post about authentication behavior. This is a great explanation of behavior chains in FubuMVC.<br /><br />This would also be a great intro to behaviors for the fubumvc guides.</div>
+</div>
+</div>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2012
+
+    Mike Murray
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a>
+</footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'mkmurray';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+		</div>
+		<div class="left-col">
+			<header id="header" class="inner"><div class="profilepic">	
+	<img src="/images/mkmurray.jpg" alt="Profile Picture">
+</div>
+<h1><a href="/">Mike Murray</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<br/>
+<h3 class="alignleft">please code responsibly</h3>
+<br/>
+<br/>
+<br/>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		<a class="facebook" href="http://www.facebook.com/mkmurray" title="Facebook">Facebook</a>
+		
+		
+		<a class="google" href="https://plus.google.com/109073345657761090655?rel=author" title="Google+">Google+</a>
+		
+		
+		<a class="twitter" href="http://twitter.com/mkmurray" title="Twitter">Twitter</a>
+		
+		
+		<a class="github" href="https://github.com/mkmurray" title="GitHub">GitHub</a>
+		
+		
+		<a class="linkedin" href="http://www.linkedin.com/in/mkmurray">LinkedIn</a>
+		
+		
+		
+		
+		<a class="rss" href="http://feeds.feedburner.com/mkmurray/" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+
+</header>				
+		</div>	
+	</div>
+</body>
+</html>

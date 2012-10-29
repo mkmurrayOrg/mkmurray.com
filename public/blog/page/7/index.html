@@ -1,0 +1,319 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Mike Murray</title>
+	<meta name="author" content="Mike Murray">
+
+	
+	<meta name="description" content="Seems like any website you start nowadays involves creating the same common features we see all over the web.&#160; These include creating user &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="http://feeds.feedburner.com/mkmurray/" rel="alternate" title="Mike Murray" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	
+</head>
+
+<body>
+	<div class="container">
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2009/01/30/asp-net-providers-membership-role-and-profile/">ASP.NET Providers - Membership, Role, and Profile</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-01-30T14:18:00-07:00" pubdate data-updated="true">Jan 30<span>th</span>, 2009</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/asp-net/'>ASP.NET</a>, <a class='category' href='/blog/categories/asp-net-providers-series/'>ASP.NET Providers Series</a>, <a class='category' href='/blog/categories/iis/'>IIS</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/security/'>Security</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>, <a class='category' href='/blog/categories/web/'>Web</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2009/01/30/asp-net-providers-membership-role-and-profile/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>Seems like any website you start nowadays involves creating the same common features we see all over the web.&#160; These include creating user account functionality, storing profile information, implementing role-based access to content and features, instantiating SQL tables and data access repositories, and so on, so forth.&#160; In most cases it would be a complete waste of time and money to roll your own implementation every time.</p>  <p>There are plenty of frameworks out there that tackle this problem for you and abstract out details you shouldn&#8217;t have to worry about.&#160; If you are in the .NET world, there are a set of these services available to you that are baked right into the .NET 2.0 Framework.&#160; I&#8217;m going to show you a personal example of how easy it is to add some of this functionality to an existing site, even one with an antique and cumbersome architecture.&#160; Implementing these features using the ASP.NET 2.0 Provider Model on said architecture has convinced me that it couldn&#8217;t be easier to add such functionality to a website, no matter what beast of a site you are dealing with.</p> <span class='fullpost'> <h3>ASP.NET 2.0 Provider Model</h3> <p>With the advent of ASP.NET 2.0, Microsoft introduced a set of configuration-driven services that adhere to the <a href="http://en.wikipedia.org/wiki/Provider_model">Provider Model pattern</a>.&#160; These services focus on storing application state of a website using a very flexible and extensible data access strategy.&#160; The available features that can be added to your website include Membership (which includes authentication and authorization), Role Management, Profile, Session State, Web Parts Personalization, and Site Map navigation.&#160; The whole idea is to be able to secure and enhance an existing site by dropping in a few lines into the <font face="Courier New">Web.config</font>, using a Microsoft utility to automatically create database tables (most likely your chosen storage medium), and then dropping, configuring, and skinning a few controls into your existing pages.&#160; To read a more thorough introduction to the Provider Model and these ASP.NET 2.0 Provider services (including a few helpful diagrams), check out the following link:</p>  <ul>   <li><a href="http://msdn.microsoft.com/en-us/library/aa479030.aspx">ASP.NET 2.0 Provider Model: Introduction to the Provider Model</a> </li> </ul>  <h3>Personal Example</h3>  <p>We currently maintain a series of desktop products that we have been entrusted with.&#160; Under the covers, these &quot;desktop&quot; products were originally written in Java as locally-hosted websites using Apache&#8217;s web server.&#160; In order to be compatible with Windows Vista, we have since ported these products to .NET 2.0 and currently use <a href="http://www.ultidev.com/products/Cassini/index.htm">UltiDev&#8217;s free, light-weight, and redistributable web server named Cassini</a> (essentially the same thing as the development web server found in Visual Studio and a great alternative to <a title="Internet Information Services" href="http://en.wikipedia.org/wiki/Internet_Information_Services">IIS</a>).&#160; Many of the features are implemented in JavaScript and the content is almost entirely static HTML pages.&#160; There were only a few Java Servlets that we ported to .NET HTTP Handlers and any database storage has been done using Microsoft Access databases.&#160; This set of products also has other interaction requirements like the ability to view content from another product while staying in the context of the currently open product.&#160; Finally, the installers for a few of these desktop products are getting to be nearly 600 MB in size, which has perpetuated the need for distributing the products to the users offline.</p>  <p>We are in the process right now of exploring the cost benefits and customer experience improvements in moving this set of offerings to an online suite of websites.&#160; The first step we are taking is to build an online version of one of the products where users can obtain a user account to view the content.&#160; Building new applications is one thing, but upgrading and maintaining existing applications (especially ones you have inherited) is a whole different development experience.&#160; This is where my appreciation for the ease and flexibility of what Microsoft is offering comes into play.</p>  <h3>Read On!</h3>  <p>The rest of the blog posts in this series can be found at the following links:</p>  <ul>   <li><a href="http://murrayon.net/2009/01/aspnet-providers-getting-started.html">ASP.NET Providers - Getting Started</a> </li>    <li><a href="http://murrayon.net/2009/01/aspnet-providers-membership.html">ASP.NET Providers - Membership</a> </li>    <li><a href="http://murrayon.net/2009/02/aspnet-providers-role-management.html">ASP.NET Providers - Role Management</a> </li>    <li><a href="http://murrayon.net/2009/02/aspnet-providers-profile.html">ASP.NET Providers - Profile</a> </li> </ul>  <p>In addition, I came across an issue when using the Profile system with the <font face="Courier New">Web Application</font> project template instead of the <font face="Courier New">Web Site</font> project template as found in Visual Studio&#8217;s default set of project templates.&#160; It has to do with the <font face="Courier New">Profile</font> proxy class object not being auto-generated by Visual Studio when using the <font face="Courier New">Web Application</font> project template.&#160; Read the following blog post for a discussion of the problem and it&#8217;s solution:</p>  <ul>   <li><a href="http://murrayon.net/2009/02/aspnet-profile-and-web-application.html">ASP.NET Profile and Web Application Projects</a> </li> </ul>  <p>Also, I have another post discussing the advantages of using the ASP.NET Provider system under IIS 7 found in Windows Vista and Server 2008; it will also include some issues with using this system if some of your content is static HTML instead of ASPX pages.&#160; You can find all of this goodness by following the link below:</p>  <ul>   <li><a href="http://murrayon.net/2009/02/iis-7-and-aspnet-providers-membership.html">IIS 7 and ASP.NET Providers (Membership, Roles, and Profile)</a> </li> </ul>  <p>Finally, I based my implementation on a 13-part tutorial series by <a href="http://www.4guysfromrolla.com/ScottMitchell.shtml">Scott Mitchell</a> on <a href="http://www.4guysfromrolla.com/">4GuysFromRolla.com</a>, starting at this link:</p>  <ul>   <li><a href="http://aspnet.4guysfromrolla.com/articles/120705-1.aspx">Examining ASP.NET 2.0&#8217;s Membership, Roles, and Profile - Part 1</a> </li> </ul>  <p>Enjoy!</p> </span>  </div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/12/16/if-programming-languages-were-religions/">If Programming Languages Were Religions&#8230;</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-12-16T11:48:00-07:00" pubdate data-updated="true">Dec 16<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/humor/'>Humor</a>, <a class='category' href='/blog/categories/personal/'>Personal</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/12/16/if-programming-languages-were-religions/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>This is hilarious and really creative:</p>  <p><a title="http://www.aegisub.net/2008/12/if-programming-languages-were-religions.html" href="http://www.aegisub.net/2008/12/if-programming-languages-were-religions.html">http://www.aegisub.net/2008/12/if-programming-languages-were-religions.html</a></p></div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/12/04/which-bam-is-which/">Which BAM Is Which?</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-12-04T16:54:00-07:00" pubdate data-updated="true">Dec 4<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/biztalk/'>BizTalk</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/12/04/which-bam-is-which/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>I just watched a presentation that I thought would be about <a title="BizTalk BAM" href="http://aspalliance.com/840_Business_Activity_Monitoring_BAM_with_BizTalk_Server_2006_from_Start_to_Finish">BAM (Business Activity Monitoring)</a> from <a href="http://www.microsoft.com/biztalk/en/us/default.aspx">BizTalk</a>, but instead it was <a title="Microsoft Research BAM" href="http://research.microsoft.com/~ejackson/bam.aspx">some new project that Microsoft Research cooked up that helps model cloud computing</a>.&#160; Interesting nonetheless, but not the BAM I thought I was getting.</p>  </div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/12/01/correctly-using-random-number-generators/">Correctly Using Random Number Generators</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-12-01T17:13:00-07:00" pubdate data-updated="true">Dec 1<span>st</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/algorithms/'>Algorithms</a>, <a class='category' href='/blog/categories/code-organization/'>Code Organization</a>, <a class='category' href='/blog/categories/error/'>Error</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/12/01/correctly-using-random-number-generators/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>Today I read another guy&#8217;s blog post that reminded me of my own &quot;Aha!&quot; moment I had a while back with Random Number Generators.&#160; It&#8217;s something I will never forget about Random Number Generators but taken for granted, realizing that it might not be obvious to everyone how these objects are intended to be used.&#160; Here is the blog entry that I read about creating and seeding a Random Number Generator once:</p>  <p><a title="http://silverlight.net/blogs/msnow/archive/2008/12/01/silverlight-tip-of-the-day-77-creating-an-efficient-random-generator.aspx" href="http://silverlight.net/blogs/msnow/archive/2008/12/01/silverlight-tip-of-the-day-77-creating-an-efficient-random-generator.aspx">http://silverlight.net/blogs/msnow/archive/2008/12/01/silverlight-tip-of-the-day-77-creating-an-efficient-random-generator.aspx</a></p>  <p>However, I must admit that I think <a title="Mike Snow" href="http://silverlight.net/blogs/msnow/about.aspx">Mike Snow</a> should have titled his post something similar to the title of my post.&#160; And I will tell you why&#8230;</p> <span class='fullpost'> <p>In the MSDN documentation that Mike quotes, there is a key sentence everyone needs to take note of, as you can ignorantly introduce bugs into your code:</p>  <blockquote>   <p>&quot;As a result, different Random objects that are created in close succession by a call to the default constructor will have identical default seed values and, therefore, will produce identical sets of random numbers.&quot;</p> </blockquote>  <p>I have actually build a piece of code where this has happened.&#160; I wrote a <font face="Courier New">for</font> loop that iterated quickly enough that the construction of the <font face="Courier New">Random</font> objects resulted in identical random number seeds.&#160; The result was that I asked for several random numbers in quick succession and got the same exact &quot;random&quot; number across all my requests each time I ran the code.&#160; So not only did I get &quot;identical sets of random numbers,&quot; but I got identical random numbers.</p>  <p>As Mike Snow and the MSDN documentation states (and from my own experience), Random Number Generators are designed to be constructed once and intended to live long and prosper within your application.&#160; It can serve <u>all</u> of the random number needs within your application (i.e., you don&#8217;t need a different Random Number Generator for different use cases or different object types).&#160; All you need is a one-time created random number seed and then you can forever generate random numbers of any type and within any range of numbers.&#160; I can&#8217;t currently think of a situation when you may need to reseed your Random Number Generator.&#160; Let me know if you think of one.</p> </span>  </div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/11/03/is-linq-to-sql-being-replaced-already/">Is LINQ to SQL Being Replaced Already?</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-11-03T13:00:00-07:00" pubdate data-updated="true">Nov 3<span>rd</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/entity-framework/'>Entity Framework</a>, <a class='category' href='/blog/categories/linq/'>LINQ</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/11/03/is-linq-to-sql-being-replaced-already/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>The short answer is &quot;kind of&quot;; the push is for the <a href="http://en.wikipedia.org/wiki/ADO.NET_Entity_Framework">ADO.NET Entity Framework</a> to be the encouraged ORM approach from now on.&#160; For the long-winded, thorough explanation of this answer (based on blog posts from Microsoft employees and managers), see the following blog post that someone pointed me toward:</p>  <p><a title="http://www.infoq.com/news/2008/11/DLINQ-Future" href="http://www.infoq.com/news/2008/11/DLINQ-Future">http://www.infoq.com/news/2008/11/DLINQ-Future</a></p>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>
+No it isn&#39;t, that is a missunderstanding. Linq to sql for SQL Server will always be there just like there are ado.net classes for SQL Server directly tied into the .NET framework libraries.</div>
+</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+<nav id="pagenavi">
+    
+        <a href="/blog/page/6/" class="prev">Prev</a>
+    
+    
+        <a href="/blog/page/8/" class="next">Next</a>
+    
+    <div class="center"><a href="/blog/archives">Blog Archives</a></div>
+</nav></div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2012
+
+    Mike Murray
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a>
+</footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'mkmurray';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+		</div>
+		<div class="left-col">
+			<header id="header" class="inner"><div class="profilepic">	
+	<img src="/images/mkmurray.jpg" alt="Profile Picture">
+</div>
+<h1><a href="/">Mike Murray</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<br/>
+<h3 class="alignleft">please code responsibly</h3>
+<br/>
+<br/>
+<br/>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		<a class="facebook" href="http://www.facebook.com/mkmurray" title="Facebook">Facebook</a>
+		
+		
+		<a class="google" href="https://plus.google.com/109073345657761090655?rel=author" title="Google+">Google+</a>
+		
+		
+		<a class="twitter" href="http://twitter.com/mkmurray" title="Twitter">Twitter</a>
+		
+		
+		<a class="github" href="https://github.com/mkmurray" title="GitHub">GitHub</a>
+		
+		
+		<a class="linkedin" href="http://www.linkedin.com/in/mkmurray">LinkedIn</a>
+		
+		
+		
+		
+		<a class="rss" href="http://feeds.feedburner.com/mkmurray/" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+
+</header>				
+		</div>	
+	</div>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Silverlight | Mike Murray]]></title>
+  <link href="http://mkmurray.com/blog/categories/silverlight/atom.xml" rel="self"/>
+  <link href="http://mkmurray.com/"/>
+  <updated>2012-10-29T14:47:08-06:00</updated>
+  <id>http://mkmurray.com/</id>
+  <author>
+    <name><![CDATA[Mike Murray]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Reactive Framework Finally Explained]]></title>
+    <link href="http://mkmurray.com/blog/2010/07/14/reactive-framework-finally-explained/"/>
+    <updated>2010-07-14T17:59:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2010/07/14/reactive-framework-finally-explained</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>I have been intrigued by the <a href="http://msdn.microsoft.com/en-us/devlabs/ee794896.aspx">Reactive Extensions for .NET (Rx Framework)</a> for quite a while now, especially the fundamental shift from a “push” data model as opposed to the “pull” model most familiar to us.&#160; I have thought to myself that this must be a game changer in how data and events are consumed in every-day software.&#160; I didn’t quite understand how it all works or how to use it from the few samples I had seen, but I knew if I gave myself a little time to really sit down and look at it, my life would be changed forever.</p>  <p>However, after reading some articles, watching some recorded presentations, and even <a href="http://live.visitmix.com/MIX10/Sessions/FTL01">attending a MIX ‘10 session in-person</a> on the Reactive Extensions, I felt increasingly lost and confused by what this framework could offer me.&#160; I wasn’t understanding some fundamental ideology of the framework and it was jading my learning experience when watching/reading sample code.&#160; Well, I think I have finally figured out what the mental roadblock was and will attempt to explain the framework here as I best as I understand it, in hopes that it can be of help to others not getting what the fuss is all about.&#160; I can sense that I’m not the only one who has been turned off by the unsuccessful attempts by Microsoft to explain this revolutionary framework to the average developer.&#160; Apparently those who had a hand in designing the framework are just so incredibly intelligent that they are having a hard time discerning that the common man is not immediately getting it.</p> <span class="fullpost">   <h3><font face="Courier New">IEnumerable&lt;T&gt;</font>, Meet <font face="Courier New">IObservable&lt;T&gt;</font></h3>    <p>Essentially what Microsoft did is create a <a href="http://en.wikipedia.org/wiki/Duality_(mathematics)">mathematical dual</a> of the <font face="Courier New">IEnumerable</font> and <font face="Courier New">IEnumerator</font> interfaces using <a href="http://en.wikipedia.org/wiki/Category_theory">Category Theory</a>, and named them <font face="Courier New">IObservable</font> and <font face="Courier New">IObserver</font> respectively.&#160; In its bare simplicity, this is done by merely reversing the direction of your arrows in your mathematical functions and compositions.&#160; The following images of a few slides from <a href="http://live.visitmix.com/MIX10/Sessions/FTL01">Erik Meijer’s MIX ‘10 Session</a> that were the best visual explanation I have seen:</p>    <p>Duality Example with De Morgan’s Laws</p>    <p><a href="http://lh6.ggpht.com/_rps657FzHZ0/TD5QDKjrqpI/AAAAAAAAADo/_LP_XWkDId4/s1600-h/rxSlide23.png"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="rxSlide2" border="0" alt="rxSlide2" src="http://lh5.ggpht.com/_rps657FzHZ0/TD5QDjfchiI/AAAAAAAAADs/etW1caiUFHA/rxSlide2_thumb1.png?imgmax=800" width="441" height="334" /></a></p>    <p>Creating a Dual of <font face="Courier New">IEnumerable</font></p>    <p><a href="http://lh4.ggpht.com/_rps657FzHZ0/TD5QD9tyhyI/AAAAAAAAADw/CG9FYEFDB4Y/s1600-h/rxSlide33.png"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="rxSlide3" border="0" alt="rxSlide3" src="http://lh4.ggpht.com/_rps657FzHZ0/TD5QEm7T9hI/AAAAAAAAAD0/t_pfOknuY3o/rxSlide3_thumb1.png?imgmax=800" width="441" height="334" /></a></p>    <p>Creating a Dual of <font face="Courier New">IEnumerator</font></p>    <p><a href="http://lh4.ggpht.com/_rps657FzHZ0/TD5QE7KuUwI/AAAAAAAAAD4/tpV314oMx5g/s1600-h/rxSlide43.png"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="rxSlide4" border="0" alt="rxSlide4" src="http://lh3.ggpht.com/_rps657FzHZ0/TD5QFZd3VjI/AAAAAAAAAD8/9jaGTsA76jQ/rxSlide4_thumb1.png?imgmax=800" width="441" height="333" /></a>&#160;</p>    <p>The reason the mathematical proof part is significant is because we can guarantee that LINQ syntax and operators will work on these new collection and data subscriber interfaces, just like they did with <font face="Courier New">IEnumerable</font> collections in LINQ-to-Objects.&#160; This new LINQ provider is commonly called “LINQ over Events.”</p>    <h3>Reacting to Data is Asynchronous</h3>    <p>This is actually where I think some of the confusion came in for me.&#160; Mostly what I didn’t understand is how you can write LINQ queries into pushed data (already sent and also yet to be sent), when essentially that task is indeterminate by nature.&#160; What I have figured out is that the LINQ syntax is not entirely for the data being pushed, but also used for molding the subscriptions themselves.&#160; What the LINQ syntax provides you is a way to compose, filter, project, aggregate, and throttle data and event subscriptions in a powerful, declarative way.</p>    <p>A common workflow seems to be to create one or more observable collections (and there are <a title="16 Ways to Create IObservables Without Implementing IObservable" href="http://weblogs.asp.net/sweinstein/archive/2010/01/10/16-ways-to-create-iobservables-without-implementing-iobservable.aspx">many ways to do so</a>) and then customize and compose a subscription based on the subscription(s) using LINQ syntax.&#160; All that’s left then is to set the subscription in motion, giving it some sort of callback or lambda expression to be called as data is asynchronously pushed in and processed.</p>    <p>Here is a very simple code example that illustrates this process quite plainly:</p>    <pre class="brush: csharp">using System;
+using System.Linq;
+
+namespace TestRX
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            var oneNumberPerSecond = Observable.Interval(TimeSpan.FromSeconds(1));
+
+            var numbersTimesTwo = from n in oneNumberPerSecond
+                                  select n * 2;
+
+            Console.WriteLine(&quot;Numbers * 2:&quot;);
+
+            numbersTimesTwo.Subscribe(num =&gt;
+            {
+                Console.WriteLine(num);
+            });
+
+            Console.ReadKey();
+        }
+    }
+}</pre>
+
+  <p>It is interesting to watch the code run and think about what it’s actually doing.&#160; It sits on the <font face="Courier New">Console.ReadKey()</font> line while the observable collection is asynchronously pushing data to the lambda expression containing the <font face="Courier New">Console.WriteLine()</font> statement.</p>
+
+  <p>It looks like the Reactive Framework is not just a better way to handle events and pushed data, but it also appears from what I’ve read that it could be used as a nicer API for sending off asynchronous process threads.</p>
+
+  <h3>Additional Reading</h3>
+
+  <p><a href="http://msdn.microsoft.com/en-us/devlabs/default.aspx">Microsoft DevLabs</a> has created the <a href="http://msdn.microsoft.com/en-us/devlabs/ee794896.aspx">Reactive Extensions for .NET</a> (and it’s associated languages), but it has also came up with the Reactive Extensions for Silverlight and JavaScript (<a href="http://msdn.microsoft.com/en-us/devlabs/ee794896.aspx">can be found on same webpage</a>).&#160; This proves very interesting as JavaScript (and Silverlight) tends to be quite event driven because of its close interactions to UI elements in HTML (or XAML).&#160; In fact, one of the most encouraging example use cases that I’ve heard was that of having some HTML text field that you wanted to auto-search as the user types, but not until the user pauses for a second; they can also hit Enter.&#160; What the Reactive Framework could provide you is a way to aggregate more than one event source (alphabetic and Enter key strokes and the timer) into a single event handler using clear, declarative framework statements.</p>
+
+  <p>Here are other links I would recommend for additional examples and explanation:</p>
+
+  <ul>
+    <li><a href="http://rxwiki.wikidot.com/101samples">(not yet) 101 Rx Samples – Reactive Framework (Rx) Wiki</a> </li>
+
+    <li><a href="http://www.codeproject.com/KB/Parallel_Programming/RxByExample.aspx">The Reactive Framework by Example – The Code Project</a> </li>
+
+    <li><a href="http://live.visitmix.com/MIX10/Sessions/FTL01">Reactive Extensions for JavaScript – Erik Meijer’s MIX ‘10 Session</a> </li>
+
+    <li><a href="http://www.virtualaltnet.com/Recordings/Show/99">Making the Most of the Reactive Extensions for .NET – Virtual Alt.NET recording with Scott Weinstein</a></li>
+
+    <li><a href="http://channel9.msdn.com/shows/Going+Deep/Expert-to-Expert-Brian-Beckman-and-Erik-Meijer-Inside-the-NET-Reactive-Framework-Rx/">Channel 9 Video with Brian Beckman and Erik Meijer</a></li>
+  </ul>
+
+  <p>Enjoy!&#160; Let me know via comments if you start using it for something real cool and useful.</p>
+</span>  </div>
+
+
+<h2>Comments</h2>
+
+
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Michael</div>
+<div class='content'>
+Nice post on a complex topic.  You are indeed correct that there has been confusion around explaining the why and how of Reactive Extensions.  Thanks Mike.</div>
+</div>
+<div class='comment'>
+<div class='author'>Paul</div>
+<div class='content'>
+Great post on getting started with Rx!  One of the things I&#39;ve been working on is a MVVM framework for Silverlight / WPF that uses the Reactive Extensions - I&#39;ve written about it quite a bit in my blog at http://blog.paulbetts.org/index.php/category/programming/reactive-extensions/ and the code is at github.com/xpaulbettsx/ReactiveXaml ; it&#39;s got some great examples of doing more than just handling events together, I&#39;d love to hear any feedback you&#39;ve got on the project</div>
+</div>
+</div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Catastrophic Failure]]></title>
+    <link href="http://mkmurray.com/blog/2008/03/07/catastrophic-failure/"/>
+    <updated>2008-03-07T10:04:00-07:00</updated>
+    <id>http://mkmurray.com/blog/2008/03/07/catastrophic-failure</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>So I got a &quot;<font face="Courier New">Catastrophic Failure</font>&quot; in the Silverlight 2 beta 1 designer in VS 2008 this morning.&#160; Have no clue what it means, but it seemed temporary (I was in the middle of typing in the XAML view and the designer didn't like something I did).&#160; Here is a screenshot, it's pretty amusing:</p> <span class='fullpost'> <p><a href="http://lh4.ggpht.com/charliebrown928/SFqfdiP7PEI/AAAAAAAAABU/vG6KlZ5yB0c/s1600-h/screenshot7.jpg"><img style="border-top-width: 0px; border-left-width: 0px; border-bottom-width: 0px; border-right-width: 0px" height="407" alt="screenshot" src="http://lh3.ggpht.com/charliebrown928/SFqfeTgD8eI/AAAAAAAAABc/CZxSdmcnaCY/screenshot_thumb5.jpg?imgmax=800" width="784" border="0" /></a></p> </span>  </div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Silverlight Tips, Tricks and Best Practices]]></title>
+    <link href="http://mkmurray.com/blog/2008/02/28/silverlight-tips-tricks-and-best-practices/"/>
+    <updated>2008-02-28T16:02:00-07:00</updated>
+    <id>http://mkmurray.com/blog/2008/02/28/silverlight-tips-tricks-and-best-practices</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>Here is a great MSDN article on some Silverlight tips, tricks, and best practices:&#160; <a title="http://msdn.microsoft.com/msdnmag/issues/08/LA/WickedCode/default.aspx" href="http://msdn.microsoft.com/msdnmag/issues/08/LA/WickedCode/default.aspx">http://msdn.microsoft.com/msdnmag/issues/08/LA/WickedCode/default.aspx</a></p>  </div>
+
+]]></content>
+  </entry>
+  
+</feed>

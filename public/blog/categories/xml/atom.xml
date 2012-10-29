@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: XML | Mike Murray]]></title>
+  <link href="http://mkmurray.com/blog/categories/xml/atom.xml" rel="self"/>
+  <link href="http://mkmurray.com/"/>
+  <updated>2012-10-29T14:47:08-06:00</updated>
+  <id>http://mkmurray.com/</id>
+  <author>
+    <name><![CDATA[Mike Murray]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Cannot Set a Value on Node Type 'Element']]></title>
+    <link href="http://mkmurray.com/blog/2008/08/04/cannot-set-a-value-on-node-type-element/"/>
+    <updated>2008-08-04T13:05:00-06:00</updated>
+    <id>http://mkmurray.com/blog/2008/08/04/cannot-set-a-value-on-node-type-element</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>You will receive an <font face="Courier New">InvalidOperationException</font> with this error message if you try to use the <font face="Courier New">Value</font> property of an <font face="Courier New">XmlNode</font> to set the node's value.&#160; You need to set the value using the <font face="Courier New">InnerText</font> property instead.</p>  <p>Thank you to this blog post for documenting the issue and its fix:&#160; <a title="http://www.neilpullinger.co.uk/2008/03/cannot-set-value-on-node-type-element.html" href="http://www.neilpullinger.co.uk/2008/03/cannot-set-value-on-node-type-element.html">http://www.neilpullinger.co.uk/2008/03/cannot-set-value-on-node-type-element.html</a></p>  </div>
+
+
+<h2>Comments</h2>
+
+
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>
+TKSSSSSSSSSSSSSSSSSSS</div>
+</div>
+<div class='comment'>
+<div class='author'>Sandeepya</div>
+<div class='content'>
+Thanks !</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>
+This helped me a lot - a huge Thanks from Germany!</div>
+</div>
+</div>
+
+]]></content>
+  </entry>
+  
+</feed>
