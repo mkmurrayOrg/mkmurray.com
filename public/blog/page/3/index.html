@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="This post is part of a series on coding Kata, BDD, MSpec, and SOLID principles.&#160; Feel free to visit the above link which points to the &hellip;">
+	<meta name="description" content="I was having fun working on the Toughest Developer Puzzle Ever 2 when I came across a problem that asked for the coordinates into a grid of numbers &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -29,6 +29,101 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2010/06/12/parallel-for-loops-in-net-4/">Parallel.For Loops in .NET 4</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-06-12T12:19:00-06:00" pubdate data-updated="true">Jun 12<span>th</span>, 2010</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/algorithms/'>Algorithms</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/linq/'>LINQ</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>, <a class='category' href='/blog/categories/threading/'>Threading</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2010/06/12/parallel-for-loops-in-net-4/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>I was having fun working on the <a href="http://toughestdeveloperpuzzleever.com/tdpe2/">Toughest Developer Puzzle Ever 2</a> when I came across a problem that asked for the coordinates into a grid of numbers of the upper left corner for a 4x4 sub-grid with a magic sum of 34, meaning all rows, columns, and the 2 diagonals all sum up to 34.&#160; Instead of trying to figure it out manually, I probably did what many programmers would do and wrote a quick and dirty program to accomplish the task for me.</p>  <p>I didn’t try to use any optimized search algorithm or anything, as I knew that the problem space was very small and specific and that computers are really fast.&#160; So I figured I would just write a brute-force iterate through every row and column type of an algorithm (in Big O notation being <font face="Courier New">O(mn)</font> or just <font face="Courier New">O(n<span style="font-size:xx-small; vertical-align:top;">2</span>)</font> if the original grid is square), knowing it would return in milliseconds.</p>  <p>I quickly realized that each iteration was not dependent any previous iteration for its calculations, so I decided it might be a good time to try out the new <font face="Courier New">Parallel.For</font> loops in the .NET 4 Framework that would multi-thread the iterations of the loops.&#160; Here’s the implementation I threw together:</p> <span class="fullpost">   <pre class="brush: csharp">using System;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Find34Grid
+{
+    public class Program
+    {
+        private static readonly int[][] Grid = new []
+        {
+            new [] {16,3,2,13,15,10,3,6,41,15,14,4,12,8,7,1,12},
+            new [] {5,10,22,8,4,5,16,7,9,7,6,12,5,11,10,8,5},
+            new [] {9,6,7,12,14,11,2,13,16,3,2,13,15,10,3,6,5},
+            new [] {41,15,14,4,12,8,7,2,5,10,11,8,4,5,16,9,15},
+            new [] {16,3,2,13,15,10,3,6,15,10,16,2,3,13,16,2,3},
+            new [] {5,10,11,8,4,5,16,9,4,5,5,11,10,8,5,11,10},
+            new [] {9,6,7,12,14,11,2,13,14,11,9,7,6,12,9,7,6},
+            new [] {41,15,14,4,12,8,7,1,12,8,4,14,15,1,14,15,1},
+            new [] {9,7,6,12,5,11,10,8,5,11,10,3,6,41,15,14,4},
+            new [] {4,14,15,1,9,7,6,12,9,7,5,16,9,9,7,6,12},
+            new [] {12,8,13,13,4,14,15,1,4,14,11,2,13,16,3,2,13}
+        };
+
+        private const int MagicSum = 34;
+
+        public static void Main(string[] args)
+        {
+            Parallel.For(0, Grid.Length - 3, i =&gt;
+            {
+                Parallel.For(0, Grid[i].Length - 3, j =&gt;
+                {
+                    int[] sums = new []
+                    {
+                        Grid[i].Skip(j).Take(4).Sum(), // Row 1
+                        Grid[i+1].Skip(j).Take(4).Sum(), // Row 2
+                        Grid[i+2].Skip(j).Take(4).Sum(), // Row 3
+                        Grid[i+3].Skip(j).Take(4).Sum(), // Row 4
+                        new [] { Grid[i][j], Grid[i+1][j], Grid[i+2][j], Grid[i+3][j]}.Sum(), // Column 1
+                        new [] { Grid[i][j+1], Grid[i+1][j+1], Grid[i+2][j+1], Grid[i+3][j+1]}.Sum(), // Column 2
+                        new [] { Grid[i][j+2], Grid[i+1][j+2], Grid[i+2][j+2], Grid[i+3][j+2]}.Sum(), // Column 3
+                        new [] { Grid[i][j+3], Grid[i+1][j+3], Grid[i+2][j+3], Grid[i+3][j+3]}.Sum(), // Column 4
+                        new [] { Grid[i][j], Grid[i+1][j+1], Grid[i+2][j+2], Grid[i+3][j+3]}.Sum(), // Diagonal 1
+                        new [] { Grid[i][j+3], Grid[i+1][j+2], Grid[i+2][j+1], Grid[i+3][j]}.Sum() // Diagonal 2
+                    };
+
+                    if (sums.All(x =&gt; x == MagicSum))
+                    {
+                        Console.WriteLine(&quot;y (row): {0}\nx (column): {1}&quot;, i, j);
+                    }
+                });
+            });
+
+            Console.ReadLine();
+        }
+    }
+}</pre>
+<p>Nothing special and certainly did the job.&#160; I didn’t really notice a performance improvement in anyway, but that was expected for such a small problem.&#160; I don’t really expect a whole lot of feedback on such straightforward code, but if there is a cleaner or more efficient way to utilize <font face="Courier New">Parallel.For</font> or <font face="Courier New">Parallel.ForEach</font>, please don’t hesitate to let me know via commenting to this post.&#160; Thanks!</p>
+</span></div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -532,96 +627,6 @@ Yes, this is a good start for a great idea (code kata done slowly).<br /><br />R
 <div class='author'>David</div>
 <div class='content'>
 Looks good Mike!<br /><br />I wouldn&#39;t call the previous spec a mistake or &quot;foolish&quot; though. I seen working on simple cases like Count advocated lots of places for doing TDD, I&#39;ve just always struggled with getting from those cases to the main responsibilities of the class.<br /><br />Looking forward to the rest of the series.</div>
-</div>
-</div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2009/11/12/anagram-code-kata-part-1-getting-started/">Anagram Code Kata Part 1 – Getting Started</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-11-12T15:03:00-07:00" pubdate data-updated="true">Nov 12<span>th</span>, 2009</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/algorithms/'>Algorithms</a>, <a class='category' href='/blog/categories/anagram-code-kata-series/'>Anagram Code Kata Series</a>, <a class='category' href='/blog/categories/bdd/'>BDD</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/code-organization/'>Code Organization</a>, <a class='category' href='/blog/categories/mspec/'>MSpec</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/testing/'>Testing</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2009/11/12/anagram-code-kata-part-1-getting-started/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p>This post is part of a <a href="http://murrayon.net/2009/11/anagram-code-kata-bdd-mspec.html" target="_blank">series on coding Kata, BDD, MSpec, and SOLID principles</a>.&#160; Feel free to visit the above link which points to the introductory post, also containing an index of all posts in the series.</p>  <p>This post will provide resources that serve as an introduction to the <a href="http://github.com/machine/machine.specifications" target="_blank">MSpec BDD testing framework</a>.&#160; We will also set up our Visual Studio solution, explain the Anagram Code Kata problem statement, and write our first specification and test.</p> <span class="fullpost">   <h3>Machine.Specifications (MSpec)</h3>    <p>The author of this BDD testing framework is <a href="http://codebetter.com/blogs/aaron.jensen/default.aspx" target="_blank">Aaron Jensen</a> of <a href="http://codebetter.com/" target="_blank">CodeBetter.com</a>.&#160; Probably the best introduction to the framework (and lightly touching on general principles of BDD) is <a href="http://blog.wekeroad.com/" target="_blank">Rob Conery’s</a> post entitled <a href="http://blog.wekeroad.com/blog/make-bdd-your-bff-2" target="_blank">Make BDD Your BFF</a>.&#160; MSpec is hosted on <a href="http://github.com/" target="_blank">GitHub</a> using the <a href="http://en.wikipedia.org/wiki/Git_(software)" target="_blank">Git source control software</a> (and <a href="http://github.com/machine/machine.specifications" target="_blank">here is the link for the repository again</a>).&#160; Download the code and build it to get the necessary libraries that you need into a <font face="Courier New">Bin</font> folder.&#160; My MSpec libraries are a few months old, as I haven’t upgraded my source since my initial download back then.&#160; I have not set up TestDriven.NET and am not sure it will be necessary for this simple coding exercise.&#160; I am using NUnit for the actual testing framework underneath MSpec; the following article may be of interest to you if you would like to use a newer version of NUnit than what MSpec targets:</p>    <p><a href="http://codebetter.com/blogs/howard.dierking/archive/2009/11/08/using-latest-nunit-version-with-mspec.aspx" target="_blank">Using Latest NUnit Version with MSpec</a></p>    <p>MSpec helps you organize your code into Specifications, a core BDD concept.&#160; It is inspired by early BDD testing frameworks like Ruby’s <a href="http://rspec.info/" target="_blank">RSpec</a>.&#160; The syntax and arrangement can be a little odd for a static language like C#, but I think I like the direction it is heading.&#160; Again, the best way to get familiar with the syntax, set up the MSpec Test Runner, and configure HTML reporting output is to read <a href="http://blog.wekeroad.com/blog/make-bdd-your-bff-2" target="_blank">Rob’s introductory post on BDD and MSpec</a>.</p>    <h3>Setting Up the Visual Studio Solution</h3>    <p>Let’s begin by creating a C# console application named <font face="Courier New">AnagramCodeKata</font> targeting .NET Framework 3.5.&#160; The solution name (and solution folder) will be the same.&#160; For our dependencies on MSpec (and NUnit), I have created a physical file system folder named <font face="Courier New">Libraries</font> and made it a sibling folder to the project’s physical folder (same level as the solution file).&#160; That folder contains the following DLL libraries from the <font face="Courier New">Bin</font> folder of the compiled MSpec source code:</p>    <ul>     <li><font face="Courier New">CommandLine.dll</font> </li>      <li><font face="Courier New">Machine.Specifications.ConsoleRunner.exe</font> </li>      <li><font face="Courier New">Machine.Specifications.dll</font> </li>      <li><font face="Courier New">Machine.Specifications.NUnit.dll</font> </li>      <li><font face="Courier New">Machine.Specifications.Reporting.dll</font> </li>      <li><font face="Courier New">nunit.framework.dll</font> </li>   </ul>    <p>Then within our Solution Explorer, we only need to make references to 3 of these libraries (namely <font face="Courier New">Machine.Specifications.dll</font>, <font face="Courier New">Machine.Specifications.NUnit.dll</font>, and <font face="Courier New">nunit.framework.dll</font>).&#160; I have also created two folders within our project in Solution Explorer, naming them <font face="Courier New">Reports</font> and <font face="Courier New">Specifications</font>.&#160; The <font face="Courier New">Reports</font> folder will contain the HTML-generated report of running our tests every time.&#160; The <font face="Courier New">Specifications</font> folder will hold our specifications and tests.&#160; This is what our current Solution Explorer looks like now:</p>    <p><a href="http://lh3.ggpht.com/_rps657FzHZ0/SvyGOtiALTI/AAAAAAAAADM/Xeygzia8cho/s1600-h/anagramScreenshot%5B6%5D.png"><img style="border-right-width: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto" title="anagramScreenshot" border="0" alt="anagramScreenshot" src="http://lh4.ggpht.com/_rps657FzHZ0/SvyGO870IZI/AAAAAAAAADQ/lDW6F6bIuhI/anagramScreenshot_thumb%5B4%5D.png?imgmax=800" width="289" height="340" /></a> </p>    <p>Also notice the <font face="Courier New">MSpecRunner </font>button at the top, which I’ve created to execute a custom External Tool that points to <font face="Courier New">Machine.Specifications.ConsoleRunner.exe</font> and passes in the appropriate parameters.&#160; This helpful setup was put forth by Rob Conery in the link to his introductory blog post that I provided above.</p>    <h3>Anagram Problem Statement</h3>    <p>So let’s go ahead and look at the <a href="http://codekata.pragprog.com/2007/01/kata_six_anagra.html">Anagram problem</a> we are trying to solve.&#160; Here’s a quick summary of what we are trying to accomplish:</p>    <blockquote>     <p>“The challenge is fairly simple: given a file containing one word per line, print out all the combinations of words that are anagrams; each line in the output contains all the words from the input that are anagrams of each other.”</p>   </blockquote>    <p>Unfortunately, Dave Thomas’ <font face="Courier New">wordlist.txt</font> link is broken on his blog post, and when responding to commenters asking for a fixed link to the text file, he pointed us all to some website that aggregates links to several word lists from around the Web.&#160; Many of us readers wanted to know the exact word list file he used so that we could compare our results to his.&#160; In his post, he states that there should be 2,530 sets of anagrams and 5,680 total words participating in those anagram sets.&#160; The tough part about this is that we’ve got to have the same word list text file.&#160; I searched the web and found a few, but I only found one that might be the same list.&#160; It is from some guy’s personal GitHub repository:</p>    <p><a title="http://github.com/krist0ff/code_kata/tree/ba975c3a64f11a81db2f3716b40de046f1ca7ef4/kata6" href="http://github.com/krist0ff/code_kata/tree/ba975c3a64f11a81db2f3716b40de046f1ca7ef4/kata6">http://github.com/krist0ff/code_kata/tree/ba975c3a64f11a81db2f3716b40de046f1ca7ef4/kata6</a></p>    <p>If you’re visiting this blog post, months or years after it was originally written, I obviously can’t guarantee this file will still be out there.&#160; You can try emailing me or commenting here and I can hopefully send it to you via email if I still have it.&#160; But more importantly, as we progress with this series, we’ll find out if it’s even the right word list or not.</p>    <p>Lastly, I’d like to look at the objectives for the coding kata that Dave Thomas outlines:</p>    <blockquote>     <p>“Apart from having some fun with words, this kata should make you think somewhat about algorithms. The simplest algorithms to find all the anagram combinations may take inordinate amounts of time to do the job. Working though alternatives should help bring the time down by orders of magnitude. To give you a possible point of comparison, I hacked a solution together in 25 lines of Ruby. It runs on the word list from my web site in 1.5s on a 1GHz PPC. It’s also an interesting exercise in testing: can you write unit tests to verify that your code is working correctly before setting it to work on the full dictionary.”</p>   </blockquote>    <p>I don’t think we’ll focus on runtime as much, but we’ll certainly revisit our algorithm as necessary if we have unacceptable wait times for the code to finish.&#160; To complete this section, let’s go ahead and add the <font face="Courier New">wordlist.txt</font> to our solution at the root of of our Project node.</p>    <h3>How About Some Actual Code?!</h3>    <p>So let’s now start off by creating our first specification.&#160; I have created a new C# file named <font face="Courier New">AnagramsFinderSpecs.cs</font> under our <font face="Courier New">Specifications</font> folder in our solution.&#160; I attempted to write our first test, but already feel like I’m not inline with “<a href="http://www.davesquared.net/2009/11/favour-test-driving-logic-over-data.html">favoring test driving logic over just testing data</a>.”</p>    <pre class="brush: csharp">using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Machine.Specifications;
-
-namespace AnagramCodeKata.Specifications
-{
-    [Subject(typeof(AnagramsFinder), &quot;Finding Anagrams&quot;)]
-    public class when_given_text_file_with_word_on_each_line
-    {
-        static int result;
-        static AnagramsFinder sut;
-
-        Establish context = () =&gt;
-        {
-            sut = new AnagramsFinder();
-        };
-
-        Because of = () =&gt;
-        {
-            result = sut.ParseTextFile(&quot;wordslist.txt&quot;);
-        };
-
-        It should_result_in_count_of_2530_anagram_sets = () =&gt;
-        {
-            result.ShouldEqual(2530);
-        };
-    }
-}</pre>
-
-  <p>If you can’t make out the funky structure and syntax, again refer back to Rob Conery’s introductory post to all of this stuff that I link to at the top.&#160; He does a great job of explaining what’s going on here.</p>
-
-  <p>Also, please remember that I have no clue what I’m doing and I’m just trying to copy people who know what they are doing.&#160; I am hoping that I’ll be corrected by those who have a better idea of how to approach all of this.&#160; This is a good stopping point because of my desire for feedback and the feeling of uncertainty I’m already getting.</p>
-
-  <p>Seriously, please guide me in the right direction or validate where I’m headed, because even I’m not sure where that is yet.&#160; I will say this, I’m pretty sure I shouldn’t be reading in <font face="Courier New">wordslist.txt</font> yet, and that this might be where I need to start using a mocking framework.</p>
-
-  <p>Stay tuned, there’s more to come.&#160; I just can’t tell what it will be about yet.&#160; It’ll still be fun though, I promise.</p>
-</span>  </div>
-<h2>Comments</h2>
-<div class='comments'>
-<div class='comment'>
-<div class='author'>Mike Murray</div>
-<div class='content'>
-Yes, thank you.  You&#39;ve given me some clairty now and some great ideas that I&#39;ll try implementing over the weekend.</div>
-</div>
-<div class='comment'>
-<div class='author'>David</div>
-<div class='content'>
-Hi Mike,<br /><br />Like you, I&#39;m a bit wary of that first spec you&#39;ve written (that doesn&#39;t mean it&#39;s wrong obviously &#8211; I&#39;m new to this too :)). <br /><br />You&#39;re right that you are testing data &#8211; loading the wordslist.txt file and checking for the right number of anagram combinations. By the way, this is probably a good example of an integration test for when you are done! :)<br /><br />Whenever I have a hard problem like this that I am having trouble solving, I try and cheat. If you keep this class simple, but push the tricky bits lower down the heirarchy then that may help you start.<br /><br />Here&#39;s how I would update the current spec to help implement your test (this won&#39;t be a spoiler because I&#39;d change the test. I&#39;ll go into that later). <br /><br />In this case I can think of two responsibilities: getting the words from our file, and then counting the number of anagrams found in those words. So maybe your spec&#39;s context could stub out a IFileReader or similar which will return an IEnumerable&lt;string&gt; (filled with some fake data) when asked to get the lines in wordslist.txt. You could then give these words to an IAnagramCounter, which will return 2530.<br /><br />Your test and because can remain the same &#8211; only the context will change (which is what I love about this style of writing specs).<br /><br />Of course this isn&#39;t specifying what your AnagramFinder should actually do&#8230; the kata aim is to print all the anagram combinations to the screen. So you may be better off trying this approach of pushing down logic but rewrite the spec to match the exact problem you are trying to solve.<br /><br />I&#39;m not sure if this will help or lead you down a dead end, but it is the approach I would take.<br /><br />Hope it helps!<br />David</div>
 </div>
 </div>
 

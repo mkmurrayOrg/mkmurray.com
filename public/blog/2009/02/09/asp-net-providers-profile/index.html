@@ -30,6 +30,31 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner"><article class="post">
 	<h1 class="title">ASP.NET Providers - Profile</h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-02-09T16:10:00-07:00" pubdate data-updated="true">Feb 9<span>th</span>, 2009</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/asp-net/'>ASP.NET</a>, <a class='category' href='/blog/categories/asp-net-providers-series/'>ASP.NET Providers Series</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/database/'>Database</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/sql/'>SQL</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>, <a class='category' href='/blog/categories/web/'>Web</a>
+
+
+</div>
+		
+			<span class="comments"><a href="#disqus_thread">Comments</a></span>
+		
+	</div>
 	<div class="entry-content"><div class='post'>
 <p>This blog post is part of a series about the ASP.NET Providers (namely Membership, Role Management, and Profile). The introductory post in the series can be found at the following link, which introduces the <a href="http://en.wikipedia.org/wiki/Provider_model">Provider Model pattern</a> and gives a personal example of an implementation I have been working on:</p><ul><li><a href="http://murrayon.net/2009/01/aspnet-providers-membership-role-and.html">ASP.NET Providers - Membership, Role, and Profile</a></li></ul><p>This post will deal with adding Profile properties to your user accounts (and apparently this can also be used with anonymous users as well).&#160; However, I will suggest using a slightly different Profile Provider than what comes in ASP.NET by default.&#160; This will show how easy it is to plug in a different implementation in this very flexible Provider Model.</p> <span class='fullpost'> <h3>SqlProfileProvider vs. SqlTableProfileProvider</h3><p>The <font face="Courier New">SqlProfileProvider</font> is the built-in Profile Provider that ASP.NET comes with by default.&#160; It allows you to define custom fields that make up profiling data you would want to collect and store about your users.&#160; This could be demographics, preferences, or any other useful details.&#160; This specific implementation is designed in a way where no matter what fields you define, your database schema will be compatible with any upgrade Microsoft could send down to patch the Provider system or ASP.NET in general.&#160; The way this is accomplished is by storing a <a title="Binary Large Object" href="http://en.wikipedia.org/wiki/Binary_large_object">blob</a> of all the field names in one table column and a blob of all the field values in another column; it&#8217;s similar to the concept of a <a title="Associative Array" href="http://en.wikipedia.org/wiki/Associative_array">dictionary</a> with key/value pairs.&#160; The difficult part is that these blobs can contain clear-text, XML, and/or binary, depending on how the source data type serializes by default.&#160; Unfortunately, this highly flexible solution is quite unusable if you need a clear view of the Profile data for reporting purposes or stored procedure needs.</p><p>When trying to find an already implemented custom provider that would allow to store each Profile field in its own table column, I came across a <a title="ASP.NET 2.0 SQL Table Profile Provider Released Today" href="http://weblogs.asp.net/scottgu/archive/2006/01/10/435038.aspx">blog post from Scott Guthrie introducing such an implementation done by two Microsoft employees</a>.&#160; The name of this provider is the <font face="Courier New">SqlTableProfileProvider</font>, and it can be found at the following link:</p><p><a href="http://www.asp.net/downloads/sandbox/table-profile-provider-samples/">Table Profile Provider Samples</a></p><p>At the above location, you will find an MSI download that will install a sample project containing a few source code files you can include in your project; you will also find a download link for a &quot;white paper&quot; Word document that explains the usage of the <font face="Courier New">SqlTableProfileProvider</font> and the <font face="Courier New">SqlStoredProcedureProfileProvider</font> custom providers.&#160; The nice thing about both of these providers is that their use in code and their configuration in the Web.config is extremely similar to how the original <font face="Courier New">SqlProfileProvider</font> is used and configured.</p><h3>Setting up the SqlTableProfileProvider</h3><p>As was done with the <a title="ASP.NET Providers - Membership" href="http://murrayon.net/2009/01/aspnet-providers-membership.html">Membership</a> and <a title="ASP.NET Providers - Role Management" href="http://murrayon.net/2009/02/aspnet-providers-role-management.html">Role Management</a> Providers, here is the XML fragment that would go in your <font face="Courier New">Web.config</font>:</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 325px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #0000ff">&lt;</span><span style="color: #800000">configuration</span><span style="color: #0000ff">&gt;</span>
     <span style="color: #0000ff">&lt;</span><span style="color: #800000">connectionStrings</span><span style="color: #0000ff">&gt;</span>

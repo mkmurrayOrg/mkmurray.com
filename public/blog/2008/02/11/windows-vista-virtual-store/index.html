@@ -30,6 +30,31 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner"><article class="post">
 	<h1 class="title">Windows Vista Virtual Store</h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-02-11T16:15:00-07:00" pubdate data-updated="true">Feb 11<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/isolated-storage/'>Isolated Storage</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/virtual-store/'>Virtual Store</a>, <a class='category' href='/blog/categories/vista/'>Vista</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
+
+
+</div>
+		
+			<span class="comments"><a href="#disqus_thread">Comments</a></span>
+		
+	</div>
 	<div class="entry-content"><div class='post'>
 <p>Vista has a security &quot;feature&quot; that locks down certain system folders (for instance <font face="Courier New">Program Files</font>) from programmatic modifications.&#160; However, it doesn&#8217;t just deny your IO requests; instead it <u>may or may not</u> redirect it to some virtual store elsewhere on the file system (it&#8217;s per-user too, so that could further screw your code up if you were writing out something global or machine-wide).&#160; The best part is you don&#8217;t know if you were redirected or not.&#160; I&#8217;ve had it where I was being redirected to the virtualized location for writes and then when I attempted to read later, it wouldn&#8217;t redirect me and I would be reading from the real <font face="Courier New">Program Files</font>.&#160; Another odd thing is that it appeared to always read and write from the real <font face="Courier New">Program Files</font> location if the context was that of a locally-hosted web site.</p> <span class='fullpost'> <p>Here&#8217;s another blogger&#8217;s discovery of it for further information:&#160; <a title="http://www.hanselman.com/blog/VistasShowCompatibilityFilesAndTheScrumptiousWonderThatIsFileVirtualization.aspx" href="http://www.hanselman.com/blog/VistasShowCompatibilityFilesAndTheScrumptiousWonderThatIsFileVirtualization.aspx">http://www.hanselman.com/blog/VistasShowCompatibilityFilesAndTheScrumptiousWonderThatIsFileVirtualization.aspx</a></p>  <p>I don&#8217;t know why I didn&#8217;t know anything about this until now, but I quickly learned about .NET&#8217;s Isolated Storage APIs.&#160; Pretty useful for persisting configurations and such.&#160; It was the solution to my problem in this case.&#160; Here is a good article on it:&#160; <a title="http://www.developer.com/net/net/article.php/3430541" href="http://www.developer.com/net/net/article.php/3430541">http://www.developer.com/net/net/article.php/3430541</a></p>  <p>I will warn you though that you should try to do the reading and writing from the same assembly from within the same application; otherwise, you end up getting different isolated storage stores for each call.&#160; According to the many documents I read there is a way to call into a certain store even if .NET doesn&#8217;t normally map your assembly and/or application to that location (you have to provide something called <font face="Courier New">Evidence</font>).&#160; I couldn&#8217;t get it to work and was running short on time.</p> </span>  </div>
 </div>

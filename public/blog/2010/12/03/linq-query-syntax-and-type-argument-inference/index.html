@@ -30,6 +30,31 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner"><article class="post">
 	<h1 class="title">LINQ Query Syntax and Type Argument Inference</h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-12-03T15:29:00-07:00" pubdate data-updated="true">Dec 3<span>rd</span>, 2010</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/algorithms/'>Algorithms</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/delegates/'>Delegates</a>, <a class='category' href='/blog/categories/error/'>Error</a>, <a class='category' href='/blog/categories/functional-programming/'>Functional Programming</a>, <a class='category' href='/blog/categories/linq/'>LINQ</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/sql/'>SQL</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
+
+
+</div>
+		
+			<span class="comments"><a href="#disqus_thread">Comments</a></span>
+		
+	</div>
 	<div class="entry-content"><div class='post'>
 <p>In LINQ, you can query in-memory data collections using <a href="http://msdn.microsoft.com/en-us/library/bb397947.aspx">Method Syntax (the <font face="Courier New">IEnumerable</font> extension methods) or Query Syntax (the SQL-like, declarative syntactic sugar on top of the underlying method calls)</a>.&#160; I was using the query syntax to join a few in-memory collections and then project (like a SQL <font face="Courier New">SELECT</font>) the denormalized data into a new object that only contained a few pieces of information from each of the separate data collections.&#160; The code could look similar to this (we&#8217;ll go with a shopping example in honor of the upcoming holiday season):</p>  <pre class="brush: csharp">var shoppingLists =
     from person in people

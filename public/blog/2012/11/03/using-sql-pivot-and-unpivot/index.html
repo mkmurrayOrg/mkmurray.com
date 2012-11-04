@@ -1,0 +1,262 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Using SQL PIVOT and UNPIVOT - Mike Murray</title>
+	<meta name="author" content="Mike Murray">
+
+	
+	<meta name="description" content="I learned about a pair of SQL keywords I didn&#8217;t know existed before. I suppose I shouldn&#8217;t have been so surprised
+this ability existed in &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="http://feeds.feedburner.com/mkmurray/" rel="alternate" title="Mike Murray" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	
+</head>
+
+<body>
+	<div class="container">
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post">
+	<h1 class="title">Using SQL PIVOT and UNPIVOT</h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-11-03T23:22:00-06:00" pubdate data-updated="true">Nov 3<span>rd</span>, 2012</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/database/'>Database</a>, <a class='category' href='/blog/categories/sql/'>SQL</a>
+
+
+</div>
+		
+			<span class="comments"><a href="#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content"><p>I learned about a pair of SQL keywords I didn&#8217;t know existed before. I suppose I shouldn&#8217;t have been so surprised
+this ability existed in SQL since I knew it existed within Excel spreadsheets, but it really saved the day this
+last week. I&#8217;m speaking of the <code>PIVOT</code> and <code>UNPIVOT</code> SQL keywords.</p>
+
+<p>This last week I needed to track down some data inconsistencies in our database by joining a few view model tables.
+These tables are populated by event handlers that denormalize the relevant data from events into a view model
+table that serves the needs of a specific part of the UI. In one particular view model table, it made sense to
+arrange the data points specific to each US state as columns on a single row. This allowed for a grid-based UI that
+enables batch operations on many rows at one time. A second view model table was intended for a different use case
+and was designed so that the state-specific data points became a one-to-many relationship across multiple rows and
+only two columns for the key-value pair of the US state and its associated data point value. These were two of the
+tables I needed to join together during my database inquisition.</p>
+
+<p>At this point I figured I was stuck, as I couldn&#8217;t see a sensible way to join two tables designed so contrary to
+each other for the purposes of joining. I tried to think of any ways to dynamically join tables on a column name
+in one table specified by the value in the other table&#8217;s row. I knew I was heading nowhere fast, so I asked our
+DBA for some ideas. He informed me of the <code>PIVOT</code> and <code>UNPIVOT</code> keywords in SQL as one option to solve the problem.
+We reasoned that even though it may not be the most efficient feature, the likelihood of it proving to be a
+performance bottleneck would be essentially non-existent (given that the entire size of the data set was relatively
+small, on the magnitude of hundreds or thousands of rows instead of millions of rows). And so I gave it a go.</p>
+
+<p>I will now describe an example scenario in order to illustrate how I used the <code>UNPIVOT</code> feature to join two tables
+that didn&#8217;t seem at all compatible. The goal will be to join a table representing what US states each product is
+available for sale within to a table representing how many of each product are being sold in each state. We will
+call the first table <code>ProductAvailability</code> and give it an integer identity column named <code>Id</code>, an integer column
+named <code>ProductId</code>, and then 52 <code>bit</code> columns indicating the availability status of the product in each of the 50 US
+states, the District of Columbia, and Puerto Rico. These columns will be named by their two letter abbreviations of
+<code>AK</code> through <code>WY</code>. The second table we will call <code>ProductSales</code> and it will also have an integer identity column
+named <code>Id</code> and an integer column named <code>ProductId</code>. In addition it will have a string column (specifically
+<code>char(2)</code>) named <code>StateCode</code> and an integer column named <code>TotalSales</code>.</p>
+
+<p>The unpivoting of the <code>ProductAvailability</code> table to prepare it for joining can be done like so:</p>
+
+<pre><code>SELECT
+    Unpivoted.ProductId,
+    Unpivoted.StateCode,
+    Unpivoted.IsAvailable
+FROM ProductAvailability
+UNPIVOT
+(
+    IsAvailable FOR StateCode
+    IN (AK,AL,AR,AZ,CA,CO,CT,
+        DC,DE,FL,GA,HI,IA,ID,
+        IL,IN,KS,KY,LA,MA,MD,
+        ME,MI,MN,MO,MS,MT,NC,
+        ND,NE,NH,NJ,NM,NV,NY,
+        OH,OK,OR,PA,PR,RI,SC,
+        SD,TN,TX,UT,VA,VT,WA,
+        WI,WV,WY)
+) AS Unpivoted
+</code></pre>
+
+<p>The interesting part is obviously the <code>UNPIVOT</code> clause. Here we are declaring a list of column names to unpivot and
+also naming two new columns in which to place the old column&#8217;s name and value (<code>StateCode</code> and <code>IsAvailable</code>
+respectively). The result is that instead of having one row of 54 columns for each product, we now have 52 rows of
+three columns to describe the exact same availability of the product. But with this second schema, we can more
+easily join with the <code>ProductSales</code> table.</p>
+
+<p>Here is an example of such a query where we are trying to find the products which have no sales in a state for
+which it is marked as available for sale:</p>
+
+<pre><code>SELECT
+    ProductStateAvailability.ProductId,
+    ProductStateAvailability.StateCode
+FROM
+(
+    SELECT
+        Unpivoted.ProductId,
+        Unpivoted.StateCode,
+        Unpivoted.IsAvailable
+    FROM ProductAvailability
+    UNPIVOT
+    (
+        IsAvailable FOR StateCode
+        IN (AK,AL,AR,AZ,CA,CO,CT,
+            DC,DE,FL,GA,HI,IA,ID,
+            IL,IN,KS,KY,LA,MA,MD,
+            ME,MI,MN,MO,MS,MT,NC,
+            ND,NE,NH,NJ,NM,NV,NY,
+            OH,OK,OR,PA,PR,RI,SC,
+            SD,TN,TX,UT,VA,VT,WA,
+            WI,WV,WY)
+    ) AS Unpivoted
+    WHERE Unpivoted.IsAvailable = 1
+) AS ProductStateAvailability
+INNER JOIN ProductSales
+    ON ProductSales.StateCode = ProductStateAvailability.StateCode
+    AND ProductSales.ProductId = ProductStateAvailability.ProductId
+WHERE ProductSales.TotalSales = 0
+</code></pre>
+
+<p>I hope you find the <code>PIVOT</code> and <code>UNPIVOT</code> SQL keywords just as helpful as I did if you ever find yourself in a bind
+with two tables that are seemingly impossible to join.</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2012
+
+    Mike Murray
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a>
+</footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'mkmurray';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://mkmurray.com/blog/2012/11/03/using-sql-pivot-and-unpivot/';
+        var disqus_url = 'http://mkmurray.com/blog/2012/11/03/using-sql-pivot-and-unpivot/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+		</div>
+		<div class="left-col">
+			<header id="header" class="inner"><div class="profilepic">	
+	<img src="/images/mkmurray.jpg" alt="Profile Picture">
+</div>
+<h1><a href="/">Mike Murray</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<br/>
+<h3 class="alignleft">please code responsibly</h3>
+<br/>
+<br/>
+<br/>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		<a class="facebook" href="http://www.facebook.com/mkmurray" title="Facebook">Facebook</a>
+		
+		
+		<a class="google" href="https://plus.google.com/109073345657761090655?rel=author" title="Google+">Google+</a>
+		
+		
+		<a class="twitter" href="http://twitter.com/mkmurray" title="Twitter">Twitter</a>
+		
+		
+		<a class="github" href="https://github.com/mkmurray" title="GitHub">GitHub</a>
+		
+		
+		<a class="linkedin" href="http://www.linkedin.com/in/mkmurray">LinkedIn</a>
+		
+		
+		
+		
+		<a class="rss" href="http://feeds.feedburner.com/mkmurray/" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+
+</header>				
+		</div>	
+	</div>
+</body>
+</html>

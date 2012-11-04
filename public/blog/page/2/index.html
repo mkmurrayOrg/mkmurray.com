@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="I learned a lot from my last foray into implementing my own Maybe Monad.&#160; Apparently, it got noticed by and was actually useful to Derick &hellip;">
+	<meta name="description" content="In LINQ, you can query in-memory data collections using Method Syntax (the IEnumerable extension methods) or Query Syntax (the SQL-like, declarative &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -29,6 +29,149 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2010/12/03/linq-query-syntax-and-type-argument-inference/">LINQ Query Syntax and Type Argument Inference</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-12-03T15:29:00-07:00" pubdate data-updated="true">Dec 3<span>rd</span>, 2010</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/algorithms/'>Algorithms</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/delegates/'>Delegates</a>, <a class='category' href='/blog/categories/error/'>Error</a>, <a class='category' href='/blog/categories/functional-programming/'>Functional Programming</a>, <a class='category' href='/blog/categories/linq/'>LINQ</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/sql/'>SQL</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2010/12/03/linq-query-syntax-and-type-argument-inference/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>In LINQ, you can query in-memory data collections using <a href="http://msdn.microsoft.com/en-us/library/bb397947.aspx">Method Syntax (the <font face="Courier New">IEnumerable</font> extension methods) or Query Syntax (the SQL-like, declarative syntactic sugar on top of the underlying method calls)</a>.&#160; I was using the query syntax to join a few in-memory collections and then project (like a SQL <font face="Courier New">SELECT</font>) the denormalized data into a new object that only contained a few pieces of information from each of the separate data collections.&#160; The code could look similar to this (we&#8217;ll go with a shopping example in honor of the upcoming holiday season):</p>  <pre class="brush: csharp">var shoppingLists =
+    from person in people
+    join wishlist in wishlists on person.Id equals wishlist.personId
+    join store in stores on store.Id equals wishlist.storeId
+    select new
+    {
+        PersonName = person.Name,
+        StoreName = store.Name,
+        NumItems = wishlist.Items.Count
+    };</pre>
+
+<p>However, I ran into the following intellisense red squiggly error in the Visual Studio C# code editor on the second <font face="Courier New">join</font> statement:</p>
+
+<blockquote>
+  <p><font face="Courier New">The type arguments for method &#8216;IEnumerable&lt;TResult&gt; System.Linq.Enumerable.Join&lt;TOuter,TInner,TKey,TResult&gt;(this IEnumerable&lt;TOuter&gt;, IEnumerable&lt;TInner&gt;, Func&lt;TOuter,TKey&gt;, Func&lt;TInner,TKey&gt;, Func&lt;TOuter,TInner,TResult&gt;)&#8217; cannot be inferred from the query.</font></p>
+</blockquote>
+
+<p>The error might also end with a statement that says &quot;<font face="Courier New">Try specifiying the type arguments explicitly</font>.&quot;</p>
+<span class="fullpost">
+  <h3>Let’s Take a Closer Look…</h3>
+
+  <p>The underlying problem is best understood by examining the method signature of the <a href="http://msdn.microsoft.com/en-us/library/bb534675.aspx">LINQ <font face="Courier New">Join</font> extension method</a> and how the LINQ query syntax for the keyword <font face="Courier New">join</font> maps to that method call in the compiler.&#160; The type signature for the extension method is as follows:</p>
+
+  <pre class="brush: csharp">public static IEnumerable&lt;TResult&gt; Join&lt;TOuter,TInner,TKey,TResult&gt;(
+    this IEnumerable&lt;TOuter&gt; outer,
+    IEnumerable&lt;TInner&gt; inner,
+    Func&lt;TOuter,TKey&gt; outerKeySelector,
+    Func&lt;TInner,TKey&gt; innerKeySelector,
+    Func&lt;TOuter,TInner,TResult&gt; resultSelector)</pre>
+
+  <p>Consistent with all <a href="http://msdn.microsoft.com/en-us/library/bb383977.aspx">extension methods</a>, it is <font face="Courier New">public static</font> and has a <font face="Courier New">this</font> keyword in front of the first method parameter, allowing you to call the <font face="Courier New">Join</font> method as if it had been declared in the original definition of the <font face="Courier New">IEnumerable&lt;&gt;</font> class or one of its inheriting children classes.</p>
+
+  <p>The first two parameters are the two data collections being joined, and in the case of my LINQ query above, they would be the joined collection of <font face="Courier New">people</font> &amp; <font face="Courier New">wishlists</font> and then the <font face="Courier New">stores</font> collection, respectively.</p>
+
+  <p>The next two method parameters take delegates or lambda expressions that select the key value from each collection participating in the join, <font face="Courier New">outer</font> collection key selector first and then the <font face="Courier New">inner</font> key selector second.&#160; The key values of each item in each collection will compared to each other for equality.&#160; It will use the normal definition of the <font face="Courier New">Equals</font> method for your object type (or if you specified a custom one in your class definition), or there is another <font face="Courier New">Join</font> extension method signature that takes in another method parameter that an object that conforms to the <font face="Courier New"><a href="http://msdn.microsoft.com/en-us/library/ms132151.aspx">IEqualityComparer&lt;TKey&gt; <font face="Arial">interface</font></a></font>.&#160; The key selectors from our LINQ query sample would be the two member access expressions in the &quot;<font face="Courier New">on store.Id equals wishlist.storeId</font><font face="Arial">&quot; statement.</font></p>
+
+  <p>The last parameter is a delegate or lambda expression that takes in a item from each participating data collection and projects the items into a new form (like the <font face="Courier New">Select</font> LINQ query method and its SQL equivalent).&#160; The two items being passed into the <font face="Courier New">Func</font> have passed the equality comparison of each item’s key value, exactly the same as how rows from two tables match up in an <font face="Courier New">inner join</font> statement in SQL.</p>
+
+  <p>As for the <a href="http://msdn.microsoft.com/en-us/library/0zk36dx2.aspx">generic type parameters</a> in this extension method definition, <font face="Courier New">TOuter</font> and <font face="Courier New">TInner</font> are the types from the two collections participating in the join.&#160; <font face="Courier New">TKey</font> is the type returned by the key selectors; notice that in order to compare the equality of each key selected, they need to be of the same type.&#160; In our example, <font face="Courier New">TKey</font> is likely <font face="Courier New">int</font> or <font face="Courier New">long</font> (or maybe <font face="Courier New">Guid</font>) since we’re dealing with <font face="Courier New">Id</font> properties of all of our objects.&#160; <font face="Courier New">TResult</font> is the type returned by the projection <font face="Courier New">Func&lt;TOuter,TInner,TResult&gt; resultSelector</font>; in our case, we returned an <a href="http://msdn.microsoft.com/en-us/library/bb397696.aspx">anonymous type</a> consisting of three properties (<font face="Courier New">PersonName</font>, <font face="Courier New">StoreName</font>, and <font face="Courier New">NumItems</font>).</p>
+
+  <h3>Ok, So Where Did I Screw Up Then?</h3>
+
+  <p>To answer this, let’s take a look one more time at my LINQ query syntax, how it would map to LINQ method syntax, and the <font face="Courier New">Join</font> method signature again all side-by-side:</p>
+
+  <pre class="brush: csharp; highlight: [4,19,20]">var shoppingLists =
+    from person in people
+    join wishlist in wishlists on person.Id equals wishlist.personId
+    join store in stores on store.Id equals wishlist.storeId
+    select new
+    {
+        PersonName = person.Name,
+        StoreName = store.Name,
+        NumItems = wishlist.Items.Count
+    };
+
+// Equivalent LINQ method syntax
+var shoppingLists2 = people
+    .Join(wishlists,
+        person =&gt; person.Id,
+        wishlist =&gt; wishlist.personId,
+        (person, wishlist) =&gt; new { person, wishlist })
+    .Join(stores,
+        store =&gt; store.Id,
+        something =&gt; something.wishlist.storeId,
+        (obj, store) =&gt; new
+        {
+            PersonName = obj.person.Name,
+            StoreName = store.Name,
+            NumItems = obj.wishlist.Items.Count
+        });
+
+public static IEnumerable&lt;TResult&gt; Join&lt;TOuter,TInner,TKey,TResult&gt;(
+    this IEnumerable&lt;TOuter&gt; outer,
+    IEnumerable&lt;TInner&gt; inner,
+    Func&lt;TOuter,TKey&gt; outerKeySelector,
+    Func&lt;TInner,TKey&gt; innerKeySelector,
+    Func&lt;TOuter,TInner,TResult&gt; resultSelector)</pre>
+
+  <p>The issue is lines 19 and 20 above; they need to be switched.&#160; The compiler can’t properly infer the generic type parameters because we have our key selectors out of order in the argument list when invoking the <font face="Courier New">Join</font> method.&#160; If you wanted to be explicit about your generic type parameters assignments, then <font face="Courier New">Join&lt;TOuter, TInner, TKey, TResult&gt;</font> would be <font face="Courier New">Join&lt;Temp1, Store, int, Temp2&gt;</font>, where <font face="Courier New">Temp1</font> and <font face="Courier New">Temp2</font> represent the magical type definitions that the compiler creates underneath the covers when you use anonymous types in your C# code.&#160; Notice the <font face="Courier New">outerKeySelector</font> needs to come before the <font face="Courier New">innerKeySelector</font>.&#160; It appears the &quot;<font face="Courier New">on store.Id equals wishlist.storeId</font><font face="Arial">&quot; syntax is not a </font><a href="http://en.wikipedia.org/wiki/Commutativity">commutative operation</a>.</p>
+
+  <p>One last thing, I just realized that the error(s) given in Visual Studio when you actually compile the code are different than the intellisense red squiggly error message.&#160; It appears an actual build of the code is able to be a little more omniscient than the quick compile that intellisense does as you type.&#160; The error (and intelligent suggestion) the compiler offers says something like this:</p>
+
+  <blockquote>
+    <p><font face="Courier New">The name &#8216;store&#8217; is not in scope on the left side of &#8216;equals&#8217;.&#160; Consider swapping the expressions on either side of &#8216;equals&#8217;.</font></p>
+  </blockquote>
+
+  <h3>Additional Info</h3>
+
+  <p>While reading the <a href="http://msdn.microsoft.com/en-us/library/bb534675.aspx">MSDN article on the LINQ <font face="Courier New">Join</font> method</a>, I thought the &quot;<font face="Courier New">Remarks</font><font face="Arial">&quot;</font> section has some really great stuff about deferred execution, default equality comparison, differences from <font face="Courier New">SelectMany</font>, sort order perseverance, and so on:</p>
+
+  <blockquote>
+    <p>This method is implemented by using deferred execution. The immediate return value is an object that stores all the information that is required to perform the action. The query represented by this method is not executed until the object is enumerated either by calling its <strong>GetEnumerator</strong> method directly or by using foreach in Visual C# or For Each in Visual Basic.</p>
+
+    <p>The default equality comparer, <a href="http://msdn.microsoft.com/en-us/library/ms224763.aspx">Default</a>, is used to hash and compare keys.</p>
+
+    <p>A join refers to the operation of correlating the elements of two sources of information based on a common key. <a href="http://msdn.microsoft.com/en-us/library/system.linq.enumerable.join.aspx">Join</a> brings the two information sources and the keys by which they are matched together in one method call. This differs from the use of <strong>SelectMany</strong>, which requires more than one method call to perform the same operation.</p>
+
+    <p><a href="http://msdn.microsoft.com/en-us/library/system.linq.enumerable.join.aspx">Join</a> preserves the order of the elements of outer, and for each of these elements, the order of the matching elements of inner.</p>
+
+    <p>In query expression syntax, a join (Visual C#) or Join (Visual Basic) clause translates to an invocation of <a href="http://msdn.microsoft.com/en-us/library/system.linq.enumerable.join.aspx">Join</a>.</p>
+
+    <p>In relational database terms, the <a href="http://msdn.microsoft.com/en-us/library/system.linq.enumerable.join.aspx">Join</a> method implements an inner equijoin. &#8216;Inner&#8217; means that only elements that have a match in the other sequence are included in the results. An &#8216;equijoin&#8217; is a join in which the keys are compared for equality. A left outer join operation has no dedicated standard query operator, but can be performed by using the <a href="http://msdn.microsoft.com/en-us/library/system.linq.enumerable.groupjoin.aspx">GroupJoin</a> method. See <a href="http://msdn.microsoft.com/en-us/library/bb397908.aspx">Join Operations</a>.</p>
+  </blockquote>
+
+  <p>Thanks, I hope this proves helpful to someone, as it was certainly eye-opening to me.</p>
+</span></div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -409,101 +552,6 @@ Nice post on a complex topic.  You are indeed correct that there has been confus
 Great post on getting started with Rx!  One of the things I&#39;ve been working on is a MVVM framework for Silverlight / WPF that uses the Reactive Extensions - I&#39;ve written about it quite a bit in my blog at http://blog.paulbetts.org/index.php/category/programming/reactive-extensions/ and the code is at github.com/xpaulbettsx/ReactiveXaml ; it&#39;s got some great examples of doing more than just handling events together, I&#39;d love to hear any feedback you&#39;ve got on the project</div>
 </div>
 </div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2010/06/12/parallel-for-loops-in-net-4/">Parallel.For Loops in .NET 4</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-06-12T12:19:00-06:00" pubdate data-updated="true">Jun 12<span>th</span>, 2010</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/algorithms/'>Algorithms</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/linq/'>LINQ</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>, <a class='category' href='/blog/categories/threading/'>Threading</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2010/06/12/parallel-for-loops-in-net-4/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p>I was having fun working on the <a href="http://toughestdeveloperpuzzleever.com/tdpe2/">Toughest Developer Puzzle Ever 2</a> when I came across a problem that asked for the coordinates into a grid of numbers of the upper left corner for a 4x4 sub-grid with a magic sum of 34, meaning all rows, columns, and the 2 diagonals all sum up to 34.&#160; Instead of trying to figure it out manually, I probably did what many programmers would do and wrote a quick and dirty program to accomplish the task for me.</p>  <p>I didn’t try to use any optimized search algorithm or anything, as I knew that the problem space was very small and specific and that computers are really fast.&#160; So I figured I would just write a brute-force iterate through every row and column type of an algorithm (in Big O notation being <font face="Courier New">O(mn)</font> or just <font face="Courier New">O(n<span style="font-size:xx-small; vertical-align:top;">2</span>)</font> if the original grid is square), knowing it would return in milliseconds.</p>  <p>I quickly realized that each iteration was not dependent any previous iteration for its calculations, so I decided it might be a good time to try out the new <font face="Courier New">Parallel.For</font> loops in the .NET 4 Framework that would multi-thread the iterations of the loops.&#160; Here’s the implementation I threw together:</p> <span class="fullpost">   <pre class="brush: csharp">using System;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Find34Grid
-{
-    public class Program
-    {
-        private static readonly int[][] Grid = new []
-        {
-            new [] {16,3,2,13,15,10,3,6,41,15,14,4,12,8,7,1,12},
-            new [] {5,10,22,8,4,5,16,7,9,7,6,12,5,11,10,8,5},
-            new [] {9,6,7,12,14,11,2,13,16,3,2,13,15,10,3,6,5},
-            new [] {41,15,14,4,12,8,7,2,5,10,11,8,4,5,16,9,15},
-            new [] {16,3,2,13,15,10,3,6,15,10,16,2,3,13,16,2,3},
-            new [] {5,10,11,8,4,5,16,9,4,5,5,11,10,8,5,11,10},
-            new [] {9,6,7,12,14,11,2,13,14,11,9,7,6,12,9,7,6},
-            new [] {41,15,14,4,12,8,7,1,12,8,4,14,15,1,14,15,1},
-            new [] {9,7,6,12,5,11,10,8,5,11,10,3,6,41,15,14,4},
-            new [] {4,14,15,1,9,7,6,12,9,7,5,16,9,9,7,6,12},
-            new [] {12,8,13,13,4,14,15,1,4,14,11,2,13,16,3,2,13}
-        };
-
-        private const int MagicSum = 34;
-
-        public static void Main(string[] args)
-        {
-            Parallel.For(0, Grid.Length - 3, i =&gt;
-            {
-                Parallel.For(0, Grid[i].Length - 3, j =&gt;
-                {
-                    int[] sums = new []
-                    {
-                        Grid[i].Skip(j).Take(4).Sum(), // Row 1
-                        Grid[i+1].Skip(j).Take(4).Sum(), // Row 2
-                        Grid[i+2].Skip(j).Take(4).Sum(), // Row 3
-                        Grid[i+3].Skip(j).Take(4).Sum(), // Row 4
-                        new [] { Grid[i][j], Grid[i+1][j], Grid[i+2][j], Grid[i+3][j]}.Sum(), // Column 1
-                        new [] { Grid[i][j+1], Grid[i+1][j+1], Grid[i+2][j+1], Grid[i+3][j+1]}.Sum(), // Column 2
-                        new [] { Grid[i][j+2], Grid[i+1][j+2], Grid[i+2][j+2], Grid[i+3][j+2]}.Sum(), // Column 3
-                        new [] { Grid[i][j+3], Grid[i+1][j+3], Grid[i+2][j+3], Grid[i+3][j+3]}.Sum(), // Column 4
-                        new [] { Grid[i][j], Grid[i+1][j+1], Grid[i+2][j+2], Grid[i+3][j+3]}.Sum(), // Diagonal 1
-                        new [] { Grid[i][j+3], Grid[i+1][j+2], Grid[i+2][j+1], Grid[i+3][j]}.Sum() // Diagonal 2
-                    };
-
-                    if (sums.All(x =&gt; x == MagicSum))
-                    {
-                        Console.WriteLine(&quot;y (row): {0}\nx (column): {1}&quot;, i, j);
-                    }
-                });
-            });
-
-            Console.ReadLine();
-        }
-    }
-}</pre>
-<p>Nothing special and certainly did the job.&#160; I didn’t really notice a performance improvement in anyway, but that was expected for such a small problem.&#160; I don’t really expect a whole lot of feedback on such straightforward code, but if there is a cleaner or more efficient way to utilize <font face="Courier New">Parallel.For</font> or <font face="Courier New">Parallel.ForEach</font>, please don’t hesitate to let me know via commenting to this post.&#160; Thanks!</p>
-</span></div>
 
 		
 		

@@ -30,6 +30,31 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner"><article class="post">
 	<h1 class="title">Finding Microsoft Office's Install Location</h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-06-12T13:59:00-06:00" pubdate data-updated="true">Jun 12<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/deployment-and-installers/'>Deployment and Installers</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/office/'>Office</a>, <a class='category' href='/blog/categories/registry/'>Registry</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
+
+
+</div>
+		
+			<span class="comments"><a href="#disqus_thread">Comments</a></span>
+		
+	</div>
 	<div class="entry-content"><div class='post'>
 <p>One of my co-workers, in trying to find the install location of <font face="Courier New">Microsoft Word</font>, found a cool little registry tree.&#160; Here is the key:</p>  <p><font face="Courier New">HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Applications</font></p>  <p>Underneath this key, there are keys named <font face="Courier New">Winword.exe</font>, <font face="Courier New">EXCEL.EXE</font>, <font face="Courier New">Outlook.EXE</font>, <font face="Courier New">MSACCESS.EXE</font>, <font face="Courier New">POWERPNT.EXE</font>, <font face="Courier New">explorer.exe</font>, <font face="Courier New">iexplore.exe</font>, <font face="Courier New">AcroRD32.exe</font>, <font face="Courier New">iTunes.exe</font>, <font face="Courier New">javaw.exe</font>, and so on.&#160; It appears many of the big companies use this area to put information about how to do certain commands for a product from a shell (like open, edit, print, etc.).</p>  <p>My next post will be about another section under <font face="Courier New">SOFTWARE\Classes</font> that I discovered.</p>  </div>
 </div>

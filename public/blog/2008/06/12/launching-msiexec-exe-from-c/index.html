@@ -30,6 +30,31 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner"><article class="post">
 	<h1 class="title">Launching MSIExec.exe From C#</h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-06-12T13:21:00-06:00" pubdate data-updated="true">Jun 12<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/add-remove-programs/'>Add/Remove Programs</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/deployment-and-installers/'>Deployment and Installers</a>, <a class='category' href='/blog/categories/error/'>Error</a>, <a class='category' href='/blog/categories/msi/'>MSI</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/patching-updating/'>Patching/Updating</a>, <a class='category' href='/blog/categories/threading/'>Threading</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
+
+
+</div>
+		
+			<span class="comments"><a href="#disqus_thread">Comments</a></span>
+		
+	</div>
 	<div class="entry-content"><div class='post'>
 <p>I ran into a problem with trying to spawn off a process to launch an <font face="Courier New">MSIExec.exe</font> command from C#.&#160; I wanted to launch the process and then wait for it to finish before proceeding; however,&#160; it was always returned immediately before the install or uninstall was really finished.&#160; I confirmed this behavior with this blog entry:&#160; <a title="http://blogs.msdn.com/heaths/archive/2005/11/15/493236.aspx" href="http://blogs.msdn.com/heaths/archive/2005/11/15/493236.aspx">http://blogs.msdn.com/heaths/archive/2005/11/15/493236.aspx</a></p>  <p>The author suggests &quot;<font face="Courier New">start /wait</font>&quot; which works from the command line or a batch file.&#160; I did verify it works launching a batch file or two from C#, but I preferred to keep in C# as much as possible.&#160; Also, I was trying to accomplish a silent background process running the <font face="Courier New">MSIExec</font> commands.&#160; However, C# can&#8217;t just start a process calling &quot;<font face="Courier New">start</font>,&quot; which is an internal command to the Command Prompt I guess.</p>  <p>Someone reminded me on a message board that you can start a process using <font face="Courier New">CMD.exe</font>, calling &quot;<font face="Courier New">start</font>&quot; like this:</p> <span class='fullpost'> <p><pre class="code"><span style="color: #2b91af">ProcessStartInfo </span>startInfo = <span style="color: blue">new </span><span style="color: #2b91af">ProcessStartInfo</span>(
     <span style="color: #a31515">&quot;cmd.exe&quot;</span>,

@@ -30,6 +30,31 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner"><article class="post">
 	<h1 class="title">Anagram Code Kata Part 4 – Will It Write My Code for Me?</h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-01-26T22:27:00-07:00" pubdate data-updated="true">Jan 26<span>th</span>, 2010</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/algorithms/'>Algorithms</a>, <a class='category' href='/blog/categories/anagram-code-kata-series/'>Anagram Code Kata Series</a>, <a class='category' href='/blog/categories/bdd/'>BDD</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/code-organization/'>Code Organization</a>, <a class='category' href='/blog/categories/mspec/'>MSpec</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/mocking/'>Mocking</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>, <a class='category' href='/blog/categories/solid/'>SOLID</a>, <a class='category' href='/blog/categories/testing/'>Testing</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
+
+
+</div>
+		
+			<span class="comments"><a href="#disqus_thread">Comments</a></span>
+		
+	</div>
 	<div class="entry-content"><div class='post'>
 <p>This post is part of a <a href="http://murrayon.net/2009/11/anagram-code-kata-bdd-mspec.html">series on coding Kata, BDD, MSpec, and SOLID principles</a>.&#160; Feel free to visit the above link which points to the introductory post, also containing an index of all posts in the series.</p>  <p>In this post, we work on implementing the other main dependency, <font face="Courier New">IAnagramsFinder</font>.&#160; In doing so, you will discover that I have been a little naïve with this BDD methodology. Apparently I expected a different experience than what I ran into doing the exercise.&#160; In gathering feedback, I had a very interesting discussion about Object-Oriented Programming with <a href="http://adotnetdude.blogspot.com/">Esteban</a> that I will summarize and ask for further discussion from all of you.&#160; I’ll also show you one way to debug your code when running the MSpec tests via the console test runner.</p> <span class="fullpost">   <h3>New Thoughts on Mocks vs. Stubs</h3>    <p>During <a href="http://murrayon.net/2009/11/anagram-code-kata-part-2-mocking-and.html">Part 2 of this series</a>, <a href="http://papamufflon.blogspot.com/">Tobias</a> left <a href="http://murrayon.net/2009/11/anagram-code-kata-part-2-mocking-and.html#comments">a comment about using mocks and <font face="Courier New">AssertWasCalled</font></a>, rather than stubs and defining fake responses.&#160; I didn’t understand how it would help, as it appeared they would accomplish roughly the same thing.&#160; With stubs and fake responses, if you don’t get back the return you are looking for, then you can infer that the dependencies weren’t called since you had previously hard-coded their return values when called.&#160; With mocks and asserting methods were called, you directly assert that the manager class did in fact call it’s dependencies.</p>    <p>When I looked more closely into using the <font face="Courier New">AssertWasCalled</font> method in Rhino.Mocks, I noticed that my strategy of using stubs and faked return values wasn’t very explicit in signifying that the ultimate responsibility of the manager class was to delegate to its dependencies.&#160; I mean the test context does rigorously stub out the dependencies, but the actual assertions weren’t clear what we were testing.&#160; Therefore, I decided to pop in a pair of <font face="Courier New">AssertWasCalled</font> statements (as found below), leaving <a href="http://murrayon.net/2009/11/anagram-code-kata-part-2-mocking-and.html#firstSpec">the rest of the test the same as it was back in Part 2</a>.</p>    <pre class="brush: csharp">It should_result_in_list_of_anagram_sets_and_both_dependencies_should_have_been_called = () =&gt;
 {

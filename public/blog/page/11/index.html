@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="I was trying to rename a product&#8217;s display name found in its ARP (Add/Remove Programs) entry.&#160; There is a registry key that lists just &hellip;">
+	<meta name="description" content="So I have been tackling a build problem with some humongous deployment builds in Visual Studio.&#160; In reality, VS Deployment Projects are not &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -29,6 +29,52 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/06/18/build-problems-with-a-very-large-visual-studio-deployment-project/">Build Problems With a Very Large Visual Studio Deployment Project</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-06-18T17:24:00-06:00" pubdate data-updated="true">Jun 18<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/build/'>Build</a>, <a class='category' href='/blog/categories/deployment-and-installers/'>Deployment and Installers</a>, <a class='category' href='/blog/categories/error/'>Error</a>, <a class='category' href='/blog/categories/msi/'>MSI</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/virtual-machine/'>Virtual Machine</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/06/18/build-problems-with-a-very-large-visual-studio-deployment-project/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>So I have been tackling a build problem with some humongous deployment builds in Visual Studio.&#160; In reality, VS Deployment Projects are not ideal for even slightly sophisticated MSI installers; but we&#8217;ve gone far enough down this path that we can&#8217;t make the switch at the moment.&#160; So please choose something with more control like the <a href="http://wix.sourceforge.net/">Microsoft-sponsored open-source project WiX</a> or a well-established, paid product like <a href="http://www.acresso.com/products/installation/installshield.htm">InstallShield</a>.</p>  <p>So the error I kept getting was &quot;<font face="Courier New">Not enough storage is available to complete this operation</font>&quot; and it would list some file (not the same every time).&#160; It appears the error means the build process ran out of virtual memory or something.&#160; So I found something interesting about default limit of 2 GB for any Windows process and how to raise that limit.&#160; That process is discussed in this post:&#160; <a title="http://murrayon.net/2007/12/building-monster-vs-2005-or-2008.html" href="http://murrayon.net/2007/12/building-monster-vs-2005-or-2008.html">http://murrayon.net/2007/12/building-monster-vs-2005-or-2008.html</a></p> <span class='fullpost'> <p>Well, it has worked on one guy&#8217;s laptop this whole time and it only worked for about 2 days on my machine (then it started getting an error that said &quot;<font face="Courier New">Unrecoverable build error</font>&quot; and was accompanied with a &quot;<font face="Courier New">Send Error Report</font>&quot; dialog).&#160; I also tried the fix on like 3 other machines without any success at all (in fact many of the machines become highly unstable with the <font face="Courier New">3GB</font> Windows boot switch).&#160; So for 6 months, I couldn&#8217;t figure out why it would work on that one machine and none of the others.&#160; Well, just recently that guy&#8217;s laptop joined the domain and started using a domain user account (I have no clue why he wasn&#8217;t from the beginning, but I digress).&#160; His machine didn&#8217;t become unstable, but it did quit building our monster deployment build.&#160; We thought we were up a creek with no box to build the MSI installer and a deadline fast approaching.&#160; We got it working on his laptop by going back to a local user account.</p>  <p>Well, that got me thinking about how we could get another PC to be able to do the darn build.&#160; I tried the build on my PC with just a local user account, but that didn&#8217;t work because I don&#8217;t currently have the other fix named above.&#160; So I created a virtual machine (in case things got unstable again) and didn&#8217;t add it to the domain, just to be safe.&#160; I did the fix named above, and am now able to successfully build this MSI install consistently under a local user account without getting the &quot;<font face="Courier New">Not enough storage is available</font>&quot; error message.&#160; The details of this adventure are discussed in this post:&#160; <a title="http://murrayon.net/2007/12/build-error-when-building-very-large-vs.html" href="http://murrayon.net/2007/12/build-error-when-building-very-large-vs.html">http://murrayon.net/2007/12/build-error-when-building-very-large-vs.html</a></p>  <p>Maybe in a few months we&#8217;ll move this installer build process to WiX and avoid the inflexibility we are running into with Visual Studio Deployment Projects.</p> </span>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>
+I was running into the same &#8216;Unrecoverable build error&#8217; when trying to build a VS2008 deployment project. Tried all of the fixes you mentioned - regsrv32, MSDN knowledge base fixes, etc. Nothing worked. Then just on a hunch I went into the $User\AppData\Local\Temp directory and noticed that there were about 6GB of temp files there. Deleted those, and bingo - working build!</div>
+</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -195,84 +241,6 @@ You could use process.WaitForExit() isn&#39;t it?</div>
 	<div class="entry-content">
 		<div class='post'>
 <p></p>  <p>So I won&#8217;t stray from programming entries very often on this blog unless there is something really important I feel needs to be said.</p>  <p>I, for one, am tired of the Michael Moore documentaries that do nothing but complain about how crappy our nation is.&#160; I also am not a fan of Al Gore&#8217;s biased misrepresentation of the facts about Global Warming and his claims that the whole scientific community is behind him; I personally think he doesn&#8217;t care about Global Warming all that much and just loves all this attention and wealth that he is accumulating.&#160; But that is a discussion for another time and place&#8230;</p>  <p>Well, to keep this brief, there is a new documentary coming out in movie theaters around the nation tomorrow by Ben Stein.&#160; It is called <u>Expelled</u>, and it is an investigative documentary around the systematic persecution by &quot;Big Science&quot; against anyone who questions the theory of Darwinism and proposes the idea that there might have been Intelligent Design.&#160; The movie is a campaign to convince &quot;Big Science&quot; of their close-mindedness, and I support this movement and hope it succeeds.</p>  <p>Here are some links if you are interested further:</p>  <ul>   <li>Trailer:&#160; <a href="http://www.youtube.com/watch?v=xGCxbhGaVfE">http://www.youtube.com/watch?v=xGCxbhGaVfE</a> </li>    <li>Movie Theater Locater:&#160; <a title="http://www.expelledthemovie.com/theaterap.php" href="http://www.expelledthemovie.com/theaterap.php">http://www.expelledthemovie.com/theaterap.php</a> </li>    <li>2 Official Web Sites:      <ul>       <li><a href="http://www.getexpelled.com/">http://www.getexpelled.com/</a> </li>        <li><a href="http://www.expelledthemovie.com/">http://www.expelledthemovie.com/</a> </li>     </ul>   </li> </ul>  <p>Ok, back to programming now!</p></div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2008/03/24/creating-patch-installers/">Creating Patch Installers</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-03-24T12:48:00-06:00" pubdate data-updated="true">Mar 24<span>th</span>, 2008</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/build/'>Build</a>, <a class='category' href='/blog/categories/deployment-and-installers/'>Deployment and Installers</a>, <a class='category' href='/blog/categories/msi/'>MSI</a>, <a class='category' href='/blog/categories/msp/'>MSP</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/orca/'>Orca</a>, <a class='category' href='/blog/categories/patching-updating/'>Patching/Updating</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2008/03/24/creating-patch-installers/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p>Windows Installer Technology allows for MSP Patch installers, which compliment your MSI installers really well.&#160; However, Visual Studio doesn&#8217;t support the creation of them from within the IDE.&#160; In fact, you have to download the Windows SDK Toolkit and use a utility called <font face="Courier New">MSIMSP</font>.&#160; For this process, you will also need a utility called <font face="Courier New">Orca</font> from the same SDK; when you download the SDK, inside the Bin folder is an <font face="Courier New">Orca.msi</font> installer.</p>  <p>What you do is build the original version of your MSI installer; then you make the necessary changes and/or fixes to your product and recreate another MSI installer representing the new version of your product.&#160; Then you pass these two MSI installers to the <font face="Courier New">MSIMSP</font> utility and it creates an MSP patch installer for you by automatically detecting the binary differences between the two MSI installers.</p> <span class='fullpost'> <p>I used this article as a guide:&#160; <a title="http://www.codeproject.com/KB/install/dotnetpatching.aspx" href="http://www.codeproject.com/KB/install/dotnetpatching.aspx">http://www.codeproject.com/KB/install/dotnetpatching.aspx</a></p>  <p>However, the Platform SDK link in the article is broken, so use this one instead:&#160; <a title="http://www.microsoft.com/downloads/details.aspx?FamilyId=A55B6B43-E24F-4EA3-A93E-40C0EC4F68E5&amp;displaylang=en" href="http://www.microsoft.com/downloads/details.aspx?FamilyId=A55B6B43-E24F-4EA3-A93E-40C0EC4F68E5&amp;displaylang=en">http://www.microsoft.com/downloads/details.aspx?FamilyId=A55B6B43-E24F-4EA3-A93E-40C0EC4F68E5&amp;displaylang=en</a></p>  <p>This isn&#8217;t the most up-to-date Windows SDK, but the batch script in the CodeProject article relies on this specific versions folder structure (it has everything you need to create the MSP patch installer nicely in one folder, whereas the newest SDK does not).</p>  <p>I did run into a few of the same hiccups that others did (found down below in the comments of the CodeProject article).&#160; Here are links to my posts with the solutions (you&#8217;ll have to click around each thread to see the problems posted before my posts):</p>  <ul>   <li>These two are in the same thread:      <ul>       <li><a title="http://www.codeproject.com/KB/install/dotnetpatching.aspx?fid=209224&amp;df=90&amp;mpp=25&amp;noise=3&amp;sort=Position&amp;view=Quick&amp;fr=26&amp;select=2473656#xx2473656xx" href="http://www.codeproject.com/KB/install/dotnetpatching.aspx?fid=209224&amp;df=90&amp;mpp=25&amp;noise=3&amp;sort=Position&amp;view=Quick&amp;fr=26&amp;select=2473656#xx2473656xx">http://www.codeproject.com/KB/install/dotnetpatching.aspx?fid=209224&amp;df=90&amp;mpp=25&amp;noise=3&amp;sort=Position&amp;view=Quick&amp;fr=26&amp;select=2473656#xx2473656xx</a> </li>        <li><a title="http://www.codeproject.com/KB/install/dotnetpatching.aspx?fid=209224&amp;df=90&amp;mpp=25&amp;noise=3&amp;sort=Position&amp;view=Quick&amp;fr=26&amp;select=2474912#xx2474912xx" href="http://www.codeproject.com/KB/install/dotnetpatching.aspx?fid=209224&amp;df=90&amp;mpp=25&amp;noise=3&amp;sort=Position&amp;view=Quick&amp;fr=26&amp;select=2474912#xx2474912xx">http://www.codeproject.com/KB/install/dotnetpatching.aspx?fid=209224&amp;df=90&amp;mpp=25&amp;noise=3&amp;sort=Position&amp;view=Quick&amp;fr=26&amp;select=2474912#xx2474912xx</a> </li>     </ul>   </li>    <li><a title="http://www.codeproject.com/KB/install/dotnetpatching.aspx?fid=209224&amp;select=2475101#xx2475101xx" href="http://www.codeproject.com/KB/install/dotnetpatching.aspx?fid=209224&amp;select=2475101#xx2475101xx">http://www.codeproject.com/KB/install/dotnetpatching.aspx?fid=209224&amp;select=2475101#xx2475101xx</a> </li> </ul>  <p>Also, I had to modify his <font face="Courier New">patch.cmd</font> batch file slightly; a copy of it is pasted below.</p>  <p>This process isn&#8217;t as effective as it should be if you are trying to difference two Visual Studio created MSI installers.&#160; The <font face="Courier New">MSIMSP</font> utility is very thorough in its comparison of file names, locations, sizes, versions, and every byte of data contained in the files.&#160; It can create a binary difference between the two files in order to minimize as much as possible the patch installer&#8217;s size and speed.&#160; It even compares the <a href="http://en.wikipedia.org/wiki/8.3_filename">8.3 short filename</a> of every file.&#160; Unfortunately, Visual Studio can be very inconsistent in its assignment of short filenames with the tilde-numbering system (i.e., &quot;<font face="Courier New">FILENA~3.TXT</font>&quot;) if you add, rename, move, or delete even a couple of files from your project.&#160; I often had to manually edit the short filenames in the second MSI using the <font face="Courier New">Orca</font> utility to make the names be consistent between the two versions of the Visual Studio created installers; otherwise, the <font face="Courier New">MSIMSP</font> utility would just blindly include the whole file for patching and inflate the overall size of the MSP patcher.</p>  <p>Good luck and enjoy not having to figure out what the deltas are between the versions of your products!</p>  <div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; overflow: auto; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 750px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4">   <pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; overflow: visible; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; white-space: nowrap; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #0000ff">if</span> <span style="color: #006080">&quot;%1&quot;</span>==<span style="color: #006080">&quot;&quot;</span> %0 Debug Release Done <br /><br />@SETLOCAL <br />@set path=%path%;<span style="color: #006080">&quot;C:\Program Files\Microsoft Platform SDK\Samples\SysMgmt\Msi\Patching&quot;</span><br />@set PatchTmp=C:\VSTemp<br /><br />:loop <br /><span style="color: #0000ff">if</span> <span style="color: #006080">&quot;%1&quot;</span>==<span style="color: #006080">&quot;Done&quot;</span> goto <span style="color: #0000ff">end</span> <br /><br /><span style="color: #0000ff">if</span> not exist %1\*.msi goto nopatch <br /><span style="color: #0000ff">if</span> not exist TargetImage\%1\*.msi goto nopatch <br /><br />:ok <br />rmdir /s /q %PatchTmp% <br />mkdir %PatchTmp% <br />mkdir %PatchTmp%\TargetImage <br />mkdir %PatchTmp%\UpgradedImage <br />mkdir %PatchTmp%\Patch <br /><br /><span style="color: #0000ff">for</span> %%a <span style="color: #0000ff">in</span> (TargetImage\%1\*.msi) do copy %%a %PatchTmp%\setup.msi <br />msiexec /qb /a %PatchTmp%\setup.msi TARGETDIR=%PatchTmp%\TargetImage /L*v %PatchTmp%\TargetImage\setup.log <br />del %PatchTmp%\setup.msi <br /><br /><span style="color: #0000ff">for</span> %%a <span style="color: #0000ff">in</span> (%1\*.msi) do copy %%a %PatchTmp%\setup.msi <br />msiexec /qb /a %PatchTmp%\setup.msi TARGETDIR=%PatchTmp%\UpgradedImage /L*v %PatchTmp%\UpgradedImage\setup.log <br />del %PatchTmp%\setup.msi <br /><br />copy patch.pcp %PatchTmp% <br />set PatchDir=%CD% <br />chdir %PatchTmp% <br />msimsp -s patch.pcp -p Patch\patch.msp -l Patch\patch.log -f %PatchTmp%\Tmp -d <br /><br />rmdir /s /q %PatchTmp%\TargetImage <br />rmdir /s /q %PatchTmp%\UpgradedImage <br />rmdir /s /q %PatchTmp%\Tmp <br />chdir %PatchDir% <br /><br />mkdir Patch <br />mkdir Patch\%1 <br />copy %PatchTmp%\Patch\*.* Patch\%1\*.* <br />rmdir /s /q %PatchTmp% <br /><br />:nopatch <br />shift <br />goto loop <br /><br />:<span style="color: #0000ff">end</span> <br />pause</pre>
-</div>
-</span>  </div>
-<h2>Comments</h2>
-<div class='comments'>
-<div class='comment'>
-<div class='author'>pavan</div>
-<div class='content'>
-if u run the above cmd file,it is going into an infinite loop.</div>
-</div>
-<div class='comment'>
-<div class='author'>pavan</div>
-<div class='content'>
-ERROR: PatchGUID property is missing from the Properties table of the .pcp file. This is a required property</div>
-</div>
-<div class='comment'>
-<div class='author'>ravish</div>
-<div class='content'>
-Found the solution&#8230;<br />i was missing &quot;/D&quot; option for chdir in my .cmd file</div>
-</div>
-<div class='comment'>
-<div class='author'>ravish</div>
-<div class='content'>
-Hi Mike,<br />Thanks for the very useful article.<br />While prepating a patch as described above, i am getting following error<br />Failed to create patch.  Error code: 0xC00E5198<br /><br />any idea what can be the problem ?</div>
-</div>
-<div class='comment'>
-<div class='author'>Baburaj</div>
-<div class='content'>
-Hi I&#8217;m getting this error while patching:<BR/><BR/>  ERROR: UpgradedImages.MsiPath &#8216;C:\VSTemp\UpgradedImage\ERP.msi&#8217; does not exist.<BR/><BR/><BR/>What could be the reason? I used your patch.cmd file.</div>
-</div>
-<div class='comment'>
-<div class='author'>Mike Murray</div>
-<div class='content'>
-I think you will find the following link helpful:<BR/><BR/><A HREF="http://forum.installsite.net/index.php?showtopic=15237" REL="nofollow">http://forum.installsite.net/index.php?showtopic=15237</A><BR/><BR/>I think you will find the whole website InstallSite.net to be a helpful resource for all questions about installers, especially MSI and MSP installers.</div>
-</div>
-<div class='comment'>
-<div class='author'>daniju</div>
-<div class='content'>
-Hi michael, thanks for your post is very interesting.<BR/><BR/>I´m trying release step to step, but my problem is the next:<BR/><BR/>***** Log starting: 2008-10-29 10:24:54 *****<BR/><BR/>Input-PCP path                     = &#8216;patch.pcp&#8217;<BR/>Patch-MSP path                     = &#8216;Patch\patch.msp&#8217;<BR/>Temp Folder                        = &#8216;C:\VSTemp\Tmp&#39;<BR/>Patch GUID                         = &#8216;{91FF215B-112C-42B9-8862-FEE08663EC9C}&#8217;<BR/>ListOfPatchGUIDsToReplace          = &#8220;none&#8221;<BR/>ListOfTargetProductCodes           = &#8216;*&#8217;<BR/>PatchSourceList                    = &#8216;PatchSourceList&#8217;<BR/>AllowProductCodeMismatches         = &#8216;1&#8217;<BR/>AllowProductVersionMajorMismatches = &#8216;1&#8217;<BR/>OptimizePatchSizeForLargeFiles     = &#8216;blank&#8217;<BR/>ApiPatchingSymbolFlags             = &#8216;0x00000000&#8217;<BR/>MsiFileToUseToCreatePatchTables    = &#8216;blank&#8217;<BR/>SqlCmdToCreatePatchTable           = &#8216;blank&#8217;<BR/>SqlCmdToCreatePatchPackageTable    = &#8216;blank&#8217;<BR/>SqlCmdToCreateMsiPatchHeadersTable = &#8216;blank&#8217;<BR/>DontRemoveTempFolderWhenFinished   = &#8216;1&#8217;<BR/>IncludeWholeFilesOnly              = &#8216;0&#8217;<BR/>MinimumRequiredMsiVersion          = &#8216;200&#8217;<BR/>SEQUENCE_DATA_GENERATION_DISABLED  = &#8216;blank&#8217;<BR/>AllowRemoval                       = &#8216;blank&#8217;<BR/><BR/>Using internal SQL cmd to create &#8216;Patch&#8217; table.<BR/>Using internal SQL cmd to create &#8216;PatchPackage&#8217; table.<BR/>Using internal SQL cmd to create &#8216;MsiPatchHeaders&#8217; table.<BR/><BR/>     Files differ: &#8216;C:\VSTemp\UpgradedImage&#46;\AlbumFotos.dll&#8217;,<BR/>                   &#8216;C:\VSTemp\TargetImage&#46;\AlbumFotos.dll&#8217;.<BR/>  Patch file created: FTK=_0E2D0A15B23B989808E6FD64A243497B; temp location=fam1\00002.HDR.<BR/>     Files differ: &#8216;C:\VSTemp\UpgradedImage&#46;\PruebasPictureBox.dll&#8217;,<BR/>                   &#8216;C:\VSTemp\TargetImage&#46;\PruebasPictureBox.dll&#8217;.<BR/>  Patch file created: FTK=_24E4033462F0482C9B569672F8337663; temp location=fam1\00003.HDR.<BR/>     Files differ: &#8216;C:\VSTemp\UpgradedImage&#46;\DermaDatos.dll&#8217;,<BR/>                   &#8216;C:\VSTemp\TargetImage&#46;\DermaDatos.dll&#8217;.<BR/>  Patch file created: FTK=_294ABD0349756E66C6CB0D11001752CE; temp location=fam1\00004.HDR.<BR/>     Files differ: &#8216;C:\VSTemp\UpgradedImage&#46;\CapturaImagenesPruebas.dll&#8217;,<BR/>                   &#8216;C:\VSTemp\TargetImage&#46;\CapturaImagenesPruebas.dll&#8217;.<BR/>  Patch file created: FTK=_5E58F544E2DC940F4F3139031A15DE72; temp location=fam1\00005.HDR.<BR/>     Files differ: &#8216;C:\VSTemp\UpgradedImage&#46;\PruebasInforme.exe&#8217;,<BR/>                   &#8216;C:\VSTemp\TargetImage&#46;\PruebasInforme.exe&#8217;.<BR/>  Patch file created: FTK=_7328B00680B1965AF0370EF0DE389DBE; temp location=fam1\00006.HDR.<BR/>     Files differ: &#8216;C:\VSTemp\UpgradedImage&#46;\MotorAlertas.dll&#8217;,<BR/>                   &#8216;C:\VSTemp\TargetImage&#46;\MotorAlertas.dll&#8217;.<BR/>  Patch file created: FTK=_7FBC6D05562B82F2CDC2F1BDBE476432; temp location=fam1\00007.HDR.<BR/>     Files differ: &#8216;C:\VSTemp\UpgradedImage&#46;\ModoDiapositiva.dll&#8217;,<BR/>                   &#8216;C:\VSTemp\TargetImage&#46;\ModoDiapositiva.dll&#8217;.<BR/>  Patch file created: FTK=_8FEA4D552741B28293ABC797812149CD; temp location=fam1\00008.HDR.<BR/>     Files differ: &#8216;C:\VSTemp\UpgradedImage&#46;\Derma.exe&#8217;,<BR/>                   &#8216;C:\VSTemp\TargetImage&#46;\Derma.exe&#8217;.<BR/>  Patch file created: FTK=_5260684262CA164CEF0A33F5A94CAC55; temp location=fam1\00009.HDR.<BR/>  ERROR: Since MSI 3.0 will block installation of major upgrade patches with sequencing information, creation of such patches is blocked.<BR/><BR/>***** Log finishing: 2008-10-29 10:25:05 *****<BR/><BR/>What is my problem?? Can you help me, please???<BR/><BR/>Thank you very much</div>
-</div>
-</div>
 
 		
 		

@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="Seems like any website you start nowadays involves creating the same common features we see all over the web.&#160; These include creating user &hellip;">
+	<meta name="description" content="This blog post is part of a series about the ASP.NET Providers (namely Membership, Role Management, and Profile).&#160; The introductory post in the &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -29,6 +29,52 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2009/01/30/asp-net-providers-getting-started/">ASP.NET Providers - Getting Started</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-01-30T14:20:00-07:00" pubdate data-updated="true">Jan 30<span>th</span>, 2009</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/asp-net/'>ASP.NET</a>, <a class='category' href='/blog/categories/asp-net-providers-series/'>ASP.NET Providers Series</a>, <a class='category' href='/blog/categories/database/'>Database</a>, <a class='category' href='/blog/categories/encryption/'>Encryption</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/sql/'>SQL</a>, <a class='category' href='/blog/categories/security/'>Security</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2009/01/30/asp-net-providers-getting-started/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>This blog post is part of a series about the ASP.NET Providers (namely Membership, Role Management, and Profile).&#160; The introductory post in the series can be found at the following link, which introduces the <a href="http://en.wikipedia.org/wiki/Provider_model" target="_blank">Provider Model pattern</a> and gives a personal example of an implementation I have been working on:</p>  <ul>   <li><a href="http://murrayon.net/2009/01/aspnet-providers-membership-role-and.html">ASP.NET Providers - Membership, Role, and Profile</a> </li> </ul>  <p>This post will deal with getting started using the ASP.NET Providers by setting up a database.</p> <span class='fullpost'> <h3>Database Setup</h3>  <p>First, you will need to configure a database to securely store all of the site&#8217;s user data and activity info.&#160; You&#8217;ll most likely be content with the already provided SQL Providers (such as the <font face="Courier New">SqlMembershipProvider</font><font face="Verdan">), but Microsoft also provides you with other options in many cases.&#160; For example in the case of Membership, </font>you also have the option of having your site use the <font face="Courier New">ActiveDirectoryMembershipProvider</font> or you can even roll your own <font face="Courier New">MembershipProvider</font>.&#160; The nice thing about using any of these Microsoft Providers is that they are already set up to store sensitive data like passwords in an encrypted format in the database.</p>  <p>There are two tools you can use to automatically generate the necessary database tables needed for the SQL implementation.&#160; The first tool is a web-based configuration tool launched from Visual Studio called the <font face="Courier New">ASP.NET Website Administration Tool</font>. It can not only create the database tables, but can also configure authorization rules, user roles, user accounts, and many other settings that go right into your <font face="Courier New">Web.config</font>.&#160; It is launched by selecting the <font face="Courier New">ASP.NET Configuration</font> menu option in the <font face="Courier New">Project</font> menu (or <font face="Courier New">Website</font> menu, depending on which version of Visual Studio you have or the project template you selected).&#160; However, this tool will create the database in a SQL Server file named <font face="Courier New">ASPNETDB.mdf</font> placed in the site&#8217;s <font face="Courier New">App_Data</font> folder.&#160; If you would prefer to create the database schema in an already existing install of SQL Server (likely on a different box), you need to use the <font face="Courier New">aspnet_regsql.exe</font> command-line tool.&#160; The command-line tool&#8217;s graphical interface can be launched by typing the name of the executable in a <font face="Courier New">Visual Studio Command Prompt</font> (located in the Start Menu under <font face="Courier new">Visual Studio | Visual Studio Tools</font>).</p>  <p>The only other thing you need now is the connection string to this newly populated database.&#160; I will show you where in your <font face="Courier New">Web.config</font> to put the connection string in the next post of this series.</p>  <h3>Read On!</h3>  <p>Continue onward by reading the next blog post in this series found at the following link:</p>  <ul>   <li><a href="http://murrayon.net/2009/01/aspnet-providers-membership.html">ASP.NET Providers - Membership</a> </li> </ul> </span>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Alan Blake</div>
+<div class='content'>
+I needed to use the built-in authentication handling for only a single page and a single user (very simple).  Therefore, I used the &#8220;location&#8221;<br />tag and the &#8220;credentials&#8221; tag to then add a user to my web.config you should consider adding this approach as well.</div>
+</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -175,52 +221,6 @@
 	<div class="entry-content">
 		<div class='post'>
 <p>Today I read another guy&#8217;s blog post that reminded me of my own &quot;Aha!&quot; moment I had a while back with Random Number Generators.&#160; It&#8217;s something I will never forget about Random Number Generators but taken for granted, realizing that it might not be obvious to everyone how these objects are intended to be used.&#160; Here is the blog entry that I read about creating and seeding a Random Number Generator once:</p>  <p><a title="http://silverlight.net/blogs/msnow/archive/2008/12/01/silverlight-tip-of-the-day-77-creating-an-efficient-random-generator.aspx" href="http://silverlight.net/blogs/msnow/archive/2008/12/01/silverlight-tip-of-the-day-77-creating-an-efficient-random-generator.aspx">http://silverlight.net/blogs/msnow/archive/2008/12/01/silverlight-tip-of-the-day-77-creating-an-efficient-random-generator.aspx</a></p>  <p>However, I must admit that I think <a title="Mike Snow" href="http://silverlight.net/blogs/msnow/about.aspx">Mike Snow</a> should have titled his post something similar to the title of my post.&#160; And I will tell you why&#8230;</p> <span class='fullpost'> <p>In the MSDN documentation that Mike quotes, there is a key sentence everyone needs to take note of, as you can ignorantly introduce bugs into your code:</p>  <blockquote>   <p>&quot;As a result, different Random objects that are created in close succession by a call to the default constructor will have identical default seed values and, therefore, will produce identical sets of random numbers.&quot;</p> </blockquote>  <p>I have actually build a piece of code where this has happened.&#160; I wrote a <font face="Courier New">for</font> loop that iterated quickly enough that the construction of the <font face="Courier New">Random</font> objects resulted in identical random number seeds.&#160; The result was that I asked for several random numbers in quick succession and got the same exact &quot;random&quot; number across all my requests each time I ran the code.&#160; So not only did I get &quot;identical sets of random numbers,&quot; but I got identical random numbers.</p>  <p>As Mike Snow and the MSDN documentation states (and from my own experience), Random Number Generators are designed to be constructed once and intended to live long and prosper within your application.&#160; It can serve <u>all</u> of the random number needs within your application (i.e., you don&#8217;t need a different Random Number Generator for different use cases or different object types).&#160; All you need is a one-time created random number seed and then you can forever generate random numbers of any type and within any range of numbers.&#160; I can&#8217;t currently think of a situation when you may need to reseed your Random Number Generator.&#160; Let me know if you think of one.</p> </span>  </div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2008/11/03/is-linq-to-sql-being-replaced-already/">Is LINQ to SQL Being Replaced Already?</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-11-03T13:00:00-07:00" pubdate data-updated="true">Nov 3<span>rd</span>, 2008</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/entity-framework/'>Entity Framework</a>, <a class='category' href='/blog/categories/linq/'>LINQ</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2008/11/03/is-linq-to-sql-being-replaced-already/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p>The short answer is &quot;kind of&quot;; the push is for the <a href="http://en.wikipedia.org/wiki/ADO.NET_Entity_Framework">ADO.NET Entity Framework</a> to be the encouraged ORM approach from now on.&#160; For the long-winded, thorough explanation of this answer (based on blog posts from Microsoft employees and managers), see the following blog post that someone pointed me toward:</p>  <p><a title="http://www.infoq.com/news/2008/11/DLINQ-Future" href="http://www.infoq.com/news/2008/11/DLINQ-Future">http://www.infoq.com/news/2008/11/DLINQ-Future</a></p>  </div>
-<h2>Comments</h2>
-<div class='comments'>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>
-No it isn&#39;t, that is a missunderstanding. Linq to sql for SQL Server will always be there just like there are ado.net classes for SQL Server directly tied into the .NET framework libraries.</div>
-</div>
-</div>
 
 		
 		

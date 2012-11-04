@@ -30,6 +30,31 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner"><article class="post">
 	<h1 class="title">Building a Monster vs 2005 (or 2008) Deployment Project</h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2007-12-14T14:47:00-07:00" pubdate data-updated="true">Dec 14<span>th</span>, 2007</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/build/'>Build</a>, <a class='category' href='/blog/categories/deployment-and-installers/'>Deployment and Installers</a>, <a class='category' href='/blog/categories/error/'>Error</a>, <a class='category' href='/blog/categories/msi/'>MSI</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
+
+
+</div>
+		
+			<span class="comments"><a href="#disqus_thread">Comments</a></span>
+		
+	</div>
 	<div class="entry-content"><div class='post'>
 <p>So I don&#8217;t think I want to get into the details of why we have a solution with over 50,000 unchanging content files in it, but basically we were handed a legacy set of Java/Apache web products and were asked to migrate it to .NET with an aggressive deadline.&#160; Anyway, we try to compress this thing up into an MSI file using a deployment project.&#160; We were getting an error before it would start packaging the files that said &quot;<font face="Courier New">Not enough storage is available to complete this operation</font>&quot; and it would be on a different file every time.&#160; It appears it means the process ran out of virtual memory.</p>  <p>When trying to figure out why, we tried a few things that would sometimes work, most notably, restarting the IDE and/or the whole machine.&#160; Then we came upon the following article that informed us that Windows has a hard-coded 2 GB limit for any given process:&#160; <a href="http://www.microsoft.com/whdc/system/platform/server/PAE/PAEmem.mspx">http://www.microsoft.com/whdc/system/platform/server/PAE/PAEmem.mspx</a>    <p>So here are the steps to up the process virtual memory limit to 3 GB and also to make the Visual Studio executable aware of this raised limit:</p> <span class='fullpost'>   <ol>     <li>I would first back up your <font face="Courier New">boot.ini</font> before making this edit.&#160; It is located right in the root of your <font face="Courier New">C:</font> drive and it is a hidden, system file (so change your folder options to display hidden files).&#160; You will need to add the <font face="Courier New">/3GB</font> switch to the end of the line with the OS that you will be using to build your deployment project, found under the <font face="Courier New">[operating systems]</font> section.&#160; Again, refer to the above link for more information about where exactly to put the switch. </li>      <li>It would be wise to also back up your <font face="Courier New">devenv.exe</font> (Visual Studio executable) before making this change as well.&#160; It is located under the <font face="Courier New">C:\Program Files\Microsoft Visual Studio 8\Common7\IDE</font> (or <font face="Courier New">Microsoft Visual Studio 9.0</font> for VS 2008) directory if you went with the default installation location.&#160; You will need to open a <font face="Courier New">Visual Studio 2005 Command Prompt </font><font face="Verdana">(or 2008 works too),</font> which loads some custom paths and environment variables different from a standard command prompt.&#160; It&#8217;s found by going to <font face="Courier New">Start Menu | All Programs | Microsoft Visual Studio 2005 | Visual Studio Tools</font>.&#160; When the command window comes up, change your directory to where the VS executable is (e.g., <font face="Courier New">cd ..\Common7\IDE</font>).&#160; Next run the following command:&#160; <font face="Courier New">editbin.exe /LARGEADDRESSAWARE devenv.exe</font> </li>      <li>Now reboot the machine and try rebuilding the deployment project again. </li>   </ol>    <p>If you have time, change the whole architecture of your program and development solution; otherwise, good luck.</p>    <p><strong><u>FOLLOWUP (06/17/08)</u></strong>:&#160; You should check out <a title="" href="http://murrayon.net/2007/12/build-error-when-building-very-large-vs.html" project?="Project?" Deployment="Deployment" VS="VS" Large="Large" Very="Very" Building="Building" When="When" error?="error?" build="build" unrecoverable="unrecoverable">the next blog post after this one</a> about an error I got later using this fix.&#160; We do have a guy&#8217;s laptop in our company that is stable using this fix, but I have tried without success to get 2 or 3 other machines to do the same.&#160; It also might have something to do with domain user accounts vs. local user accounts.</p>    <p><strong><u>FOLLOWUP (06/18/08)</u></strong>:&#160; <strong>I got it working!!!</strong>&#160; The problem was being logged in with a domain user account for some reason.&#160; I am really not sure why; there must be something different about using a domain user account (perhaps during the login process or some restriction set on our domain user accounts or policies).&#160; I did test it without the changes involving the <font face="Courier New">3GB</font> switch, but they are necessary as well.&#160; In fact in my setup, I also didn&#8217;t put the box on the domain at all, just to be sure.&#160; The box runs very stable as far as I can tell with these modifications to Windows and the Visual Studio executable.</p> </span>  </div>
 <h2>Comments</h2>

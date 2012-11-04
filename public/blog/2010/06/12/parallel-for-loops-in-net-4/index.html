@@ -30,6 +30,31 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner"><article class="post">
 	<h1 class="title">Parallel.For Loops in .NET 4</h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-06-12T12:19:00-06:00" pubdate data-updated="true">Jun 12<span>th</span>, 2010</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/algorithms/'>Algorithms</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/linq/'>LINQ</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>, <a class='category' href='/blog/categories/threading/'>Threading</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
+
+
+</div>
+		
+			<span class="comments"><a href="#disqus_thread">Comments</a></span>
+		
+	</div>
 	<div class="entry-content"><div class='post'>
 <p>I was having fun working on the <a href="http://toughestdeveloperpuzzleever.com/tdpe2/">Toughest Developer Puzzle Ever 2</a> when I came across a problem that asked for the coordinates into a grid of numbers of the upper left corner for a 4x4 sub-grid with a magic sum of 34, meaning all rows, columns, and the 2 diagonals all sum up to 34.&#160; Instead of trying to figure it out manually, I probably did what many programmers would do and wrote a quick and dirty program to accomplish the task for me.</p>  <p>I didn’t try to use any optimized search algorithm or anything, as I knew that the problem space was very small and specific and that computers are really fast.&#160; So I figured I would just write a brute-force iterate through every row and column type of an algorithm (in Big O notation being <font face="Courier New">O(mn)</font> or just <font face="Courier New">O(n<span style="font-size:xx-small; vertical-align:top;">2</span>)</font> if the original grid is square), knowing it would return in milliseconds.</p>  <p>I quickly realized that each iteration was not dependent any previous iteration for its calculations, so I decided it might be a good time to try out the new <font face="Courier New">Parallel.For</font> loops in the .NET 4 Framework that would multi-thread the iterations of the loops.&#160; Here’s the implementation I threw together:</p> <span class="fullpost">   <pre class="brush: csharp">using System;
 using System.Linq;

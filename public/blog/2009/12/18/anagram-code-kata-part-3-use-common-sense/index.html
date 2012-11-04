@@ -30,6 +30,31 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner"><article class="post">
 	<h1 class="title">Anagram Code Kata Part 3 – Use Common Sense</h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-12-18T18:10:00-07:00" pubdate data-updated="true">Dec 18<span>th</span>, 2009</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/anagram-code-kata-series/'>Anagram Code Kata Series</a>, <a class='category' href='/blog/categories/bdd/'>BDD</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/mspec/'>MSpec</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/mocking/'>Mocking</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>, <a class='category' href='/blog/categories/solid/'>SOLID</a>, <a class='category' href='/blog/categories/testing/'>Testing</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
+
+
+</div>
+		
+			<span class="comments"><a href="#disqus_thread">Comments</a></span>
+		
+	</div>
 	<div class="entry-content"><div class='post'>
 <p>This post is part of a <a href="http://murrayon.net/2009/11/anagram-code-kata-bdd-mspec.html">series on coding Kata, BDD, MSpec, and SOLID principles</a>.&#160; Feel free to visit the above link which points to the introductory post, also containing an index of all posts in the series.</p>  <p>In this post, we will discuss how far to take the idea of creating mockable contracts via interfaces for testing purposes and to keep responsibilities modular.&#160; As I solicited feedback from commenters, I was getting hung up on applying this concept to every object and dependency.&#160; We’ll talk about how I’m now thinking that overly strict adherence to the practice can drive you nuts and decrease productivity.&#160; It is meant to help guide your design process along rather than hinder it.&#160; We’ll finish this post off with one of our two dependencies implemented in an extremely simple manner.</p> <span class="fullpost">   <h3><font face="Courier New">IFileParser</font> Dependency</h3>    <p>When we left off last time, we had defined two separate responsibilities that <font face="Courier New">AnagramsFinder</font> was going to push down into its dependencies.&#160; As I started to write a specification test for the newly created <font face="Courier New">NewlineFileParser</font>, I realized it would be difficult to stub based on providing a file path to a text file as the only parameter.&#160; I began having thoughts that maybe I could break up another pair of dependencies for file parsing, namely obtaining a file stream (or file contents string) from a path and then parsing the file contents into a list of multiple lines.&#160; But then again, my first of the two dependencies is still dependent on the physical file system and I cannot get away from this unless I somehow mock up an in-memory file system.&#160; This began to feel silly to me as I was hoping I would just use the built-in .NET APIs for file systems and string parsing.</p>    <p>After emailing <a href="http://www.davesquared.net/" target="_blank">Dave</a> and <a href="http://adotnetdude.blogspot.com/" target="_blank">Esteban</a> asking for guidance, the revelation I received via these two fine gentlemen is that file parsing is not an essential purpose of this application nor exercise (at least not yet; we won’t be focusing on performance unless it appears to be grossly deficient as we go along).&#160; What we could do is write integration tests instead, where we have a set of simple test files sitting in a folder that we run our <font face="Courier New">NewlineFileParser</font> against to ensure it working as we expect.&#160; But I don’t think I’m even going to do this at this point.&#160; I really do want to get to the core of the application.&#160; Plus, I feel certain that I can trust the implementation of <font face="Courier New">File.ReadAllLines()</font> from the .NET Framework.</p>    <p>Unless it needs to be changed further down the road, the following code implementation will likely be sufficient for the remainder of this coding exercise:</p>    <pre class="brush: csharp">public class NewlineFileParser : IFileParser
 {

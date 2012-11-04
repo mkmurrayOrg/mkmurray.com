@@ -14,5 +14,12 @@
 	</div>
 {% else %}
 	<h1 class="title">{% if site.titlecase %}{{ page.title | titlecase }}{% else %}{{ page.title }}{% endif %}</h1>
+	<div class="meta">
+		<div class="date">{% include post/date.html %}{{ time }}</div>
+		<div class="tags">{% include post/categories.html %}</div>
+		{% if site.disqus_short_name and site.disqus_show_comment_count == true %}
+			<span class="comments"><a href="#disqus_thread">Comments</a></span>
+		{% endif %}
+	</div>
 	<div class="entry-content">{{ content }}</div>
 {% endif %}

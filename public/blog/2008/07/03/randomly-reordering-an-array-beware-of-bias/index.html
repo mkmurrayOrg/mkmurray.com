@@ -30,6 +30,31 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner"><article class="post">
 	<h1 class="title">Randomly Reordering an Array - Beware of Bias</h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-07-03T16:34:00-06:00" pubdate data-updated="true">Jul 3<span>rd</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/algorithms/'>Algorithms</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/error/'>Error</a>
+
+
+</div>
+		
+			<span class="comments"><a href="#disqus_thread">Comments</a></span>
+		
+	</div>
 	<div class="entry-content"><div class='post'>
 <p>So I came upon the following blog post and found that I (just as the author has done) have been using a naive algorithm for randomly reordering arrays (mostly notably used when shuffling a deck of cards):</p>  <p><a title="http://scottonwriting.net/sowblog/posts/13356.aspx" href="http://scottonwriting.net/sowblog/posts/13356.aspx">http://scottonwriting.net/sowblog/posts/13356.aspx</a></p>  <p>I agree I have seen this simple iterate-and-swap reordering algorithm all over the place, even in my education at college.&#160; I can think of a few applications that I am using it in right now.&#160; Here is some example C# code demonstrating the faulty algorithm:</p> <span class='fullpost'> <div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 225px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none">Random rnd = <span style="color: #0000ff">new</span> Random();
 

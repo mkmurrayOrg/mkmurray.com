@@ -30,6 +30,31 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner"><article class="post">
 	<h1 class="title">ASP.NET Providers - Role Management</h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-02-05T16:45:00-07:00" pubdate data-updated="true">Feb 5<span>th</span>, 2009</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/asp-net/'>ASP.NET</a>, <a class='category' href='/blog/categories/asp-net-providers-series/'>ASP.NET Providers Series</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/security/'>Security</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>, <a class='category' href='/blog/categories/web/'>Web</a>
+
+
+</div>
+		
+			<span class="comments"><a href="#disqus_thread">Comments</a></span>
+		
+	</div>
 	<div class="entry-content"><div class='post'>
 <p>This blog post is part of a series about the ASP.NET Providers (namely Membership, Role Management, and Profile). The introductory post in the series can be found at the following link, which introduces the <a href="http://en.wikipedia.org/wiki/Provider_model">Provider Model pattern</a> and gives a personal example of an implementation I have been working on:</p>  <ul>   <li><a href="http://murrayon.net/2009/01/aspnet-providers-membership-role-and.html">ASP.NET Providers - Membership, Role, and Profile</a> </li> </ul>  <p>This post will deal with adding Role Management to your website.</p> <span class='fullpost'> <h3>Role Management</h3>  <p>Creating roles and assigning users accounts to them is a great way to group users together under similar permissions and abilities.&#160; The ASP.NET Roles Management service allows you to restrict page viewing (or even just certain regions of a page) based on roles you define; you can even apply roles security to specific methods or classes using <a title="Introduction to Attributes (C#)" href="http://msdn.microsoft.com/en-us/library/aa288059(VS.71).aspx">attributes</a>, which I will show an example of a little later.</p>  <p>In order to add role management to your site, add an XML fragment like the one below; the process is much the same as it was with the <a title="ASP.NET Providers - Membership" href="http://murrayon.net/2009/01/aspnet-providers-membership.html">Membership Provider</a>:</p>  <div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 300px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #0000ff">&lt;</span><span style="color: #800000">configuration</span><span style="color: #0000ff">&gt;</span>
     <span style="color: #0000ff">&lt;</span><span style="color: #800000">connectionStrings</span><span style="color: #0000ff">&gt;</span>

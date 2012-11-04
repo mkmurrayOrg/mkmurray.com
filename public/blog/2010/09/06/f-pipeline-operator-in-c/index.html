@@ -30,6 +30,31 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner"><article class="post">
 	<h1 class="title">F# Pipeline Operator in C#?</h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-09-06T20:22:00-06:00" pubdate data-updated="true">Sep 6<span>th</span>, 2010</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/algorithms/'>Algorithms</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/code-organization/'>Code Organization</a>, <a class='category' href='/blog/categories/f-/'>F#</a>, <a class='category' href='/blog/categories/functional-programming/'>Functional Programming</a>, <a class='category' href='/blog/categories/linq/'>LINQ</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>, <a class='category' href='/blog/categories/solid/'>SOLID</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
+
+
+</div>
+		
+			<span class="comments"><a href="#disqus_thread">Comments</a></span>
+		
+	</div>
 	<div class="entry-content"><div class='post'>
 <p>I am currently reading the <a href="http://www.manning.com/petricek/" target="_blank">Real-World Functional Programming</a> book from <a href="http://www.manning.com/" target="_blank">Manning Publications</a>. It’s mostly an exercise in learning F#, but also to improve my C# code as well. I finally learned what the F# pipelining operator (<font face="Courier New">|&gt;</font>) is all about, and I was so impressed I thought I would try to figure out how to bring it into C# if possible.</p> <span class="fullpost">   <h3>Introducing the F# Pipeline Operator</h3>    <p>Here is some F# code that defines a list of integers and a pair of functions.&#160; They are then used in a few “higher-order” functions (functions that utilize other functions as parameters or return values, according to my book).&#160; <font face="courier new">List.filter</font> is equivalent to the LINQ <font face="Courier New">IEnumerable.Where()</font> extension method, and <font face="Courier New">List.map</font> is equivalent to <font face="Courier New">IEnumerable.Select()</font>.</p>    <pre class="brush: csharp">let numbers = [ 1 .. 10 ]
 let isOdd(n) = n % 2 = 1
