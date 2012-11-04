@@ -3,11 +3,11 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Anagram Code Kata Part 3 ΓÇô Use Common Sense - Mike Murray</title>
+	<title>Anagram Code Kata Part 3 – Use Common Sense - Mike Murray</title>
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="Liquid error: incompatible character encodings: UTF-8 and IBM437 ">
+	<meta name="description" content="This post is part of a series on coding Kata, BDD, MSpec, and SOLID principles.&#160; Feel free to visit the above link which points to the &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -28,7 +28,44 @@
 				
 			
 			<div class="mid-col-container">
-				<div id="content" class="inner"><article class="post">Liquid error: incompatible character encodings: UTF-8 and IBM437
+				<div id="content" class="inner"><article class="post">
+	<h1 class="title">Anagram Code Kata Part 3 – Use Common Sense</h1>
+	<div class="entry-content"><div class='post'>
+<p>This post is part of a <a href="http://murrayon.net/2009/11/anagram-code-kata-bdd-mspec.html">series on coding Kata, BDD, MSpec, and SOLID principles</a>.&#160; Feel free to visit the above link which points to the introductory post, also containing an index of all posts in the series.</p>  <p>In this post, we will discuss how far to take the idea of creating mockable contracts via interfaces for testing purposes and to keep responsibilities modular.&#160; As I solicited feedback from commenters, I was getting hung up on applying this concept to every object and dependency.&#160; We’ll talk about how I’m now thinking that overly strict adherence to the practice can drive you nuts and decrease productivity.&#160; It is meant to help guide your design process along rather than hinder it.&#160; We’ll finish this post off with one of our two dependencies implemented in an extremely simple manner.</p> <span class="fullpost">   <h3><font face="Courier New">IFileParser</font> Dependency</h3>    <p>When we left off last time, we had defined two separate responsibilities that <font face="Courier New">AnagramsFinder</font> was going to push down into its dependencies.&#160; As I started to write a specification test for the newly created <font face="Courier New">NewlineFileParser</font>, I realized it would be difficult to stub based on providing a file path to a text file as the only parameter.&#160; I began having thoughts that maybe I could break up another pair of dependencies for file parsing, namely obtaining a file stream (or file contents string) from a path and then parsing the file contents into a list of multiple lines.&#160; But then again, my first of the two dependencies is still dependent on the physical file system and I cannot get away from this unless I somehow mock up an in-memory file system.&#160; This began to feel silly to me as I was hoping I would just use the built-in .NET APIs for file systems and string parsing.</p>    <p>After emailing <a href="http://www.davesquared.net/" target="_blank">Dave</a> and <a href="http://adotnetdude.blogspot.com/" target="_blank">Esteban</a> asking for guidance, the revelation I received via these two fine gentlemen is that file parsing is not an essential purpose of this application nor exercise (at least not yet; we won’t be focusing on performance unless it appears to be grossly deficient as we go along).&#160; What we could do is write integration tests instead, where we have a set of simple test files sitting in a folder that we run our <font face="Courier New">NewlineFileParser</font> against to ensure it working as we expect.&#160; But I don’t think I’m even going to do this at this point.&#160; I really do want to get to the core of the application.&#160; Plus, I feel certain that I can trust the implementation of <font face="Courier New">File.ReadAllLines()</font> from the .NET Framework.</p>    <p>Unless it needs to be changed further down the road, the following code implementation will likely be sufficient for the remainder of this coding exercise:</p>    <pre class="brush: csharp">public class NewlineFileParser : IFileParser
+{
+    public IEnumerable&lt;string&gt; ExtractWordListFromFile(string filePath)
+    {
+        return File.ReadAllLines(filePath);
+    }
+}</pre>
+
+  <p>I feel great about this because I haven’t gone insane trying to mock and test everything in sight, nor have I broken up every single responsibility in such small chunks that it becomes tedious.&#160; Instead, I have broken up the two core responsibilities of <font face="Courier New">AnagramsFinder</font> which means I can change and test the two dependencies independent of each other and from their manager class.&#160; Even though I haven’t written a ton of code yet, I feel the tests specs have driven my design into a cohesive, decoupled design that should prove flexible if requirements change or if I encounter friction later on and need to rethink my design.&#160; A flexible architecture for the application is being flushed out based on a “top-to-bottom” design view of the requirements.</p>
+
+  <h3>Create Stubs or Assert Methods were Called</h3>
+
+  <p><a href="http://papamufflon.blogspot.com/">Tobias Walter</a> left <a href="http://murrayon.net/2009/11/anagram-code-kata-part-2-mocking-and.html#comments">a comment on my last post</a> with some suggestions that I would like to get clarification on and discuss further with my growing audience of three now.&#160; He compared some of my implementation to <a href="http://www.davesquared.net/2009/11/favour-test-driving-logic-over-data.html">Dave’s implementation on his Favour test driving logic over data post</a>, but the comparison was lost on me.&#160; It seemed Tobias was saying that I had gone too far breaking up the responsibilities into such small dependencies.&#160; I am unsure what his argument was, but as far as I could tell both Dave and I broke up a managing class into two separate responsibilities so that the more crucial of the two could be tested independently.&#160; Also in doing so, we both created stubs that were given specific dummy responses to method calls using Rhino.Mocks.&#160; One more comment I would like to say is that I broke the file parsing responsibility away into its own dependency more because of the need to isolate the anagrams grouping than because file parsing is of itself a difficult task.&#160; If Tobias or anyone else could try to clarify his argument, that would really help me understand the merits of his suggestions.</p>
+
+  <p>Another suggestion that Tobias brought up that I would like to petition feedback on is to use the mocking feature of testing whether a method was called instead of creating a stub programmed with a dummy response.&#160; I have to admit, I’m not sure when to use one method over another.&#160; I guess I’ve felt in the past that testing whether a method was called seems silly, since it seems odd to have your test know the implementation and inner method calls of the subject under test.&#160; But I am now realizing that my stubs appear to be doing the same thing, but with dummy input and output programmed in.&#160; If you have an opinion or experience on this subject, please leave some feedback in the comments of this post.</p>
+
+  <h3>What’s Next?</h3>
+
+  <p>In my next post I hope to summarize this mocking debate brought up above regarding two differing methods of verifying my manager class is correctly managing its dependencies.&#160; I also hope to begin driving out the design and implementation of the <font face="Courier New">AnagramGrouper</font> dependency via behavior specification tests.&#160; Thanks and any feedback is greatly appreciated.</p>
+</span>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>David</div>
+<div class='content'>
+Hi Mike,<br /><br />In terms of the stubbing vs. asserting a method was called, the team I&#39;m on has found we rarely AssertWasCalled any more. Doing so explicitly couples our tests/specs to the implementation, whereas just stubbing calls in a SetUp seems easier to change without altering the fundamental assertions in our tests. <br /><br />The only time we use AssertWasCalled is for void methods to a service or similar where there is no observable side-effect from a unit perspective.<br /><br />YMMV. :)<br /><br />Regards,<br />David</div>
+</div>
+<div class='comment'>
+<div class='author'>Tobias Walter</div>
+<div class='content'>
+Hi Mike,<br /><br />great you continued this series.<br /><br />I think I messed things up and wrote incorrect things. In the meantime I managed to do this kata again and now I agree with you. Just forget my advice to mock it - this was wrong.<br /><br />However, I and my coworkers question if it&#39;s worth to write 30 lines of code to test a 2-lines-method? I think for this kata it will be enough to do some acceptance tests here.</div>
+</div>
+</div>
+</div>
+
 </article>
 
 	<div class="share">

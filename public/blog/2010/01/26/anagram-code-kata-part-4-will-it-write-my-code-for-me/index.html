@@ -3,11 +3,11 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Anagram Code Kata Part 4 ΓÇô Will it Write My Code for Me? - Mike Murray</title>
+	<title>Anagram Code Kata Part 4 – Will it Write My Code for Me? - Mike Murray</title>
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="Liquid error: incompatible character encodings: UTF-8 and IBM437 ">
+	<meta name="description" content="This post is part of a series on coding Kata, BDD, MSpec, and SOLID principles.&#160; Feel free to visit the above link which points to the &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -28,7 +28,135 @@
 				
 			
 			<div class="mid-col-container">
-				<div id="content" class="inner"><article class="post">Liquid error: incompatible character encodings: UTF-8 and IBM437
+				<div id="content" class="inner"><article class="post">
+	<h1 class="title">Anagram Code Kata Part 4 – Will It Write My Code for Me?</h1>
+	<div class="entry-content"><div class='post'>
+<p>This post is part of a <a href="http://murrayon.net/2009/11/anagram-code-kata-bdd-mspec.html">series on coding Kata, BDD, MSpec, and SOLID principles</a>.&#160; Feel free to visit the above link which points to the introductory post, also containing an index of all posts in the series.</p>  <p>In this post, we work on implementing the other main dependency, <font face="Courier New">IAnagramsFinder</font>.&#160; In doing so, you will discover that I have been a little naïve with this BDD methodology. Apparently I expected a different experience than what I ran into doing the exercise.&#160; In gathering feedback, I had a very interesting discussion about Object-Oriented Programming with <a href="http://adotnetdude.blogspot.com/">Esteban</a> that I will summarize and ask for further discussion from all of you.&#160; I’ll also show you one way to debug your code when running the MSpec tests via the console test runner.</p> <span class="fullpost">   <h3>New Thoughts on Mocks vs. Stubs</h3>    <p>During <a href="http://murrayon.net/2009/11/anagram-code-kata-part-2-mocking-and.html">Part 2 of this series</a>, <a href="http://papamufflon.blogspot.com/">Tobias</a> left <a href="http://murrayon.net/2009/11/anagram-code-kata-part-2-mocking-and.html#comments">a comment about using mocks and <font face="Courier New">AssertWasCalled</font></a>, rather than stubs and defining fake responses.&#160; I didn’t understand how it would help, as it appeared they would accomplish roughly the same thing.&#160; With stubs and fake responses, if you don’t get back the return you are looking for, then you can infer that the dependencies weren’t called since you had previously hard-coded their return values when called.&#160; With mocks and asserting methods were called, you directly assert that the manager class did in fact call it’s dependencies.</p>    <p>When I looked more closely into using the <font face="Courier New">AssertWasCalled</font> method in Rhino.Mocks, I noticed that my strategy of using stubs and faked return values wasn’t very explicit in signifying that the ultimate responsibility of the manager class was to delegate to its dependencies.&#160; I mean the test context does rigorously stub out the dependencies, but the actual assertions weren’t clear what we were testing.&#160; Therefore, I decided to pop in a pair of <font face="Courier New">AssertWasCalled</font> statements (as found below), leaving <a href="http://murrayon.net/2009/11/anagram-code-kata-part-2-mocking-and.html#firstSpec">the rest of the test the same as it was back in Part 2</a>.</p>    <pre class="brush: csharp">It should_result_in_list_of_anagram_sets_and_both_dependencies_should_have_been_called = () =&gt;
+{
+    fileParser.AssertWasCalled(x =&gt; x.ExtractWordListFromFile(filePath));
+    anagramGrouper.AssertWasCalled(x =&gt; x.FindAnagramSets(wordListFromFile));
+
+    result.ShouldEqual(expected);
+};</pre>
+
+  <p>However, when I thought to simplify the test code by removing most of stubbing setup, it appeared I had to leave most of the stub logic in tact in order to test if <font face="Courier New">anagramGrouper.FindAnagramSets()</font> was called with parameter <font face="Courier New">wordListFromFile</font>, which was one of the stubbed fake responses.&#160; The one dependency (the file parser) needed to pass it’s return value to the next dependency (the anagrams finder).&#160; I could not think of a way to accomplish testing that the manager class facilitated that without the stubbing logic (fake responses) that I created.</p>
+
+  <p>It would be great if someone could enlighten me since I’m such a newbie to mocking and stubbing.&#160; Otherwise, I feel the intent of the test is now more clear with the <font face="Courier New">AssertWasCalled</font> checks that I added, even if that I means I’m needlessly mixing stubbing and mocking.&#160; But one last question:&#160; should I try to stick more closely to the rule of thumb guiding me to stick to one all-encompassing assertion per test if possible?&#160; Let me know your thoughts.</p>
+
+  <h3>Implementing the <font face="Courier New">AnagramGrouper</font> Dependency</h3>
+
+  <p>So let’s continue onward with some more actual design and code.&#160; We are tackling the <font face="Courier New">AnagramGrouper</font> dependency, whose sole responsibility is to take in the parsed collection of words and find anagram sets.&#160; Here is the test spec (one thing to note is that in some of my earlier tests for the <font face="Courier New">AnagramsFinder</font> manager class and <font face="Courier New">IFileParser</font>, I had used string arrays liberally; I decided to go with <font face="Courier New">IList&lt;string&gt;</font> collections instead):</p>
+
+  <pre class="brush: csharp">public class AnagramGrouperSpecs
+{
+    [Subject(typeof(AnagramGrouperSpecs))]
+    public class when_given_word_list_collection
+    {
+        static AnagramGrouper sut;
+        static IEnumerable&lt;IList&lt;string&gt;&gt; result;
+        static IEnumerable&lt;string&gt; wordList = new[] { &quot;wordA&quot;, &quot;wordB&quot;, &quot;Aword&quot;, &quot;wordC&quot; };
+
+        Establish context = () =&gt;
+        {
+            sut = new AnagramGrouper();
+        };
+
+        Because of = () =&gt;
+        {
+            result = sut.FindAnagramSets(wordList);
+        };
+
+        It should_result_in_anagram_sets_collection_of_length_1 = () =&gt;
+        {
+            result.Count().ShouldEqual(1);
+        };
+
+        It should_contain_2_specific_words_in_the_anagram_set = () =&gt;
+        {
+            result.First().ShouldContain(&quot;wordA&quot;, &quot;Aword&quot;);
+        };
+    }
+}</pre>
+
+  <p>Here too I have basically two assertions (but split it up differently than last time); should I also try harder to avoid this as well?</p>
+
+  <p>When contemplating how to further breakdown this responsibility of finding anagram sets into subtasks, I figure we would need one piece of code that would compare two words and answer whether they are anagrams of each other, and another piece of code that would keep track of the various anagram sets (perhaps a collection or dictionary of string arrays).&#160; With what BDD has revealed to me thus far, I figure this means we are going to see two more dependencies (and interfaces, and spec tests) added to the codebase.</p>
+
+  <p>So I start with the word comparison task, thinking I could perhaps leverage the <font face="Courier New">String.GetHashCode()</font> method for assigning meaningful value to the list of characters in the string.&#160; However, string hash codes give importance to letter casing and order of characters, so a modified strategy would have to be utilized, even though <font face="Courier New">GetHashCode()</font> seems quite close to filling our need.</p>
+
+  <p>Now I probably should have come up with this ingenious algorithm all by myself, but…it is what it is and this is the best, most concise solution that I can put together to solve the problem.&#160; With that said, I ended up doing some internet searching in order to proof-of-concept my <font face="Courier New">GetHashCode()</font> idea.&#160; I came across pure genius in the form of <a href="http://www.formatexception.com/">Brian Mullen’s</a> blog post entitled <a href="http://www.formatexception.com/2009/03/linq-group-by-and-groupby/">LINQ group by and GroupBy</a>, specifically the second-to-last code snippet.&#160; Just <font face="Courier New">String.ToCharArray()</font> the word and then <font face="Courier New">Array.Sort()</font> the resultant array; now turn it back into a string and do <font face="Courier New">GetHashCode()</font> now.&#160; (As a side note, we can worry about case-insensitivity later if desired by simply doing a <font face="Courier New">String.ToLower()</font> on the word before getting the hash code.)&#160; Now anagrams will have the same hash code (Brian uses the term “canonical”, which I think is very fitting); it’s literally perfect in every way!</p>
+
+  <p>So now for the other dependency, I figure we could use a <font face="Courier New">Dictionary&lt;int, IList&lt;string&gt;&gt;</font>, where the key is the canonical hash code and the value is a string list collection representing an anagram set of words.&#160; These two dependency implementations are so simple and straight forward that I have a hard time seeing a reason to continue breaking out full-fledged object dependencies with interfaces and Dependency Injection.&#160; However, I will make a case for moving the canonical hash code logic outside this <font face="Courier New">AnagramsGrouper</font> class, but that will come later.</p>
+
+  <p>So let’s write some code to pass our test/spec:</p>
+
+  <pre class="brush: csharp">public class AnagramGrouper : IAnagramGrouper
+{
+    public IEnumerable&lt;IList&lt;string&gt;&gt; FindAnagramSets(IEnumerable&lt;string&gt; wordList)
+    {
+        Dictionary&lt;int, IList&lt;string&gt;&gt; results = new Dictionary&lt;int, IList&lt;string&gt;&gt;();
+
+        foreach (string word in wordList)
+        {
+            int canonicalHashCode = GetCanonicalHashCode(word);
+
+            if (results.ContainsKey(canonicalHashCode))
+            {
+                results[canonicalHashCode].Add(word);
+            }
+            else
+            {
+                results.Add(canonicalHashCode, new List&lt;string&gt;(new[] { word }));
+            }
+        }
+
+        return results.Values;
+    }
+
+    public static int GetCanonicalHashCode(string word)
+    {
+        char[] letters = word.ToCharArray();
+        Array.Sort&lt;char&gt;(letters);
+
+        return new string(letters).GetHashCode();
+    }
+}</pre>
+
+  <p>Maybe you noticed already, but there is a bug in my logic.&#160; At that time, I didn’t see it and needed to debug the code while running.&#160; Setting a debug break point in your code doesn’t work like you’re probably used to, and this is because we’re running the MSpec tests via its console test runner.&#160; I had to do some searching to figure this one out, and that’s what we’ll cover next.</p>
+
+  <h3>How to Debug MSpec Specifications and the Code They Test</h3>
+
+  <p>After a short ride on the Google super highway, I found a <a href="http://codebetter.com/blogs/aaron.jensen/archive/2008/09/02/mspec-v0-2.aspx#comments">blog post containing a November 2009 comment</a> from <a href="http://codebetter.com/blogs/aaron.jensen/default.aspx">Aaron Jensen</a>, author of MSpec, that gave a few possible solutions.&#160; I opted to go with the <font face="Courier new">Debugger.Break()</font> solution, which I put at the very top of my <font face="Courier new">FindAnagramSets</font> method.&#160; It is a tad awkward because it will show a Windows error dialog box that says the program encountered a problem and Windows is searching the web for a solution.&#160; If you wait through that, it will give you an option to debug the program via a Visual Studio dialog where you select the currently running instance of Visual Studio as your debugger instance.&#160; You just remove the statement when you’re done (and you’ll really want to remember to remove it from your production code).&#160; Does the trick, though it is a bit obtrusive to your code base.</p>
+
+  <p>If you haven’t already figured it out, the bug is that my <font face="Courier New">FindAnagramSets</font> method is returning all anagram sets found in the dictionary.&#160; An anagram set of just one word is not really an anagram set, which is why our test specification which is based on that assumption failed.&#160; The fix is to filter out anagram word sets with less than two words before returning, like this:</p>
+
+  <pre class="brush: csharp">// Return anagram sets with more than one word in it
+return results.Values.Where(x =&gt; x.Count &gt; 1);</pre>
+
+  <p>That will make the code pass the tests now.&#160; Remember to remove the debugger statement we added.</p>
+
+  <h3>BDD, OOP…WTH?!</h3>
+
+  <p>Just kidding.&#160; But I do want to discuss a reaction I had to BDD after implementing this anagram finding solution.&#160; After I completed the code and finished the tests, I was feeling pretty great.&#160; But then I started thinking about how I didn’t really go down the path that I felt BDD was originally trying to lead me down with <font face="Courier New">AnagramGrouper</font>, which was to create two more dependencies, just as I had done for the first managing class <font face="Courier New">AnagramsFinder</font>.&#160; I mean I felt pretty frustrated because I was digging BDD to this point.&#160; I’m not quite sure what my original expectations were, but I might have thought BDD was magically going to right my algorithms for me as well.</p>
+
+  <p>I decided to discuss the whole thing with <a href="http://adotnetdude.blogspot.com/">Esteban</a> to get some perspective on the issue.&#160; He told me he didn’t know a thing about BDD and how it’s supposed to work, but he figured BDD would lead me to decoupled, cohesive code design, but he couldn’t see how it would aide with algorithmic solutions to the problems at hand.&#160; I’m not sure why I was so naïve, but it makes complete sense.&#160; I mean these methodologies are designed to keep you disciplined to some proven, guiding principles, but you still need to use your brain and creativity to actually solve the problem.&#160; I guess it would help to get some feedback and suggestions from you all in regard to knowing when it is time to switch from BDD architecture design mode to algorithm design mode within the broken down dependencies that handle the very specific sub-responsibilities.&#160; Please let me know if you have found some guiding concept or question you’ve come up with that you put to the test in order to lead you into the right coding mindset for that particular context (design or algorithm; or do I even have the right categories?).</p>
+
+  <p>Perhaps it’s just that this design process feels so new to me.&#160; Maybe I have solely been in the coding, algorithm mindset this whole time throughout my career.&#160; Perhaps it will become more natural with practice and experience.&#160; I guess it just feels like I’m learning to drive a manual, stick-shift car or something, and I am a little rough with the clutch when transitioning between gears.</p>
+
+  <p>To take this discussion further, <a href="http://adotnetdude.blogspot.com/">Esteban</a> made a comment in our conversation about his personal thoughts on these methodologies (like BDD) and Object-Oriented Programming.&#160; He has come to believe that we invent these methodologies like flavors of the week “because as programmers we don’t really get OOP.”&#160; Perhaps OOP just comes more naturally to his thought process that most people (or he admits it’s possible he could just be completely ignorant), but he feels that there’s really just a few simple rules and guidelines to keep in mind at all times in order to keep your objects behaving like real life objects and not acting like data constructs.&#160; I encouraged him to give his theory some additional thought and make it a little more formal by writing it down.&#160; He did this and the following is a link to the resultant blog post:</p>
+
+  <p><a href="http://adotnetdude.blogspot.com/2010/01/3-simple-rules-to-good-object-oriented.html">3 Simple Rules to Good Object Oriented Code</a></p>
+
+  <p>Please read through that post and comment on it.&#160; His idea needs to be criticized and/or validated.&#160; He admits he may have no clue what he’s talking about, but I said that’s why it needs to be put to the test by posting it in the open.&#160; We both think it’s an interesting theory, but we’re unsure if it even holds any water.&#160; Perhaps Esteban’s theory is too simplistic to be practical for many programmers.&#160; Provide feedback and lots of it.</p>
+
+  <h3>Summary</h3>
+
+  <p>So I think I need to wrap this post up about now.&#160; I think I have raised enough discussion points to write a book, but please do take the time to comment on what I’m doing wrong, what I’m doing right, or how to make the BDD mentality more flowing and natural.&#160; I promised to talk about having a Word class as opposed to using primitive strings everywhere, and that will definitely be in the next post.&#160; Also, I think our <font face="Courier New">AnagramGrouper</font> class may need some more testing and flushing out of how it should handle spaces, punctuation, casing, and so on.</p>
+
+  <p>Thanks for sticking with me thus far.</p>
+</span>  </div>
+</div>
+
 </article>
 
 	<div class="share">

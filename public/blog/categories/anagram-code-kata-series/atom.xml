@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Anagram Code Kata Series | Mike Murray]]></title>
   <link href="http://mkmurray.com/blog/categories/anagram-code-kata-series/atom.xml" rel="self"/>
   <link href="http://mkmurray.com/"/>
-  <updated>2012-10-29T14:47:08-06:00</updated>
+  <updated>2012-11-03T19:32:09-06:00</updated>
   <id>http://mkmurray.com/</id>
   <author>
     <name><![CDATA[Mike Murray]]></name>
@@ -12,5 +12,483 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
-  Liquid error: incompatible character encodings: UTF-8 and IBM437
+  
+  <entry>
+    <title type="html"><![CDATA[Anagram Code Kata Part 5 – Domain Objects Over Language Primitives]]></title>
+    <link href="http://mkmurray.com/blog/2010/02/20/anagram-code-kata-part-5-domain-objects-over-language-primitives/"/>
+    <updated>2010-02-20T17:55:00-07:00</updated>
+    <id>http://mkmurray.com/blog/2010/02/20/anagram-code-kata-part-5-domain-objects-over-language-primitives</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>This post is part of a <a href="http://murrayon.net/2009/11/anagram-code-kata-bdd-mspec.html">series on coding Kata, BDD, MSpec, and SOLID principles</a>.&#160; Feel free to visit the above link which points to the introductory post, also containing an index of all posts in the series.</p>  <p>In this post, we will discuss some reasons why you might want to avoid using language primitives directly in place of domain objects.&#160; Specifically, I have been using <font face="Courier New">String</font> variables and objects to represent words up to this point.&#160; <a href="http://adotnetdude.blogspot.com/">Esteban</a> suggested I create a <font face="Courier New">Word</font> class for a few good reasons which I’ll layout for you.&#160; Out of sheer luck and good timing, <a href="http://codebetter.com/blogs/dru.sellers/default.aspx">Dru Sellers</a> of <a href="http://codebetter.com/">CodeBetter.com</a> also wrote on this subject shortly afterward and confirmed Esteban’s reasoning.</p> <span class="fullpost">   <h3>Use <font face="Courier New">String</font> Class or Create <font face="Courier New">Word</font> Domain Object?</h3>    <p>I mentioned in the previous post that Esteban had suggested creating a <font face="Courier New">Word</font> class instead of just passing around strings everywhere through my application.&#160; One good reason is that we don’t own the <font face="Courier New">String</font> class and so further modification to our string-based implementation is difficult because the logic is scattered throughout the application, instead of centralized under the responsibility and definition of one domain class.&#160; It is much more difficult to refactor the word-specific logic with its behaviors and attributes spread throughout the code.&#160; Even if your <font face="Courier New">Word</font> class doesn’t grow any more beyond a seemingly unnecessary wrapper of the <font face="Courier New">String</font> class, the code is more cohesive and ready for change should the need arise.</p>    <p>But more importantly, you designed the code thinking in a true object-oriented mindset.&#160; You have to keep in mind that the <font face="Courier New">String</font> class is someone else’s implementation, and is hardly ever sufficient in and of itself as a domain object within your solution.&#160; Think about it, the behaviors that a string object performs are so generic and multipurpose that you likely don’t need two-thirds of the class as defined (and there’s likely a few behaviors you really need that aren’t there).&#160; Of course nearly every application on earth makes use of the <font face="Courier New">String</font> class; but because of this fact, it has no meaning in and of itself within any given application.&#160; You would have to look at how the stings are actually used within the code in order to understand its unique application within the app’s context.&#160; Of course that task of research is much easier for everyone (including the original author of the code) if it’s all encapsulated within a dedicated domain object class.&#160; True object-orientation means describing in code form the properties, behaviors, and interactions/relationships of real world objects within your problem domain.</p>    <p>Esteban gave me a great example to illustrate these points.&#160; He said that you can always represent money as a decimal (and even when you use a domain object, it’s got to have a decimal language primitive underneath the covers).&#160; However, what happens when you need to attach metadata to the amount (like currency denomination), or if you need to change decimal precision?&#160; You would have to go through all of the code and make sure your use of decimal language primitives is modified uniformly in order to retain consistency.&#160; Also, mathematic operations involving money are hardly ever the same as their counterparts involving standard decimals, because currency deals with discrete values to a certain decimal precision.&#160; Typically when the behaviors and properties within our system begin to get complex, we are cognizant enough to create domain objects in order to bring it all under one class.&#160; We definitely don’t want to over-architect features and interactions before we need them, but I think there is power in this principle of abstracting away language primitives and instead encapsulating their use within domain objects located in just one place in your codebase.&#160; I believe it is one thing we can keep in mind to help guide us to better object-oriented thinking, and avoid language-oriented coding.</p>    <p>As mentioned above, Esteban’s thoughts were confirmed nearly verbatim by <a href="http://codebetter.com/blogs/dru.sellers/default.aspx">Dru Sellers</a> of <a href="http://codebetter.com/">CodeBetter.com</a> in his blog post that he wrote just a few days after I had the conversation with Esteban.&#160; A great coincidence no doubt, and worth a read; here’s the link:</p>    <p><a href="http://codebetter.com/blogs/dru.sellers/archive/2010/01/27/business-primitives-1-2.aspx">Business Primitives (1/2)</a>&#160;</p>    <h3><font face="Courier New">Word</font> Class Implementation</h3>    <p>So basically I created the following class implementation and then replaced string with a reference to this new class, <font face="Courier new">Word</font>:</p>    <pre class="brush: csharp">public class Word
+{
+    private string wordStr = string.Empty;
+
+    public Word(string wordStr)
+    {
+        this.wordStr = wordStr;
+    }
+
+    public override string ToString()
+    {
+        return wordStr;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return wordStr == ((Word)obj).ToString();
+    }
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
+
+    public int GetCanonicalHashCode()
+    {
+        char[] letters = wordStr.ToCharArray();
+        Array.Sort&lt;char&gt;(letters);
+        return new string(letters).GetHashCode();
+    }
+}</pre>
+
+  <p>I have defined an overridden implementation for <font face="Courier New">Equals(object)</font> (so that the test assertions and other <font face="Courier New">IEnumerable.Contains()</font> queries work) and <font face="Courier New">GetHashCode()</font> (solely to satisfy a compiler warning).&#160; I also moved the <font face="Courier New">GetCanoncialHashCode()</font> method from <font face="Courier New">AnagramGrouper</font>, in order to better encapsulate it as a behavior a Word knows how to do innately.</p>
+
+  <p>One other change I had to make was to convert strings into <font face="Courier New">Word</font> objects in our <font face="Courier New">NewlineFileParser</font>, which I accomplished by using an <font face="Courier New">IEnumberable.Select()</font> call as shown below:</p>
+
+  <pre class="brush: csharp">return File.ReadAllLines(filePath).Select&lt;string, Word&gt;(x =&gt; new Word(x));</pre>
+
+  <p></p>
+
+  <h3>Let’s Revisit <font face="Courier New">AssertWasCalled</font> One More Time</h3>
+
+  <p>Trust me, I am groaning with you, even as I wrote that heading text.&#160; The last thing we need is for me to rehash the topic again and flip flop my stance yet another time.&#160; Yes, that’s right I’ve changed my mind again.&#160; First I couldn’t understand what utility asserting methods were called would have under normal test scenarios.&#160; Then I changed my mind that perhaps using it would help my test specifications have clearer intent of what I am asserting.&#160; After an email conversation with <a href="http://www.davesquared.net/">David Tchepak</a>, I think I’m now back to my original stance.&#160; Here is what Dave said that had me reconsidering, and I think it’s pretty sound reasoning (emphasis added by me):</p>
+
+  <blockquote>
+    <p>…</p>
+
+    <p>“But seeing as you asked for it, here goes. :)</p>
+
+    <p>“I try and avoid <font face="Courier New">AssertWasCalled</font> like the plague. Generally I don't care that some method was called, I care that my class does the work it needs to. If that involves calling a dependency then great, but that is not my class' reason for existence.</p>
+
+    <p>“I prefer your original approach of stubbing out everything in the setup and having that tested indirectly. One reason I prefer this is I find it makes it easier to refactor: the assertions in my test don't change, the class still does the same thing. However I can add or change dependencies by changing some wiring in the setup, and then make sure I haven't stuffed anything up as my assertions still pass. <strong>I prefer that my tests specify what I want, not how it does it.</strong> To me, <font face="Courier New">AssertWasCalled</font> reeks of over-specification. The one exception is where I hit the external boundaries of my code, so where I want to send an email or something without side effects that I can test. Then the core of the behaviour is the call itself, so I'm happy to assert on that then.”</p>
+  </blockquote>
+
+  <p>And with that I’ll promise to never bring this up again…unless of course I get swayed by someone else. :)&#160; In all seriousness, I think this is an interesting discussion and so if you have insight, please share via comment below.</p>
+
+  <h3>Summary</h3>
+
+  <p>Please leave your thoughts in the comments below in regard to creating domain objects over using language primitives (or heaven forbid, the <font face="Courier New">AssertWasCalled</font> debate).&#160; As far as this coding kata exercise, I need to take a high-level look at where this should go next.&#160; Perhaps the next post will tie up loose ends and see how our code performs on large text files as input.&#160; It may be that we will need to refactor our architecture to achieve better runtimes.&#160; If not, maybe we can still discuss where would could have headed if it had been necessary.</p>
+</span>  </div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Anagram Code Kata Part 4 – Will it Write My Code for Me?]]></title>
+    <link href="http://mkmurray.com/blog/2010/01/26/anagram-code-kata-part-4-will-it-write-my-code-for-me/"/>
+    <updated>2010-01-26T22:27:00-07:00</updated>
+    <id>http://mkmurray.com/blog/2010/01/26/anagram-code-kata-part-4-will-it-write-my-code-for-me</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>This post is part of a <a href="http://murrayon.net/2009/11/anagram-code-kata-bdd-mspec.html">series on coding Kata, BDD, MSpec, and SOLID principles</a>.&#160; Feel free to visit the above link which points to the introductory post, also containing an index of all posts in the series.</p>  <p>In this post, we work on implementing the other main dependency, <font face="Courier New">IAnagramsFinder</font>.&#160; In doing so, you will discover that I have been a little naïve with this BDD methodology. Apparently I expected a different experience than what I ran into doing the exercise.&#160; In gathering feedback, I had a very interesting discussion about Object-Oriented Programming with <a href="http://adotnetdude.blogspot.com/">Esteban</a> that I will summarize and ask for further discussion from all of you.&#160; I’ll also show you one way to debug your code when running the MSpec tests via the console test runner.</p> <span class="fullpost">   <h3>New Thoughts on Mocks vs. Stubs</h3>    <p>During <a href="http://murrayon.net/2009/11/anagram-code-kata-part-2-mocking-and.html">Part 2 of this series</a>, <a href="http://papamufflon.blogspot.com/">Tobias</a> left <a href="http://murrayon.net/2009/11/anagram-code-kata-part-2-mocking-and.html#comments">a comment about using mocks and <font face="Courier New">AssertWasCalled</font></a>, rather than stubs and defining fake responses.&#160; I didn’t understand how it would help, as it appeared they would accomplish roughly the same thing.&#160; With stubs and fake responses, if you don’t get back the return you are looking for, then you can infer that the dependencies weren’t called since you had previously hard-coded their return values when called.&#160; With mocks and asserting methods were called, you directly assert that the manager class did in fact call it’s dependencies.</p>    <p>When I looked more closely into using the <font face="Courier New">AssertWasCalled</font> method in Rhino.Mocks, I noticed that my strategy of using stubs and faked return values wasn’t very explicit in signifying that the ultimate responsibility of the manager class was to delegate to its dependencies.&#160; I mean the test context does rigorously stub out the dependencies, but the actual assertions weren’t clear what we were testing.&#160; Therefore, I decided to pop in a pair of <font face="Courier New">AssertWasCalled</font> statements (as found below), leaving <a href="http://murrayon.net/2009/11/anagram-code-kata-part-2-mocking-and.html#firstSpec">the rest of the test the same as it was back in Part 2</a>.</p>    <pre class="brush: csharp">It should_result_in_list_of_anagram_sets_and_both_dependencies_should_have_been_called = () =&gt;
+{
+    fileParser.AssertWasCalled(x =&gt; x.ExtractWordListFromFile(filePath));
+    anagramGrouper.AssertWasCalled(x =&gt; x.FindAnagramSets(wordListFromFile));
+
+    result.ShouldEqual(expected);
+};</pre>
+
+  <p>However, when I thought to simplify the test code by removing most of stubbing setup, it appeared I had to leave most of the stub logic in tact in order to test if <font face="Courier New">anagramGrouper.FindAnagramSets()</font> was called with parameter <font face="Courier New">wordListFromFile</font>, which was one of the stubbed fake responses.&#160; The one dependency (the file parser) needed to pass it’s return value to the next dependency (the anagrams finder).&#160; I could not think of a way to accomplish testing that the manager class facilitated that without the stubbing logic (fake responses) that I created.</p>
+
+  <p>It would be great if someone could enlighten me since I’m such a newbie to mocking and stubbing.&#160; Otherwise, I feel the intent of the test is now more clear with the <font face="Courier New">AssertWasCalled</font> checks that I added, even if that I means I’m needlessly mixing stubbing and mocking.&#160; But one last question:&#160; should I try to stick more closely to the rule of thumb guiding me to stick to one all-encompassing assertion per test if possible?&#160; Let me know your thoughts.</p>
+
+  <h3>Implementing the <font face="Courier New">AnagramGrouper</font> Dependency</h3>
+
+  <p>So let’s continue onward with some more actual design and code.&#160; We are tackling the <font face="Courier New">AnagramGrouper</font> dependency, whose sole responsibility is to take in the parsed collection of words and find anagram sets.&#160; Here is the test spec (one thing to note is that in some of my earlier tests for the <font face="Courier New">AnagramsFinder</font> manager class and <font face="Courier New">IFileParser</font>, I had used string arrays liberally; I decided to go with <font face="Courier New">IList&lt;string&gt;</font> collections instead):</p>
+
+  <pre class="brush: csharp">public class AnagramGrouperSpecs
+{
+    [Subject(typeof(AnagramGrouperSpecs))]
+    public class when_given_word_list_collection
+    {
+        static AnagramGrouper sut;
+        static IEnumerable&lt;IList&lt;string&gt;&gt; result;
+        static IEnumerable&lt;string&gt; wordList = new[] { &quot;wordA&quot;, &quot;wordB&quot;, &quot;Aword&quot;, &quot;wordC&quot; };
+
+        Establish context = () =&gt;
+        {
+            sut = new AnagramGrouper();
+        };
+
+        Because of = () =&gt;
+        {
+            result = sut.FindAnagramSets(wordList);
+        };
+
+        It should_result_in_anagram_sets_collection_of_length_1 = () =&gt;
+        {
+            result.Count().ShouldEqual(1);
+        };
+
+        It should_contain_2_specific_words_in_the_anagram_set = () =&gt;
+        {
+            result.First().ShouldContain(&quot;wordA&quot;, &quot;Aword&quot;);
+        };
+    }
+}</pre>
+
+  <p>Here too I have basically two assertions (but split it up differently than last time); should I also try harder to avoid this as well?</p>
+
+  <p>When contemplating how to further breakdown this responsibility of finding anagram sets into subtasks, I figure we would need one piece of code that would compare two words and answer whether they are anagrams of each other, and another piece of code that would keep track of the various anagram sets (perhaps a collection or dictionary of string arrays).&#160; With what BDD has revealed to me thus far, I figure this means we are going to see two more dependencies (and interfaces, and spec tests) added to the codebase.</p>
+
+  <p>So I start with the word comparison task, thinking I could perhaps leverage the <font face="Courier New">String.GetHashCode()</font> method for assigning meaningful value to the list of characters in the string.&#160; However, string hash codes give importance to letter casing and order of characters, so a modified strategy would have to be utilized, even though <font face="Courier New">GetHashCode()</font> seems quite close to filling our need.</p>
+
+  <p>Now I probably should have come up with this ingenious algorithm all by myself, but…it is what it is and this is the best, most concise solution that I can put together to solve the problem.&#160; With that said, I ended up doing some internet searching in order to proof-of-concept my <font face="Courier New">GetHashCode()</font> idea.&#160; I came across pure genius in the form of <a href="http://www.formatexception.com/">Brian Mullen’s</a> blog post entitled <a href="http://www.formatexception.com/2009/03/linq-group-by-and-groupby/">LINQ group by and GroupBy</a>, specifically the second-to-last code snippet.&#160; Just <font face="Courier New">String.ToCharArray()</font> the word and then <font face="Courier New">Array.Sort()</font> the resultant array; now turn it back into a string and do <font face="Courier New">GetHashCode()</font> now.&#160; (As a side note, we can worry about case-insensitivity later if desired by simply doing a <font face="Courier New">String.ToLower()</font> on the word before getting the hash code.)&#160; Now anagrams will have the same hash code (Brian uses the term “canonical”, which I think is very fitting); it’s literally perfect in every way!</p>
+
+  <p>So now for the other dependency, I figure we could use a <font face="Courier New">Dictionary&lt;int, IList&lt;string&gt;&gt;</font>, where the key is the canonical hash code and the value is a string list collection representing an anagram set of words.&#160; These two dependency implementations are so simple and straight forward that I have a hard time seeing a reason to continue breaking out full-fledged object dependencies with interfaces and Dependency Injection.&#160; However, I will make a case for moving the canonical hash code logic outside this <font face="Courier New">AnagramsGrouper</font> class, but that will come later.</p>
+
+  <p>So let’s write some code to pass our test/spec:</p>
+
+  <pre class="brush: csharp">public class AnagramGrouper : IAnagramGrouper
+{
+    public IEnumerable&lt;IList&lt;string&gt;&gt; FindAnagramSets(IEnumerable&lt;string&gt; wordList)
+    {
+        Dictionary&lt;int, IList&lt;string&gt;&gt; results = new Dictionary&lt;int, IList&lt;string&gt;&gt;();
+
+        foreach (string word in wordList)
+        {
+            int canonicalHashCode = GetCanonicalHashCode(word);
+
+            if (results.ContainsKey(canonicalHashCode))
+            {
+                results[canonicalHashCode].Add(word);
+            }
+            else
+            {
+                results.Add(canonicalHashCode, new List&lt;string&gt;(new[] { word }));
+            }
+        }
+
+        return results.Values;
+    }
+
+    public static int GetCanonicalHashCode(string word)
+    {
+        char[] letters = word.ToCharArray();
+        Array.Sort&lt;char&gt;(letters);
+
+        return new string(letters).GetHashCode();
+    }
+}</pre>
+
+  <p>Maybe you noticed already, but there is a bug in my logic.&#160; At that time, I didn’t see it and needed to debug the code while running.&#160; Setting a debug break point in your code doesn’t work like you’re probably used to, and this is because we’re running the MSpec tests via its console test runner.&#160; I had to do some searching to figure this one out, and that’s what we’ll cover next.</p>
+
+  <h3>How to Debug MSpec Specifications and the Code They Test</h3>
+
+  <p>After a short ride on the Google super highway, I found a <a href="http://codebetter.com/blogs/aaron.jensen/archive/2008/09/02/mspec-v0-2.aspx#comments">blog post containing a November 2009 comment</a> from <a href="http://codebetter.com/blogs/aaron.jensen/default.aspx">Aaron Jensen</a>, author of MSpec, that gave a few possible solutions.&#160; I opted to go with the <font face="Courier new">Debugger.Break()</font> solution, which I put at the very top of my <font face="Courier new">FindAnagramSets</font> method.&#160; It is a tad awkward because it will show a Windows error dialog box that says the program encountered a problem and Windows is searching the web for a solution.&#160; If you wait through that, it will give you an option to debug the program via a Visual Studio dialog where you select the currently running instance of Visual Studio as your debugger instance.&#160; You just remove the statement when you’re done (and you’ll really want to remember to remove it from your production code).&#160; Does the trick, though it is a bit obtrusive to your code base.</p>
+
+  <p>If you haven’t already figured it out, the bug is that my <font face="Courier New">FindAnagramSets</font> method is returning all anagram sets found in the dictionary.&#160; An anagram set of just one word is not really an anagram set, which is why our test specification which is based on that assumption failed.&#160; The fix is to filter out anagram word sets with less than two words before returning, like this:</p>
+
+  <pre class="brush: csharp">// Return anagram sets with more than one word in it
+return results.Values.Where(x =&gt; x.Count &gt; 1);</pre>
+
+  <p>That will make the code pass the tests now.&#160; Remember to remove the debugger statement we added.</p>
+
+  <h3>BDD, OOP…WTH?!</h3>
+
+  <p>Just kidding.&#160; But I do want to discuss a reaction I had to BDD after implementing this anagram finding solution.&#160; After I completed the code and finished the tests, I was feeling pretty great.&#160; But then I started thinking about how I didn’t really go down the path that I felt BDD was originally trying to lead me down with <font face="Courier New">AnagramGrouper</font>, which was to create two more dependencies, just as I had done for the first managing class <font face="Courier New">AnagramsFinder</font>.&#160; I mean I felt pretty frustrated because I was digging BDD to this point.&#160; I’m not quite sure what my original expectations were, but I might have thought BDD was magically going to right my algorithms for me as well.</p>
+
+  <p>I decided to discuss the whole thing with <a href="http://adotnetdude.blogspot.com/">Esteban</a> to get some perspective on the issue.&#160; He told me he didn’t know a thing about BDD and how it’s supposed to work, but he figured BDD would lead me to decoupled, cohesive code design, but he couldn’t see how it would aide with algorithmic solutions to the problems at hand.&#160; I’m not sure why I was so naïve, but it makes complete sense.&#160; I mean these methodologies are designed to keep you disciplined to some proven, guiding principles, but you still need to use your brain and creativity to actually solve the problem.&#160; I guess it would help to get some feedback and suggestions from you all in regard to knowing when it is time to switch from BDD architecture design mode to algorithm design mode within the broken down dependencies that handle the very specific sub-responsibilities.&#160; Please let me know if you have found some guiding concept or question you’ve come up with that you put to the test in order to lead you into the right coding mindset for that particular context (design or algorithm; or do I even have the right categories?).</p>
+
+  <p>Perhaps it’s just that this design process feels so new to me.&#160; Maybe I have solely been in the coding, algorithm mindset this whole time throughout my career.&#160; Perhaps it will become more natural with practice and experience.&#160; I guess it just feels like I’m learning to drive a manual, stick-shift car or something, and I am a little rough with the clutch when transitioning between gears.</p>
+
+  <p>To take this discussion further, <a href="http://adotnetdude.blogspot.com/">Esteban</a> made a comment in our conversation about his personal thoughts on these methodologies (like BDD) and Object-Oriented Programming.&#160; He has come to believe that we invent these methodologies like flavors of the week “because as programmers we don’t really get OOP.”&#160; Perhaps OOP just comes more naturally to his thought process that most people (or he admits it’s possible he could just be completely ignorant), but he feels that there’s really just a few simple rules and guidelines to keep in mind at all times in order to keep your objects behaving like real life objects and not acting like data constructs.&#160; I encouraged him to give his theory some additional thought and make it a little more formal by writing it down.&#160; He did this and the following is a link to the resultant blog post:</p>
+
+  <p><a href="http://adotnetdude.blogspot.com/2010/01/3-simple-rules-to-good-object-oriented.html">3 Simple Rules to Good Object Oriented Code</a></p>
+
+  <p>Please read through that post and comment on it.&#160; His idea needs to be criticized and/or validated.&#160; He admits he may have no clue what he’s talking about, but I said that’s why it needs to be put to the test by posting it in the open.&#160; We both think it’s an interesting theory, but we’re unsure if it even holds any water.&#160; Perhaps Esteban’s theory is too simplistic to be practical for many programmers.&#160; Provide feedback and lots of it.</p>
+
+  <h3>Summary</h3>
+
+  <p>So I think I need to wrap this post up about now.&#160; I think I have raised enough discussion points to write a book, but please do take the time to comment on what I’m doing wrong, what I’m doing right, or how to make the BDD mentality more flowing and natural.&#160; I promised to talk about having a Word class as opposed to using primitive strings everywhere, and that will definitely be in the next post.&#160; Also, I think our <font face="Courier New">AnagramGrouper</font> class may need some more testing and flushing out of how it should handle spaces, punctuation, casing, and so on.</p>
+
+  <p>Thanks for sticking with me thus far.</p>
+</span>  </div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Anagram Code Kata Part 3 – Use Common Sense]]></title>
+    <link href="http://mkmurray.com/blog/2009/12/18/anagram-code-kata-part-3-use-common-sense/"/>
+    <updated>2009-12-18T18:10:00-07:00</updated>
+    <id>http://mkmurray.com/blog/2009/12/18/anagram-code-kata-part-3-use-common-sense</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>This post is part of a <a href="http://murrayon.net/2009/11/anagram-code-kata-bdd-mspec.html">series on coding Kata, BDD, MSpec, and SOLID principles</a>.&#160; Feel free to visit the above link which points to the introductory post, also containing an index of all posts in the series.</p>  <p>In this post, we will discuss how far to take the idea of creating mockable contracts via interfaces for testing purposes and to keep responsibilities modular.&#160; As I solicited feedback from commenters, I was getting hung up on applying this concept to every object and dependency.&#160; We’ll talk about how I’m now thinking that overly strict adherence to the practice can drive you nuts and decrease productivity.&#160; It is meant to help guide your design process along rather than hinder it.&#160; We’ll finish this post off with one of our two dependencies implemented in an extremely simple manner.</p> <span class="fullpost">   <h3><font face="Courier New">IFileParser</font> Dependency</h3>    <p>When we left off last time, we had defined two separate responsibilities that <font face="Courier New">AnagramsFinder</font> was going to push down into its dependencies.&#160; As I started to write a specification test for the newly created <font face="Courier New">NewlineFileParser</font>, I realized it would be difficult to stub based on providing a file path to a text file as the only parameter.&#160; I began having thoughts that maybe I could break up another pair of dependencies for file parsing, namely obtaining a file stream (or file contents string) from a path and then parsing the file contents into a list of multiple lines.&#160; But then again, my first of the two dependencies is still dependent on the physical file system and I cannot get away from this unless I somehow mock up an in-memory file system.&#160; This began to feel silly to me as I was hoping I would just use the built-in .NET APIs for file systems and string parsing.</p>    <p>After emailing <a href="http://www.davesquared.net/" target="_blank">Dave</a> and <a href="http://adotnetdude.blogspot.com/" target="_blank">Esteban</a> asking for guidance, the revelation I received via these two fine gentlemen is that file parsing is not an essential purpose of this application nor exercise (at least not yet; we won’t be focusing on performance unless it appears to be grossly deficient as we go along).&#160; What we could do is write integration tests instead, where we have a set of simple test files sitting in a folder that we run our <font face="Courier New">NewlineFileParser</font> against to ensure it working as we expect.&#160; But I don’t think I’m even going to do this at this point.&#160; I really do want to get to the core of the application.&#160; Plus, I feel certain that I can trust the implementation of <font face="Courier New">File.ReadAllLines()</font> from the .NET Framework.</p>    <p>Unless it needs to be changed further down the road, the following code implementation will likely be sufficient for the remainder of this coding exercise:</p>    <pre class="brush: csharp">public class NewlineFileParser : IFileParser
+{
+    public IEnumerable&lt;string&gt; ExtractWordListFromFile(string filePath)
+    {
+        return File.ReadAllLines(filePath);
+    }
+}</pre>
+
+  <p>I feel great about this because I haven’t gone insane trying to mock and test everything in sight, nor have I broken up every single responsibility in such small chunks that it becomes tedious.&#160; Instead, I have broken up the two core responsibilities of <font face="Courier New">AnagramsFinder</font> which means I can change and test the two dependencies independent of each other and from their manager class.&#160; Even though I haven’t written a ton of code yet, I feel the tests specs have driven my design into a cohesive, decoupled design that should prove flexible if requirements change or if I encounter friction later on and need to rethink my design.&#160; A flexible architecture for the application is being flushed out based on a “top-to-bottom” design view of the requirements.</p>
+
+  <h3>Create Stubs or Assert Methods were Called</h3>
+
+  <p><a href="http://papamufflon.blogspot.com/">Tobias Walter</a> left <a href="http://murrayon.net/2009/11/anagram-code-kata-part-2-mocking-and.html#comments">a comment on my last post</a> with some suggestions that I would like to get clarification on and discuss further with my growing audience of three now.&#160; He compared some of my implementation to <a href="http://www.davesquared.net/2009/11/favour-test-driving-logic-over-data.html">Dave’s implementation on his Favour test driving logic over data post</a>, but the comparison was lost on me.&#160; It seemed Tobias was saying that I had gone too far breaking up the responsibilities into such small dependencies.&#160; I am unsure what his argument was, but as far as I could tell both Dave and I broke up a managing class into two separate responsibilities so that the more crucial of the two could be tested independently.&#160; Also in doing so, we both created stubs that were given specific dummy responses to method calls using Rhino.Mocks.&#160; One more comment I would like to say is that I broke the file parsing responsibility away into its own dependency more because of the need to isolate the anagrams grouping than because file parsing is of itself a difficult task.&#160; If Tobias or anyone else could try to clarify his argument, that would really help me understand the merits of his suggestions.</p>
+
+  <p>Another suggestion that Tobias brought up that I would like to petition feedback on is to use the mocking feature of testing whether a method was called instead of creating a stub programmed with a dummy response.&#160; I have to admit, I’m not sure when to use one method over another.&#160; I guess I’ve felt in the past that testing whether a method was called seems silly, since it seems odd to have your test know the implementation and inner method calls of the subject under test.&#160; But I am now realizing that my stubs appear to be doing the same thing, but with dummy input and output programmed in.&#160; If you have an opinion or experience on this subject, please leave some feedback in the comments of this post.</p>
+
+  <h3>What’s Next?</h3>
+
+  <p>In my next post I hope to summarize this mocking debate brought up above regarding two differing methods of verifying my manager class is correctly managing its dependencies.&#160; I also hope to begin driving out the design and implementation of the <font face="Courier New">AnagramGrouper</font> dependency via behavior specification tests.&#160; Thanks and any feedback is greatly appreciated.</p>
+</span>  </div>
+
+
+<h2>Comments</h2>
+
+
+<div class='comments'>
+<div class='comment'>
+<div class='author'>David</div>
+<div class='content'>
+Hi Mike,<br /><br />In terms of the stubbing vs. asserting a method was called, the team I&#39;m on has found we rarely AssertWasCalled any more. Doing so explicitly couples our tests/specs to the implementation, whereas just stubbing calls in a SetUp seems easier to change without altering the fundamental assertions in our tests. <br /><br />The only time we use AssertWasCalled is for void methods to a service or similar where there is no observable side-effect from a unit perspective.<br /><br />YMMV. :)<br /><br />Regards,<br />David</div>
+</div>
+<div class='comment'>
+<div class='author'>Tobias Walter</div>
+<div class='content'>
+Hi Mike,<br /><br />great you continued this series.<br /><br />I think I messed things up and wrote incorrect things. In the meantime I managed to do this kata again and now I agree with you. Just forget my advice to mock it - this was wrong.<br /><br />However, I and my coworkers question if it&#39;s worth to write 30 lines of code to test a 2-lines-method? I think for this kata it will be enough to do some acceptance tests here.</div>
+</div>
+</div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Anagram Code Kata Part 2 – Mocking and SRP]]></title>
+    <link href="http://mkmurray.com/blog/2009/11/17/anagram-code-kata-part-2-mocking-and-srp/"/>
+    <updated>2009-11-17T00:59:00-07:00</updated>
+    <id>http://mkmurray.com/blog/2009/11/17/anagram-code-kata-part-2-mocking-and-srp</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>This post is part of a <a href="http://murrayon.net/2009/11/anagram-code-kata-bdd-mspec.html">series on coding Kata, BDD, MSpec, and SOLID principles</a>.&#160; Feel free to visit the above link which points to the introductory post, also containing an index of all posts in the series.</p>  <p>In this post, we will rewrite our <a href="http://murrayon.net/2009/11/anagram-code-kata-part-1-getting.html" target="_blank">first specification/test from the previous post</a>, where we didn’t feel very confident about the direction we were heading.&#160; We got some great feedback and will now better <a href="http://www.davesquared.net/2009/11/favour-test-driving-logic-over-data.html" target="_blank">focus on test driving logic and not just data</a>; we will also be more careful in extracting the requirements from problem statement and in giving our classes a <a href="http://www.davesquared.net/2009/01/introduction-to-solid-principles-of-oo.html" target="_blank">Single Responsibility (the first of the SOLID principles of Object-Oriented Design)</a>.&#160; As we are test driving our design from a “top-down” perspective, we will encounter the need for dependencies not yet implemented while creating the higher level classes.&#160; Instead of halting our rhythm and progress, we will utilize a mocking framework to stub out non-existent implementations according to interfaces.&#160; This also encourages us to use <a href="http://www.davesquared.net/2009/01/introduction-to-solid-principles-of-oo.html" target="_blank">Dependency Inversion (last of the SOLID principles; same link as above)</a> and we can prove the validity of our modules by testing them in complete isolation from their dependencies.</p> <span class="fullpost">   <h3>Don’t Focus on Data (Yet) and SRP (Single Responsibility Principle)</h3>    <p>I had a feeling I was focusing too much on testing data, and I also knew it seemed to odd to be writing my very first test to be dependent on solving a specific instance of the problem (especially a test case with thousands of words in it), instead of working on solving the problem generally.&#160; After some terrific feedback from <a href="http://www.davesquared.net/" target="_blank">David Tchepak</a> in the <a href="http://murrayon.net/2009/11/anagram-code-kata-part-1-getting.html#comments" target="_blank">comments of my last post</a>, I now understand that wasn’t my only mistake.&#160; I was also trying to give my <font face="Courier New">AnagramsFinder</font> class too many responsibilities (especially with just one <font face="Courier New">ParseTextFile</font> method), namely extracting the words out of the text file and then grouping the anagrams together.&#160; Not only that, I also was returning a count of anagram sets when the <a href="http://codekata.pragprog.com/2007/01/kata_six_anagra.html" target="_blank">problem statement specifically asked for output of the anagram sets themselves</a>.&#160; Even though this is a simple problem scenario, it can be foolish to make assumptions or simplifications like I did that are not part of the requirements.</p>    <p>Let us first focus on the responsibilities required of our <font face="Courier New">AnagramsFinder</font> class.&#160; It needs to parse a list of words out of a text file given the file path and it also needs to group words together into sets that are anagrams of each other.&#160; However, we just named two responsibilities; implementing both in the same class would make it less cohesive and therefore less maintainable.&#160; This is because our class would have more than one responsibility that could change in the future, and because these responsibilities are in the same class, they could be considered coupled and one could be affected by modifications to the other.&#160; All of this train of thought falls under the Single Responsibility Principle from the SOLID principles (see links at the beginning of the post).</p>    <p>To solve this predicament, we will make <font face="Courier New">AnagramsFinder</font> a managing class of dependencies that individually solve these separate concerns.&#160; Each of these dependencies will adhere to the Single Responsibility principle, as does this higher abstraction manager class.&#160; Its responsibility can be summarized as managing the inputs, outputs, and execution order of its dependencies.&#160; We shall name the dependencies directly after each of their responsibilities, namely <font face="Courier New">FileParser</font> and <font face="Courier New">AnagramGrouper</font>.&#160; However, I don’t want to go implement these dependencies and throw off the flow of fleshing out the design and logic of my manager class.&#160; We are trying to design from a more “top-down” approach, instead of focusing on the lower level data concerns of the solution too early in the design process.&#160; To accomplish completing the design of our manager class without actually implementing the dependencies, we will code to interfaces (namely <font face="Courier New">IFileParser</font> and <font face="Courier New">IAnagramGrouper</font>).</p>    <h3>DIP (Dependency Inversion Principle)</h3>    <p>The advantages of using interfaces are that we abstract out the actual implementation of the dependencies, allowing us to be more modular and less coupled between dependencies.&#160; One class is not strongly tied to a specific implementation of its dependency, but rather the general contracts made available by the interface’s defined method signatures.&#160; What this really means is that we can swap out actual implementations of the dependency without the consuming class being modified in the least bit.&#160; This makes for truly maintainable code, especially when requirements change down the road after version one of the application is up and running.&#160; This is what the Dependency Inversion Principle (again, from SOLID) is all about.</p>    <p>We can take this a step further by passing the necessary dependencies into our consuming class at construction.&#160; This allows for us to “inject” into the object any implementation of the interface we see fit; this technique is aptly named Dependency Injection (DI).&#160; Our manager class doesn’t have to fret about any concrete details regarding its dependencies’ actual implementations, nor about any of the construction ceremony associated with “newing” up and initializing said dependencies.&#160; We won’t be using any DI containers (as our dependency needs are very light in this exercise), but the use of the Dependency Inversion Principle does set us up nicely to use a mocking framework so that we can finish fleshing out our tests without implementing any of the dependencies yet.</p>    <h3>Mocking Dependencies</h3>    <p>We would like to finish the design of our top level <font face="Courier New">AnagramsFinder</font> manager class, but not fully commit to how its dependencies will be implemented yet.&#160; We have a general idea of how we want our consuming class to interact with its dependencies via interfaces.&#160; Let’s go ahead and look at our interfaces we named earlier:</p>    <pre class="brush: csharp">public interface IFileParser
+{
+    IEnumerable&lt;string&gt; ExtractWordListFromFile(string filePath);
+}
+
+public interface IAnagramGrouper
+{
+    IEnumerable&lt;string[]&gt; FindAnagramSets(IEnumerable<string> wordList);
+}</pre>
+
+  <p>Now, we could create concrete implementations of the interfaces to be used in our tests that return simple dummy results.&#160; An example could look like this:</p>
+
+  <pre class="brush: csharp">public class TestFileParser : IFileParser
+{
+    public IEnumerable&lt;string&gt; ExtractWordListFromFile(string filePath)
+    {
+        return new[] { &quot;wordA&quot;, &quot;wordB&quot;, &quot;Aword&quot;, &quot;wordC&quot; };;
+    }
+}</pre>
+
+  <p>This is helpful because it keeps the one class we are interested in from being dependent on any real logic in its dependencies.&#160; We want to be able to test our modules in isolation from any dependencies, so that no secondary or outside influences skew the test results.&#160; We are basically providing dummy dependencies to our tests that have no logic that could cause side effects.</p>
+
+  <p>However, the software development community has provided tools called mocking frameworks that can create these dependency stubs for you.&#160; This can save you from creating concrete interface implementations that have no use except for in testing.&#160; The mocking framework I will try out is <a href="http://www.ayende.com/projects/rhino-mocks.aspx" target="_blank">Rhino.Mocks from Ayende</a>.&#160; To get set up, you merely need to <a href="http://www.ayende.com/projects/rhino-mocks/downloads.aspx" target="_blank">download the latest build zip archive</a>, extract out the <font face="Courier New">Rhino.Mocks.dll</font> library to our <font face="Courier New">Libraries</font> folder created in the last blog post, and add a reference to the DLL in our Visual Studio solution.&#160; I will next show you how to use Rhino.Mocks as we rewrite our first specification test.</p>
+  <a name="firstSpec"></a>
+
+  <h3>Rewrite of Our First Specification/Test</h3>
+
+  <p>Armed with SRP, DIP, mocking, a more strict adherence to the actual problem statement, and a renewed focus on “favoring test driving logic over just testing data,” we now rewrite our first specification as follows:</p>
+
+  <pre class="brush: csharp">[Subject(typeof(AnagramsFinder), &quot;Finding Anagrams&quot;)]
+public class when_given_text_file_with_word_on_each_line
+{
+    static AnagramsFinder sut;
+    static IEnumerable&lt;string[]&gt; result;
+    static string filePath = &quot;dummy_file_path.txt&quot;;
+    static IEnumerable&lt;string&gt; wordListFromFile = new[] { &quot;wordA&quot;, &quot;wordB&quot;, &quot;Aword&quot;, &quot;wordC&quot; };
+    static IEnumerable&lt;string[]&gt; expected = new[] { new[] { &quot;anagram&quot;, &quot;gramana&quot; } };
+
+    Establish context = () =&gt;
+    {
+        var fileParser = MockRepository.GenerateStub&lt;IFileParser&gt;();
+        fileParser.Stub(x =&gt; x.ExtractWordListFromFile(filePath)).Return(wordListFromFile);
+
+        var anagramGrouper = MockRepository.GenerateStub&lt;IAnagramGrouper&gt;();
+        anagramGrouper.Stub(x =&gt; x.FindAnagramSets(wordListFromFile)).Return(expected);
+
+        sut = new AnagramsFinder(fileParser, anagramGrouper);
+    };
+
+    Because of = () =&gt;
+    {
+        result = sut.ExtractAnagramSets(filePath);
+    };
+
+    It should_result_in_list_of_anagram_sets = () =&gt;
+    {
+        result.ShouldEqual(expected);
+    };
+}</pre>
+
+  <p>I should mention a few notes about the code.&#160; First, we need to add a using Rhino.Mocks statement at the top of our specification class file.&#160; Second, our <font face="Courier New">AnagramsFinder</font> instance variable named <font face="Courier New">sut</font> stands for the “Subject Under Test,” a mannerism I picked up from David Tchepak, whom I’ve mentioned several times throughout this post series.</p>
+
+  <p>Our use of Rhino.Mocks is found when we call the <font face="Courier New">MockRepository.GenerateStub</font> method against an interface.&#160; We then proceed to tell the stubbed object how to behave by specifying dummy return values when given methods of the object are called with given parameters.&#160; The last line of our “context” setup is to then inject these two newly generated, stubbed dependencies into our manager class for testing.&#160; It’s also interesting to note that none of my parameters and expected outputs really make much sense.&#160; This is done on purpose to show that the data really doesn’t matter to this class, as we are not testing the logic of any data processing by the dependencies (remember, test in isolation).&#160; It is true that this test really isn’t testing any real logic at this point, and it may even never evolve into testing any real logic either.&#160; However, I think the important point is that it aided us in fleshing out the design, which we previously didn’t know how we were going to implement.&#160; Not all tests will created equal in regard to validating our logic, but they all will play a part in driving the design of our code.&#160; Hopefully these statements are true, and I would love to hear feedback on this topic in the comments.</p>
+
+  <p>I also want to touch on the Specification pattern of Behavior Driven Design and testing.&#160; Specification tests are commonly set up into a workflow of context establishing, behavior performing, and results asserting.&#160; The MSpec framework is designed to encourage this test organization.</p>
+
+  <h3>Red, Green, Refactor and MSpec Test Runner Output</h3>
+
+  <p>To make our first test run, we need to create the basic outline of our <font face="Courier New">AnagramsFinder</font> class as outlined in our test.&#160; This includes a constructor that takes our two dependencies and an <font face="Courier New">ExtractAnagramSets</font> method:</p>
+
+  <pre class="brush: csharp">public class AnagramsFinder
+{
+    private IFileParser fileParser;
+    private IAnagramGrouper anagramGrouper;
+
+    public AnagramsFinder(IFileParser fileParser, IAnagramGrouper anagramGrouper)
+    {
+        this.fileParser = fileParser;
+        this.anagramGrouper = anagramGrouper;
+    }
+
+    public IEnumerable&lt;string[]&gt; ExtractAnagramSets(string filePath)
+    {
+        throw new NotImplementedException();
+    }
+}</pre>
+
+  <p>I am using the ConsoleRunner according to the method described in Rob Conery’s introductory MSpec and BDD post, including output to an HTML report.&#160; After running our specifications, we get the following output:</p>
+
+  <pre style="border-bottom: #cecece 1px solid; border-left: #cecece 1px solid; padding-bottom: 5px; background-color: #fbfbfb; min-height: 40px; padding-left: 5px; width: 567px; padding-right: 5px; height: 239px; border-top: #cecece 1px solid; border-right: #cecece 1px solid; padding-top: 5px"><pre style="background-color: #fbfbfb; margin: 0em; width: 100%; font-family: consolas,&#39;Courier New&#39;,courier,monospace; font-size: 12px">Specs in AnagramCodeKata:
+
+AnagramsFinder Finding Anagrams, when given text file with word on each line
+¯ should result in list of anagram sets (FAIL)
+System.NotImplementedException: The method or operation is not implemented.
+   ... Stack Trace here ...
+
+Contexts: 1, Specifications: 1
+  0 passed, 1 failed</pre></pre>
+
+  <p>…and the HTML report:</p>
+
+  <p></p>
+  <a href="http://lh6.ggpht.com/_rps657FzHZ0/SwJYInxVVSI/AAAAAAAAADU/jcI2a8kADCA/s1600-h/htmlReportError%5B3%5D.png"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="htmlReportError" border="0" alt="htmlReportError" src="http://lh3.ggpht.com/_rps657FzHZ0/SwJYJUz3eMI/AAAAAAAAADY/bBzyAsPXUsw/htmlReportError_thumb%5B1%5D.png?imgmax=800" width="564" height="445" /></a> </a>
+
+  <p>A highly encouraged tenet of Test Driven Development is the practice of “Red, Green, Refactor.”&#160; It is meant to denote the evolution of the results and state of your tests.&#160; You are encouraged to write the test and then do the minimum work necessary to get the code base to compile and run.&#160; You are first running your test in a control state where you know it should fail.&#160; Most test runners will show the color Red in regard to failed tests, and thus the name of the first step.&#160; Your next stage is to implement the code to make the test pass and turn the output color to Green, commonly indicating passing tests.&#160; The Refactor stage is a time to pause and see if any code can be reorganized or simplified.&#160; Then “rinse and repeat as necessary”, an applicable instruction from shampoo bottles.</p>
+
+  <p>To make our test pass, we implement real logic to coordinate the calls into our dependencies, like so:</p>
+
+  <pre class="brush: csharp">public IEnumerable&lt;string[]&gt; ExtractAnagramSets(string filePath)
+{
+    var wordList = fileParser.ExtractWordListFromFile(filePath);
+    return anagramGrouper.FindAnagramSets(wordList);
+}</pre>
+
+  <p>…and the successful outputs of our test runner:</p>
+
+  <pre style="border-bottom: #cecece 1px solid; border-left: #cecece 1px solid; padding-bottom: 5px; background-color: #fbfbfb; min-height: 40px; padding-left: 5px; width: 579px; padding-right: 5px; height: 156px; border-top: #cecece 1px solid; border-right: #cecece 1px solid; padding-top: 5px"><pre style="background-color: #fbfbfb; margin: 0em; width: 100%; font-family: consolas,&#39;Courier New&#39;,courier,monospace; font-size: 12px">Specs in AnagramCodeKata:
+
+AnagramsFinder Finding Anagrams, when given text file with word on each line
+¯ should result in list of anagram sets
+
+Contexts: 1, Specifications: 1</pre></pre>
+
+  <p>&#160;</p>
+
+  <p><a href="http://lh5.ggpht.com/_rps657FzHZ0/SwJYJpq8OfI/AAAAAAAAADc/noptZ4ChfGo/s1600-h/htmlReportSuccess%5B3%5D.png"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="htmlReportSuccess" border="0" alt="htmlReportSuccess" src="http://lh5.ggpht.com/_rps657FzHZ0/SwJYKGw-YWI/AAAAAAAAADg/0aPU7UnGVno/htmlReportSuccess_thumb%5B1%5D.png?imgmax=800" width="583" height="436" /></a> </p>
+
+  <h3>Final Thoughts and Questions</h3>
+
+  <p>So what do you think of the new test?&#160; Are we better able to see the Single Responsibility of the <font face="Courier New">AnagramsFinder</font> manager class?&#160; Are we more inline with solving the actual problem statement?&#160; Your feedback would be much appreciated.</p>
+
+  <p>In the next post, we will begin work on test driving the design and implementation of the dependencies…unless of course I get feedback that I should be focusing on a different area first or that this last rewrite still needs more help.</p>
+</span>  </div>
+
+
+<h2>Comments</h2>
+
+
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Tobias Walter</div>
+<div class='content'>
+Yes, this is a good start for a great idea (code kata done slowly).<br /><br />Right now, I&#39;m struggling with the same kata and I have a problem looking at your AnagramsFinder and IAnagramGrouper. The result of both is the same and the tests (apart from setting up a not needed IFileParser for the AnagramsFinder) will be the same too.<br /><br />I think this is because you&#39;re using the pipes and filters-pattern (opposite to David, who combines his both results in &quot;focus on test driving logic&quot;). Testing just the filters should be sufficient here?<br /><br />What you maybe can do is a behavioural test. So, instead of testing with stubs, use mock-objects testing weather the methods were called.<br /><br />What do you think about that?<br /><br />p.s. it&#39;s hard to post a comment here because the word verification-textbox is only accessible when selecting text with the mouse and scrolling down :(</div>
+</div>
+<div class='comment'>
+<div class='author'>David</div>
+<div class='content'>
+Looks good Mike!<br /><br />I wouldn&#39;t call the previous spec a mistake or &quot;foolish&quot; though. I seen working on simple cases like Count advocated lots of places for doing TDD, I&#39;ve just always struggled with getting from those cases to the main responsibilities of the class.<br /><br />Looking forward to the rest of the series.</div>
+</div>
+</div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Anagram Code Kata Part 1 – Getting Started]]></title>
+    <link href="http://mkmurray.com/blog/2009/11/12/anagram-code-kata-part-1-getting-started/"/>
+    <updated>2009-11-12T15:03:00-07:00</updated>
+    <id>http://mkmurray.com/blog/2009/11/12/anagram-code-kata-part-1-getting-started</id>
+    <content type="html"><![CDATA[<div class='post'>
+<p>This post is part of a <a href="http://murrayon.net/2009/11/anagram-code-kata-bdd-mspec.html" target="_blank">series on coding Kata, BDD, MSpec, and SOLID principles</a>.&#160; Feel free to visit the above link which points to the introductory post, also containing an index of all posts in the series.</p>  <p>This post will provide resources that serve as an introduction to the <a href="http://github.com/machine/machine.specifications" target="_blank">MSpec BDD testing framework</a>.&#160; We will also set up our Visual Studio solution, explain the Anagram Code Kata problem statement, and write our first specification and test.</p> <span class="fullpost">   <h3>Machine.Specifications (MSpec)</h3>    <p>The author of this BDD testing framework is <a href="http://codebetter.com/blogs/aaron.jensen/default.aspx" target="_blank">Aaron Jensen</a> of <a href="http://codebetter.com/" target="_blank">CodeBetter.com</a>.&#160; Probably the best introduction to the framework (and lightly touching on general principles of BDD) is <a href="http://blog.wekeroad.com/" target="_blank">Rob Conery’s</a> post entitled <a href="http://blog.wekeroad.com/blog/make-bdd-your-bff-2" target="_blank">Make BDD Your BFF</a>.&#160; MSpec is hosted on <a href="http://github.com/" target="_blank">GitHub</a> using the <a href="http://en.wikipedia.org/wiki/Git_(software)" target="_blank">Git source control software</a> (and <a href="http://github.com/machine/machine.specifications" target="_blank">here is the link for the repository again</a>).&#160; Download the code and build it to get the necessary libraries that you need into a <font face="Courier New">Bin</font> folder.&#160; My MSpec libraries are a few months old, as I haven’t upgraded my source since my initial download back then.&#160; I have not set up TestDriven.NET and am not sure it will be necessary for this simple coding exercise.&#160; I am using NUnit for the actual testing framework underneath MSpec; the following article may be of interest to you if you would like to use a newer version of NUnit than what MSpec targets:</p>    <p><a href="http://codebetter.com/blogs/howard.dierking/archive/2009/11/08/using-latest-nunit-version-with-mspec.aspx" target="_blank">Using Latest NUnit Version with MSpec</a></p>    <p>MSpec helps you organize your code into Specifications, a core BDD concept.&#160; It is inspired by early BDD testing frameworks like Ruby’s <a href="http://rspec.info/" target="_blank">RSpec</a>.&#160; The syntax and arrangement can be a little odd for a static language like C#, but I think I like the direction it is heading.&#160; Again, the best way to get familiar with the syntax, set up the MSpec Test Runner, and configure HTML reporting output is to read <a href="http://blog.wekeroad.com/blog/make-bdd-your-bff-2" target="_blank">Rob’s introductory post on BDD and MSpec</a>.</p>    <h3>Setting Up the Visual Studio Solution</h3>    <p>Let’s begin by creating a C# console application named <font face="Courier New">AnagramCodeKata</font> targeting .NET Framework 3.5.&#160; The solution name (and solution folder) will be the same.&#160; For our dependencies on MSpec (and NUnit), I have created a physical file system folder named <font face="Courier New">Libraries</font> and made it a sibling folder to the project’s physical folder (same level as the solution file).&#160; That folder contains the following DLL libraries from the <font face="Courier New">Bin</font> folder of the compiled MSpec source code:</p>    <ul>     <li><font face="Courier New">CommandLine.dll</font> </li>      <li><font face="Courier New">Machine.Specifications.ConsoleRunner.exe</font> </li>      <li><font face="Courier New">Machine.Specifications.dll</font> </li>      <li><font face="Courier New">Machine.Specifications.NUnit.dll</font> </li>      <li><font face="Courier New">Machine.Specifications.Reporting.dll</font> </li>      <li><font face="Courier New">nunit.framework.dll</font> </li>   </ul>    <p>Then within our Solution Explorer, we only need to make references to 3 of these libraries (namely <font face="Courier New">Machine.Specifications.dll</font>, <font face="Courier New">Machine.Specifications.NUnit.dll</font>, and <font face="Courier New">nunit.framework.dll</font>).&#160; I have also created two folders within our project in Solution Explorer, naming them <font face="Courier New">Reports</font> and <font face="Courier New">Specifications</font>.&#160; The <font face="Courier New">Reports</font> folder will contain the HTML-generated report of running our tests every time.&#160; The <font face="Courier New">Specifications</font> folder will hold our specifications and tests.&#160; This is what our current Solution Explorer looks like now:</p>    <p><a href="http://lh3.ggpht.com/_rps657FzHZ0/SvyGOtiALTI/AAAAAAAAADM/Xeygzia8cho/s1600-h/anagramScreenshot%5B6%5D.png"><img style="border-right-width: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto" title="anagramScreenshot" border="0" alt="anagramScreenshot" src="http://lh4.ggpht.com/_rps657FzHZ0/SvyGO870IZI/AAAAAAAAADQ/lDW6F6bIuhI/anagramScreenshot_thumb%5B4%5D.png?imgmax=800" width="289" height="340" /></a> </p>    <p>Also notice the <font face="Courier New">MSpecRunner </font>button at the top, which I’ve created to execute a custom External Tool that points to <font face="Courier New">Machine.Specifications.ConsoleRunner.exe</font> and passes in the appropriate parameters.&#160; This helpful setup was put forth by Rob Conery in the link to his introductory blog post that I provided above.</p>    <h3>Anagram Problem Statement</h3>    <p>So let’s go ahead and look at the <a href="http://codekata.pragprog.com/2007/01/kata_six_anagra.html">Anagram problem</a> we are trying to solve.&#160; Here’s a quick summary of what we are trying to accomplish:</p>    <blockquote>     <p>“The challenge is fairly simple: given a file containing one word per line, print out all the combinations of words that are anagrams; each line in the output contains all the words from the input that are anagrams of each other.”</p>   </blockquote>    <p>Unfortunately, Dave Thomas’ <font face="Courier New">wordlist.txt</font> link is broken on his blog post, and when responding to commenters asking for a fixed link to the text file, he pointed us all to some website that aggregates links to several word lists from around the Web.&#160; Many of us readers wanted to know the exact word list file he used so that we could compare our results to his.&#160; In his post, he states that there should be 2,530 sets of anagrams and 5,680 total words participating in those anagram sets.&#160; The tough part about this is that we’ve got to have the same word list text file.&#160; I searched the web and found a few, but I only found one that might be the same list.&#160; It is from some guy’s personal GitHub repository:</p>    <p><a title="http://github.com/krist0ff/code_kata/tree/ba975c3a64f11a81db2f3716b40de046f1ca7ef4/kata6" href="http://github.com/krist0ff/code_kata/tree/ba975c3a64f11a81db2f3716b40de046f1ca7ef4/kata6">http://github.com/krist0ff/code_kata/tree/ba975c3a64f11a81db2f3716b40de046f1ca7ef4/kata6</a></p>    <p>If you’re visiting this blog post, months or years after it was originally written, I obviously can’t guarantee this file will still be out there.&#160; You can try emailing me or commenting here and I can hopefully send it to you via email if I still have it.&#160; But more importantly, as we progress with this series, we’ll find out if it’s even the right word list or not.</p>    <p>Lastly, I’d like to look at the objectives for the coding kata that Dave Thomas outlines:</p>    <blockquote>     <p>“Apart from having some fun with words, this kata should make you think somewhat about algorithms. The simplest algorithms to find all the anagram combinations may take inordinate amounts of time to do the job. Working though alternatives should help bring the time down by orders of magnitude. To give you a possible point of comparison, I hacked a solution together in 25 lines of Ruby. It runs on the word list from my web site in 1.5s on a 1GHz PPC. It’s also an interesting exercise in testing: can you write unit tests to verify that your code is working correctly before setting it to work on the full dictionary.”</p>   </blockquote>    <p>I don’t think we’ll focus on runtime as much, but we’ll certainly revisit our algorithm as necessary if we have unacceptable wait times for the code to finish.&#160; To complete this section, let’s go ahead and add the <font face="Courier New">wordlist.txt</font> to our solution at the root of of our Project node.</p>    <h3>How About Some Actual Code?!</h3>    <p>So let’s now start off by creating our first specification.&#160; I have created a new C# file named <font face="Courier New">AnagramsFinderSpecs.cs</font> under our <font face="Courier New">Specifications</font> folder in our solution.&#160; I attempted to write our first test, but already feel like I’m not inline with “<a href="http://www.davesquared.net/2009/11/favour-test-driving-logic-over-data.html">favoring test driving logic over just testing data</a>.”</p>    <pre class="brush: csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+using Machine.Specifications;
+
+namespace AnagramCodeKata.Specifications
+{
+    [Subject(typeof(AnagramsFinder), &quot;Finding Anagrams&quot;)]
+    public class when_given_text_file_with_word_on_each_line
+    {
+        static int result;
+        static AnagramsFinder sut;
+
+        Establish context = () =&gt;
+        {
+            sut = new AnagramsFinder();
+        };
+
+        Because of = () =&gt;
+        {
+            result = sut.ParseTextFile(&quot;wordslist.txt&quot;);
+        };
+
+        It should_result_in_count_of_2530_anagram_sets = () =&gt;
+        {
+            result.ShouldEqual(2530);
+        };
+    }
+}</pre>
+
+  <p>If you can’t make out the funky structure and syntax, again refer back to Rob Conery’s introductory post to all of this stuff that I link to at the top.&#160; He does a great job of explaining what’s going on here.</p>
+
+  <p>Also, please remember that I have no clue what I’m doing and I’m just trying to copy people who know what they are doing.&#160; I am hoping that I’ll be corrected by those who have a better idea of how to approach all of this.&#160; This is a good stopping point because of my desire for feedback and the feeling of uncertainty I’m already getting.</p>
+
+  <p>Seriously, please guide me in the right direction or validate where I’m headed, because even I’m not sure where that is yet.&#160; I will say this, I’m pretty sure I shouldn’t be reading in <font face="Courier New">wordslist.txt</font> yet, and that this might be where I need to start using a mocking framework.</p>
+
+  <p>Stay tuned, there’s more to come.&#160; I just can’t tell what it will be about yet.&#160; It’ll still be fun though, I promise.</p>
+</span>  </div>
+
+
+<h2>Comments</h2>
+
+
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Mike Murray</div>
+<div class='content'>
+Yes, thank you.  You&#39;ve given me some clairty now and some great ideas that I&#39;ll try implementing over the weekend.</div>
+</div>
+<div class='comment'>
+<div class='author'>David</div>
+<div class='content'>
+Hi Mike,<br /><br />Like you, I&#39;m a bit wary of that first spec you&#39;ve written (that doesn&#39;t mean it&#39;s wrong obviously -- I&#39;m new to this too :)). <br /><br />You&#39;re right that you are testing data -- loading the wordslist.txt file and checking for the right number of anagram combinations. By the way, this is probably a good example of an integration test for when you are done! :)<br /><br />Whenever I have a hard problem like this that I am having trouble solving, I try and cheat. If you keep this class simple, but push the tricky bits lower down the heirarchy then that may help you start.<br /><br />Here&#39;s how I would update the current spec to help implement your test (this won&#39;t be a spoiler because I&#39;d change the test. I&#39;ll go into that later). <br /><br />In this case I can think of two responsibilities: getting the words from our file, and then counting the number of anagrams found in those words. So maybe your spec&#39;s context could stub out a IFileReader or similar which will return an IEnumerable&lt;string&gt; (filled with some fake data) when asked to get the lines in wordslist.txt. You could then give these words to an IAnagramCounter, which will return 2530.<br /><br />Your test and because can remain the same -- only the context will change (which is what I love about this style of writing specs).<br /><br />Of course this isn&#39;t specifying what your AnagramFinder should actually do... the kata aim is to print all the anagram combinations to the screen. So you may be better off trying this approach of pushing down logic but rewrite the spec to match the exact problem you are trying to solve.<br /><br />I&#39;m not sure if this will help or lead you down a dead end, but it is the approach I would take.<br /><br />Hope it helps!<br />David</div>
+</div>
+</div>
+
+]]></content>
+  </entry>
+  
 </feed>

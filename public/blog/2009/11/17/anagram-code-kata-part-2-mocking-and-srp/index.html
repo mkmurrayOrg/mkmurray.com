@@ -3,11 +3,11 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Anagram Code Kata Part 2 ΓÇô Mocking and SRP - Mike Murray</title>
+	<title>Anagram Code Kata Part 2 – Mocking and SRP - Mike Murray</title>
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="Liquid error: incompatible character encodings: UTF-8 and IBM437 ">
+	<meta name="description" content="This post is part of a series on coding Kata, BDD, MSpec, and SOLID principles.&#160; Feel free to visit the above link which points to the &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -28,7 +28,157 @@
 				
 			
 			<div class="mid-col-container">
-				<div id="content" class="inner"><article class="post">Liquid error: incompatible character encodings: UTF-8 and IBM437
+				<div id="content" class="inner"><article class="post">
+	<h1 class="title">Anagram Code Kata Part 2 – Mocking and SRP</h1>
+	<div class="entry-content"><div class='post'>
+<p>This post is part of a <a href="http://murrayon.net/2009/11/anagram-code-kata-bdd-mspec.html">series on coding Kata, BDD, MSpec, and SOLID principles</a>.&#160; Feel free to visit the above link which points to the introductory post, also containing an index of all posts in the series.</p>  <p>In this post, we will rewrite our <a href="http://murrayon.net/2009/11/anagram-code-kata-part-1-getting.html" target="_blank">first specification/test from the previous post</a>, where we didn’t feel very confident about the direction we were heading.&#160; We got some great feedback and will now better <a href="http://www.davesquared.net/2009/11/favour-test-driving-logic-over-data.html" target="_blank">focus on test driving logic and not just data</a>; we will also be more careful in extracting the requirements from problem statement and in giving our classes a <a href="http://www.davesquared.net/2009/01/introduction-to-solid-principles-of-oo.html" target="_blank">Single Responsibility (the first of the SOLID principles of Object-Oriented Design)</a>.&#160; As we are test driving our design from a “top-down” perspective, we will encounter the need for dependencies not yet implemented while creating the higher level classes.&#160; Instead of halting our rhythm and progress, we will utilize a mocking framework to stub out non-existent implementations according to interfaces.&#160; This also encourages us to use <a href="http://www.davesquared.net/2009/01/introduction-to-solid-principles-of-oo.html" target="_blank">Dependency Inversion (last of the SOLID principles; same link as above)</a> and we can prove the validity of our modules by testing them in complete isolation from their dependencies.</p> <span class="fullpost">   <h3>Don’t Focus on Data (Yet) and SRP (Single Responsibility Principle)</h3>    <p>I had a feeling I was focusing too much on testing data, and I also knew it seemed to odd to be writing my very first test to be dependent on solving a specific instance of the problem (especially a test case with thousands of words in it), instead of working on solving the problem generally.&#160; After some terrific feedback from <a href="http://www.davesquared.net/" target="_blank">David Tchepak</a> in the <a href="http://murrayon.net/2009/11/anagram-code-kata-part-1-getting.html#comments" target="_blank">comments of my last post</a>, I now understand that wasn’t my only mistake.&#160; I was also trying to give my <font face="Courier New">AnagramsFinder</font> class too many responsibilities (especially with just one <font face="Courier New">ParseTextFile</font> method), namely extracting the words out of the text file and then grouping the anagrams together.&#160; Not only that, I also was returning a count of anagram sets when the <a href="http://codekata.pragprog.com/2007/01/kata_six_anagra.html" target="_blank">problem statement specifically asked for output of the anagram sets themselves</a>.&#160; Even though this is a simple problem scenario, it can be foolish to make assumptions or simplifications like I did that are not part of the requirements.</p>    <p>Let us first focus on the responsibilities required of our <font face="Courier New">AnagramsFinder</font> class.&#160; It needs to parse a list of words out of a text file given the file path and it also needs to group words together into sets that are anagrams of each other.&#160; However, we just named two responsibilities; implementing both in the same class would make it less cohesive and therefore less maintainable.&#160; This is because our class would have more than one responsibility that could change in the future, and because these responsibilities are in the same class, they could be considered coupled and one could be affected by modifications to the other.&#160; All of this train of thought falls under the Single Responsibility Principle from the SOLID principles (see links at the beginning of the post).</p>    <p>To solve this predicament, we will make <font face="Courier New">AnagramsFinder</font> a managing class of dependencies that individually solve these separate concerns.&#160; Each of these dependencies will adhere to the Single Responsibility principle, as does this higher abstraction manager class.&#160; Its responsibility can be summarized as managing the inputs, outputs, and execution order of its dependencies.&#160; We shall name the dependencies directly after each of their responsibilities, namely <font face="Courier New">FileParser</font> and <font face="Courier New">AnagramGrouper</font>.&#160; However, I don’t want to go implement these dependencies and throw off the flow of fleshing out the design and logic of my manager class.&#160; We are trying to design from a more “top-down” approach, instead of focusing on the lower level data concerns of the solution too early in the design process.&#160; To accomplish completing the design of our manager class without actually implementing the dependencies, we will code to interfaces (namely <font face="Courier New">IFileParser</font> and <font face="Courier New">IAnagramGrouper</font>).</p>    <h3>DIP (Dependency Inversion Principle)</h3>    <p>The advantages of using interfaces are that we abstract out the actual implementation of the dependencies, allowing us to be more modular and less coupled between dependencies.&#160; One class is not strongly tied to a specific implementation of its dependency, but rather the general contracts made available by the interface’s defined method signatures.&#160; What this really means is that we can swap out actual implementations of the dependency without the consuming class being modified in the least bit.&#160; This makes for truly maintainable code, especially when requirements change down the road after version one of the application is up and running.&#160; This is what the Dependency Inversion Principle (again, from SOLID) is all about.</p>    <p>We can take this a step further by passing the necessary dependencies into our consuming class at construction.&#160; This allows for us to “inject” into the object any implementation of the interface we see fit; this technique is aptly named Dependency Injection (DI).&#160; Our manager class doesn’t have to fret about any concrete details regarding its dependencies’ actual implementations, nor about any of the construction ceremony associated with “newing” up and initializing said dependencies.&#160; We won’t be using any DI containers (as our dependency needs are very light in this exercise), but the use of the Dependency Inversion Principle does set us up nicely to use a mocking framework so that we can finish fleshing out our tests without implementing any of the dependencies yet.</p>    <h3>Mocking Dependencies</h3>    <p>We would like to finish the design of our top level <font face="Courier New">AnagramsFinder</font> manager class, but not fully commit to how its dependencies will be implemented yet.&#160; We have a general idea of how we want our consuming class to interact with its dependencies via interfaces.&#160; Let’s go ahead and look at our interfaces we named earlier:</p>    <pre class="brush: csharp">public interface IFileParser
+{
+    IEnumerable&lt;string&gt; ExtractWordListFromFile(string filePath);
+}
+
+public interface IAnagramGrouper
+{
+    IEnumerable&lt;string[]&gt; FindAnagramSets(IEnumerable<string> wordList);
+}</pre>
+
+  <p>Now, we could create concrete implementations of the interfaces to be used in our tests that return simple dummy results.&#160; An example could look like this:</p>
+
+  <pre class="brush: csharp">public class TestFileParser : IFileParser
+{
+    public IEnumerable&lt;string&gt; ExtractWordListFromFile(string filePath)
+    {
+        return new[] { &quot;wordA&quot;, &quot;wordB&quot;, &quot;Aword&quot;, &quot;wordC&quot; };;
+    }
+}</pre>
+
+  <p>This is helpful because it keeps the one class we are interested in from being dependent on any real logic in its dependencies.&#160; We want to be able to test our modules in isolation from any dependencies, so that no secondary or outside influences skew the test results.&#160; We are basically providing dummy dependencies to our tests that have no logic that could cause side effects.</p>
+
+  <p>However, the software development community has provided tools called mocking frameworks that can create these dependency stubs for you.&#160; This can save you from creating concrete interface implementations that have no use except for in testing.&#160; The mocking framework I will try out is <a href="http://www.ayende.com/projects/rhino-mocks.aspx" target="_blank">Rhino.Mocks from Ayende</a>.&#160; To get set up, you merely need to <a href="http://www.ayende.com/projects/rhino-mocks/downloads.aspx" target="_blank">download the latest build zip archive</a>, extract out the <font face="Courier New">Rhino.Mocks.dll</font> library to our <font face="Courier New">Libraries</font> folder created in the last blog post, and add a reference to the DLL in our Visual Studio solution.&#160; I will next show you how to use Rhino.Mocks as we rewrite our first specification test.</p>
+  <a name="firstSpec"></a>
+
+  <h3>Rewrite of Our First Specification/Test</h3>
+
+  <p>Armed with SRP, DIP, mocking, a more strict adherence to the actual problem statement, and a renewed focus on “favoring test driving logic over just testing data,” we now rewrite our first specification as follows:</p>
+
+  <pre class="brush: csharp">[Subject(typeof(AnagramsFinder), &quot;Finding Anagrams&quot;)]
+public class when_given_text_file_with_word_on_each_line
+{
+    static AnagramsFinder sut;
+    static IEnumerable&lt;string[]&gt; result;
+    static string filePath = &quot;dummy_file_path.txt&quot;;
+    static IEnumerable&lt;string&gt; wordListFromFile = new[] { &quot;wordA&quot;, &quot;wordB&quot;, &quot;Aword&quot;, &quot;wordC&quot; };
+    static IEnumerable&lt;string[]&gt; expected = new[] { new[] { &quot;anagram&quot;, &quot;gramana&quot; } };
+
+    Establish context = () =&gt;
+    {
+        var fileParser = MockRepository.GenerateStub&lt;IFileParser&gt;();
+        fileParser.Stub(x =&gt; x.ExtractWordListFromFile(filePath)).Return(wordListFromFile);
+
+        var anagramGrouper = MockRepository.GenerateStub&lt;IAnagramGrouper&gt;();
+        anagramGrouper.Stub(x =&gt; x.FindAnagramSets(wordListFromFile)).Return(expected);
+
+        sut = new AnagramsFinder(fileParser, anagramGrouper);
+    };
+
+    Because of = () =&gt;
+    {
+        result = sut.ExtractAnagramSets(filePath);
+    };
+
+    It should_result_in_list_of_anagram_sets = () =&gt;
+    {
+        result.ShouldEqual(expected);
+    };
+}</pre>
+
+  <p>I should mention a few notes about the code.&#160; First, we need to add a using Rhino.Mocks statement at the top of our specification class file.&#160; Second, our <font face="Courier New">AnagramsFinder</font> instance variable named <font face="Courier New">sut</font> stands for the “Subject Under Test,” a mannerism I picked up from David Tchepak, whom I’ve mentioned several times throughout this post series.</p>
+
+  <p>Our use of Rhino.Mocks is found when we call the <font face="Courier New">MockRepository.GenerateStub</font> method against an interface.&#160; We then proceed to tell the stubbed object how to behave by specifying dummy return values when given methods of the object are called with given parameters.&#160; The last line of our “context” setup is to then inject these two newly generated, stubbed dependencies into our manager class for testing.&#160; It’s also interesting to note that none of my parameters and expected outputs really make much sense.&#160; This is done on purpose to show that the data really doesn’t matter to this class, as we are not testing the logic of any data processing by the dependencies (remember, test in isolation).&#160; It is true that this test really isn’t testing any real logic at this point, and it may even never evolve into testing any real logic either.&#160; However, I think the important point is that it aided us in fleshing out the design, which we previously didn’t know how we were going to implement.&#160; Not all tests will created equal in regard to validating our logic, but they all will play a part in driving the design of our code.&#160; Hopefully these statements are true, and I would love to hear feedback on this topic in the comments.</p>
+
+  <p>I also want to touch on the Specification pattern of Behavior Driven Design and testing.&#160; Specification tests are commonly set up into a workflow of context establishing, behavior performing, and results asserting.&#160; The MSpec framework is designed to encourage this test organization.</p>
+
+  <h3>Red, Green, Refactor and MSpec Test Runner Output</h3>
+
+  <p>To make our first test run, we need to create the basic outline of our <font face="Courier New">AnagramsFinder</font> class as outlined in our test.&#160; This includes a constructor that takes our two dependencies and an <font face="Courier New">ExtractAnagramSets</font> method:</p>
+
+  <pre class="brush: csharp">public class AnagramsFinder
+{
+    private IFileParser fileParser;
+    private IAnagramGrouper anagramGrouper;
+
+    public AnagramsFinder(IFileParser fileParser, IAnagramGrouper anagramGrouper)
+    {
+        this.fileParser = fileParser;
+        this.anagramGrouper = anagramGrouper;
+    }
+
+    public IEnumerable&lt;string[]&gt; ExtractAnagramSets(string filePath)
+    {
+        throw new NotImplementedException();
+    }
+}</pre>
+
+  <p>I am using the ConsoleRunner according to the method described in Rob Conery’s introductory MSpec and BDD post, including output to an HTML report.&#160; After running our specifications, we get the following output:</p>
+
+  <pre style="border-bottom: #cecece 1px solid; border-left: #cecece 1px solid; padding-bottom: 5px; background-color: #fbfbfb; min-height: 40px; padding-left: 5px; width: 567px; padding-right: 5px; height: 239px; border-top: #cecece 1px solid; border-right: #cecece 1px solid; padding-top: 5px"><pre style="background-color: #fbfbfb; margin: 0em; width: 100%; font-family: consolas,&#39;Courier New&#39;,courier,monospace; font-size: 12px">Specs in AnagramCodeKata:
+
+AnagramsFinder Finding Anagrams, when given text file with word on each line
+¯ should result in list of anagram sets (FAIL)
+System.NotImplementedException: The method or operation is not implemented.
+   ... Stack Trace here ...
+
+Contexts: 1, Specifications: 1
+  0 passed, 1 failed</pre></pre>
+
+  <p>…and the HTML report:</p>
+
+  <p></p>
+  <a href="http://lh6.ggpht.com/_rps657FzHZ0/SwJYInxVVSI/AAAAAAAAADU/jcI2a8kADCA/s1600-h/htmlReportError%5B3%5D.png"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="htmlReportError" border="0" alt="htmlReportError" src="http://lh3.ggpht.com/_rps657FzHZ0/SwJYJUz3eMI/AAAAAAAAADY/bBzyAsPXUsw/htmlReportError_thumb%5B1%5D.png?imgmax=800" width="564" height="445" /></a> </a>
+
+  <p>A highly encouraged tenet of Test Driven Development is the practice of “Red, Green, Refactor.”&#160; It is meant to denote the evolution of the results and state of your tests.&#160; You are encouraged to write the test and then do the minimum work necessary to get the code base to compile and run.&#160; You are first running your test in a control state where you know it should fail.&#160; Most test runners will show the color Red in regard to failed tests, and thus the name of the first step.&#160; Your next stage is to implement the code to make the test pass and turn the output color to Green, commonly indicating passing tests.&#160; The Refactor stage is a time to pause and see if any code can be reorganized or simplified.&#160; Then “rinse and repeat as necessary”, an applicable instruction from shampoo bottles.</p>
+
+  <p>To make our test pass, we implement real logic to coordinate the calls into our dependencies, like so:</p>
+
+  <pre class="brush: csharp">public IEnumerable&lt;string[]&gt; ExtractAnagramSets(string filePath)
+{
+    var wordList = fileParser.ExtractWordListFromFile(filePath);
+    return anagramGrouper.FindAnagramSets(wordList);
+}</pre>
+
+  <p>…and the successful outputs of our test runner:</p>
+
+  <pre style="border-bottom: #cecece 1px solid; border-left: #cecece 1px solid; padding-bottom: 5px; background-color: #fbfbfb; min-height: 40px; padding-left: 5px; width: 579px; padding-right: 5px; height: 156px; border-top: #cecece 1px solid; border-right: #cecece 1px solid; padding-top: 5px"><pre style="background-color: #fbfbfb; margin: 0em; width: 100%; font-family: consolas,&#39;Courier New&#39;,courier,monospace; font-size: 12px">Specs in AnagramCodeKata:
+
+AnagramsFinder Finding Anagrams, when given text file with word on each line
+¯ should result in list of anagram sets
+
+Contexts: 1, Specifications: 1</pre></pre>
+
+  <p>&#160;</p>
+
+  <p><a href="http://lh5.ggpht.com/_rps657FzHZ0/SwJYJpq8OfI/AAAAAAAAADc/noptZ4ChfGo/s1600-h/htmlReportSuccess%5B3%5D.png"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="htmlReportSuccess" border="0" alt="htmlReportSuccess" src="http://lh5.ggpht.com/_rps657FzHZ0/SwJYKGw-YWI/AAAAAAAAADg/0aPU7UnGVno/htmlReportSuccess_thumb%5B1%5D.png?imgmax=800" width="583" height="436" /></a> </p>
+
+  <h3>Final Thoughts and Questions</h3>
+
+  <p>So what do you think of the new test?&#160; Are we better able to see the Single Responsibility of the <font face="Courier New">AnagramsFinder</font> manager class?&#160; Are we more inline with solving the actual problem statement?&#160; Your feedback would be much appreciated.</p>
+
+  <p>In the next post, we will begin work on test driving the design and implementation of the dependencies…unless of course I get feedback that I should be focusing on a different area first or that this last rewrite still needs more help.</p>
+</span>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Tobias Walter</div>
+<div class='content'>
+Yes, this is a good start for a great idea (code kata done slowly).<br /><br />Right now, I&#39;m struggling with the same kata and I have a problem looking at your AnagramsFinder and IAnagramGrouper. The result of both is the same and the tests (apart from setting up a not needed IFileParser for the AnagramsFinder) will be the same too.<br /><br />I think this is because you&#39;re using the pipes and filters-pattern (opposite to David, who combines his both results in &quot;focus on test driving logic&quot;). Testing just the filters should be sufficient here?<br /><br />What you maybe can do is a behavioural test. So, instead of testing with stubs, use mock-objects testing weather the methods were called.<br /><br />What do you think about that?<br /><br />p.s. it&#39;s hard to post a comment here because the word verification-textbox is only accessible when selecting text with the mouse and scrolling down :(</div>
+</div>
+<div class='comment'>
+<div class='author'>David</div>
+<div class='content'>
+Looks good Mike!<br /><br />I wouldn&#39;t call the previous spec a mistake or &quot;foolish&quot; though. I seen working on simple cases like Count advocated lots of places for doing TDD, I&#39;ve just always struggled with getting from those cases to the main responsibilities of the class.<br /><br />Looking forward to the rest of the series.</div>
+</div>
+</div>
+</div>
+
 </article>
 
 	<div class="share">
