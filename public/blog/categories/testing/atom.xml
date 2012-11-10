@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Testing | Mike Murray]]></title>
   <link href="http://mkmurray.com/blog/categories/testing/atom.xml" rel="self"/>
   <link href="http://mkmurray.com/"/>
-  <updated>2012-11-10T15:57:48-07:00</updated>
+  <updated>2012-11-10T16:01:32-07:00</updated>
   <id>http://mkmurray.com/</id>
   <author>
     <name><![CDATA[Mike Murray]]></name>
@@ -71,7 +71,7 @@ job done, but it is definitely not very readable and quite difficult to
 understand its purpose and logic. About the only thing that can be discerned is
 that it is intended to generate a filename in a specific format.</p>
 
-<p>Katrina starts by writing a very simple and seemlingly useless test (which she
+<p>Katrina starts by writing a very simple and seemingly useless test (which she
 calls a "Mickey Mouse test" in her GitHub commit message) in order to begin test
 coverage of this method:</p>
 

@@ -61,7 +61,7 @@ job done, but it is definitely not very readable and quite difficult to
 understand its purpose and logic. About the only thing that can be discerned is
 that it is intended to generate a filename in a specific format.
 
-Katrina starts by writing a very simple and seemlingly useless test (which she
+Katrina starts by writing a very simple and seemingly useless test (which she
 calls a "Mickey Mouse test" in her GitHub commit message) in order to begin test
 coverage of this method:
 <pre class="brush: ruby">
