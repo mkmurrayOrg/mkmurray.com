@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Ruby | Mike Murray]]></title>
   <link href="http://mkmurray.com/blog/categories/ruby/atom.xml" rel="self"/>
   <link href="http://mkmurray.com/"/>
-  <updated>2012-11-10T15:43:46-07:00</updated>
+  <updated>2012-11-10T15:57:48-07:00</updated>
   <id>http://mkmurray.com/</id>
   <author>
     <name><![CDATA[Mike Murray]]></name>
@@ -32,7 +32,7 @@ is the right time to add it before refactoring.</p>
 <p>However, I have found myself skipping this step in the past, feeling justified
 because the quality of the code was so poor or the deadline was so short. It is
 irresponsible of me to assume that I have not changed the functionality of the
-code with no proof in the form of passing tests that sufficiently cover all
+code without proof in the form of passing tests that sufficiently cover all
 scenarios and use cases.  Nonetheless, watching Katrina's presentation has
 given me renewed commitment and a sound plan of attack against legacy code that
 may be ugly and very unfamiliar to me.</p>
