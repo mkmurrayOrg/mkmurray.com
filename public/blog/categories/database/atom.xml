@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Database | Mike Murray]]></title>
   <link href="http://mkmurray.com/blog/categories/database/atom.xml" rel="self"/>
   <link href="http://mkmurray.com/"/>
-  <updated>2012-11-03T23:33:20-06:00</updated>
+  <updated>2012-11-10T15:43:46-07:00</updated>
   <id>http://mkmurray.com/</id>
   <author>
     <name><![CDATA[Mike Murray]]></name>
@@ -51,24 +51,26 @@ named <code>Id</code> and an integer column named <code>ProductId</code>. In add
 
 <p>The unpivoting of the <code>ProductAvailability</code> table to prepare it for joining can be done like so:</p>
 
-<pre><code>SELECT
-    Unpivoted.ProductId,
-    Unpivoted.StateCode,
-    Unpivoted.IsAvailable
-FROM ProductAvailability
-UNPIVOT
-(
-    IsAvailable FOR StateCode
-    IN (AK,AL,AR,AZ,CA,CO,CT,
-        DC,DE,FL,GA,HI,IA,ID,
-        IL,IN,KS,KY,LA,MA,MD,
-        ME,MI,MN,MO,MS,MT,NC,
-        ND,NE,NH,NJ,NM,NV,NY,
-        OH,OK,OR,PA,PR,RI,SC,
-        SD,TN,TX,UT,VA,VT,WA,
-        WI,WV,WY)
-) AS Unpivoted
-</code></pre>
+<pre class="brush: sql">
+    SELECT
+      Unpivoted.ProductId,
+      Unpivoted.StateCode,
+      Unpivoted.IsAvailable
+    FROM ProductAvailability
+    UNPIVOT
+    (
+      IsAvailable FOR StateCode
+      IN (AK,AL,AR,AZ,CA,CO,CT,
+          DC,DE,FL,GA,HI,IA,ID,
+          IL,IN,KS,KY,LA,MA,MD,
+          ME,MI,MN,MO,MS,MT,NC,
+          ND,NE,NH,NJ,NM,NV,NY,
+          OH,OK,OR,PA,PR,RI,SC,
+          SD,TN,TX,UT,VA,VT,WA,
+          WI,WV,WY)
+    ) AS Unpivoted
+</pre>
+
 
 <p>The interesting part is obviously the <code>UNPIVOT</code> clause. Here we are declaring a list of column names to unpivot and
 also naming two new columns in which to place the old column's name and value (<code>StateCode</code> and <code>IsAvailable</code>
@@ -79,18 +81,19 @@ easily join with the <code>ProductSales</code> table.</p>
 <p>Here is an example of such a query where we are trying to find the products which have no sales in a state for
 which it is marked as available for sale:</p>
 
-<pre><code>SELECT
-    ProductStateAvailability.ProductId,
-    ProductStateAvailability.StateCode
-FROM
-(
+<pre class="brush: sql">
     SELECT
+      ProductStateAvailability.ProductId,
+      ProductStateAvailability.StateCode
+    FROM
+    (
+      SELECT
         Unpivoted.ProductId,
         Unpivoted.StateCode,
         Unpivoted.IsAvailable
-    FROM ProductAvailability
-    UNPIVOT
-    (
+      FROM ProductAvailability
+      UNPIVOT
+      (
         IsAvailable FOR StateCode
         IN (AK,AL,AR,AZ,CA,CO,CT,
             DC,DE,FL,GA,HI,IA,ID,
@@ -100,14 +103,15 @@ FROM
             OH,OK,OR,PA,PR,RI,SC,
             SD,TN,TX,UT,VA,VT,WA,
             WI,WV,WY)
-    ) AS Unpivoted
-    WHERE Unpivoted.IsAvailable = 1
-) AS ProductStateAvailability
-INNER JOIN ProductSales
-    ON ProductSales.StateCode = ProductStateAvailability.StateCode
-    AND ProductSales.ProductId = ProductStateAvailability.ProductId
-WHERE ProductSales.TotalSales = 0
-</code></pre>
+      ) AS Unpivoted
+      WHERE Unpivoted.IsAvailable = 1
+    ) AS ProductStateAvailability
+    INNER JOIN ProductSales
+      ON ProductSales.StateCode = ProductStateAvailability.StateCode
+      AND ProductSales.ProductId = ProductStateAvailability.ProductId
+    WHERE ProductSales.TotalSales = 0
+</pre>
+
 
 <p>I hope you find the <code>PIVOT</code> and <code>UNPIVOT</code> SQL keywords just as helpful as I did if you ever find yourself in a bind
 with two tables that are seemingly impossible to join.</p>

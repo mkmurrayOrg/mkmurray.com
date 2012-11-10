@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="So I have been tackling a build problem with some humongous deployment builds in Visual Studio.&#160; In reality, VS Deployment Projects are not &hellip;">
+	<meta name="description" content="So I came upon the following blog post and found that I (just as the author has done) have been using a naive algorithm for randomly reordering &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -18,7 +18,24 @@
 	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
-	
+	<link href='http://alexgorbatchev.com/pub/sh/current/styles/shCore.css' rel='stylesheet' type='text/css'/>
+<link href='http://alexgorbatchev.com/pub/sh/current/styles/shThemeRDark.css' rel='stylesheet' type='text/css'/>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shCore.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shAutoloader.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushCpp.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushCSharp.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushCss.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushJScript.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushPlain.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushPowerShell.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushRuby.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushSql.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushXml.js' type='text/javascript'></script>
+<script type='text/javascript'>
+     SyntaxHighlighter.config.bloggerMode = true;
+     SyntaxHighlighter.all();
+</script>
+
 </head>
 
 <body>
@@ -29,6 +46,78 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/07/03/randomly-reordering-an-array-beware-of-bias/">Randomly Reordering an Array - Beware of Bias</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-07-03T16:34:00-06:00" pubdate data-updated="true">Jul 3<span>rd</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/algorithms/'>Algorithms</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/error/'>Error</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/07/03/randomly-reordering-an-array-beware-of-bias/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>So I came upon the following blog post and found that I (just as the author has done) have been using a naive algorithm for randomly reordering arrays (mostly notably used when shuffling a deck of cards):</p>  <p><a title="http://scottonwriting.net/sowblog/posts/13356.aspx" href="http://scottonwriting.net/sowblog/posts/13356.aspx">http://scottonwriting.net/sowblog/posts/13356.aspx</a></p>  <p>I agree I have seen this simple iterate-and-swap reordering algorithm all over the place, even in my education at college.&#160; I can think of a few applications that I am using it in right now.&#160; Here is some example C# code demonstrating the faulty algorithm:</p> <span class='fullpost'> <div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 225px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none">Random rnd = <span style="color: #0000ff">new</span> Random();
+
+<span style="color: #0000ff">for</span> (<span style="color: #0000ff">int</span> i = 0; i &lt; deck.Length; i++)
+{
+   <span style="color: #008000">// Set swapWithPos to a random position,</span>
+   <span style="color: #008000">//    such that 0 &lt;= swapWithPos &lt; deck.Length</span>
+   <span style="color: #0000ff">int</span> swapWithPos = rnd.Next(deck.Length);
+
+   <span style="color: #008000">// Swap the value at the &quot;current&quot;</span>
+   <span style="color: #008000">//    position (i) with value at swapWithPos</span>
+   <span style="color: #0000ff">int</span> tmp = deck[i];
+   deck[i] = deck[swapWithPos];
+   deck[swapWithPos] = tmp;
+}</pre></div>
+<p>Apparently, there is some bias introduced by this algorithm while reordering the array.&#160; For example, with a 3 item array of values <font face="Courier New">[0, 1, 2]</font>, there are 27 outcomes, but only 6 unique permutations.&#160; Half of the permutations (<font face="Courier New">[0, 2, 1]</font>, <font face="Courier New">[1, 0, 2]</font>, and <font face="Courier New">[1, 2, 0]</font>) each appear 5 times in the 27 outcomes, while the other half of the permutations (<font face="Courier New">[0, 1, 2]</font>, <font face="Courier New">[2, 0, 1]</font>, and <font face="Courier New">[2, 1, 0]</font>) each appear only 4 times each.&#160; There is a slight bias toward half of the permutations in this example.</p><p>With a few modifications, this algorithm can be morphed into the <a href="http://en.wikipedia.org/wiki/Fisher-Yates_shuffle">Fisher-Yates Shuffle (also known as the Knuth Shuffle)</a>, which provides for an unbiased way to guarantee each permutation to be equally likely.&#160; Here is some example C# code showing the more correct reordering algorithm:</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 325px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none">Random rnd = <span style="color: #0000ff">new</span> Random();
+
+<span style="color: #008000">// The number of items left to shuffle (loop invariant).</span>
+<span style="color: #0000ff">int</span> i = deck.length;
+
+<span style="color: #0000ff">while</span> (i &gt; 1)
+{
+    <span style="color: #008000">// Set swapWithPos to a random position,</span>
+    <span style="color: #008000">//    such that 0 &lt;= swapWithPos &lt; i</span>
+    <span style="color: #0000ff">int</span> swapWithPos = rnd.Next(i);
+
+    <span style="color: #008000">// Decrement i in order to make it the last pertinent index</span>
+    --i;
+
+    <span style="color: #008000">// Swap the value at the &quot;current&quot;</span>
+    <span style="color: #008000">//    position (i) with value at swapWithPos</span>
+    <span style="color: #0000ff">int</span> tmp = deck[i];
+    deck[i] = deck[swapWithPos];
+    deck[swapWithPos] = tmp;
+}</pre></div><p>This algorithm has built into it some method for setting aside a growing set of already shuffled items as it iterates through the array.&#160; Perhaps it is this feature that eliminates the bias toward a certain subset of the permutations (I can&#8217;t really tell from my readings).</p><p><u><strong>FOLLOWUP (01/05/09):</strong></u>&#160; I found this article today on the same subject, but with a lot more graphs and detailed explanations:&#160; <a href="http://www.codinghorror.com/blog/archives/001015.html">The Danger of Na&#239;vet&#233;</a></p>
+</span>  </div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -210,44 +299,6 @@ You could use process.WaitForExit() isn&#39;t it?</div>
 
 </article>
 
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2008/04/17/expelled-an-investigative-documentary/">Expelled - an Investigative Documentary</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-04-17T14:22:00-06:00" pubdate data-updated="true">Apr 17<span>th</span>, 2008</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/news-and-politics/'>News and Politics</a>, <a class='category' href='/blog/categories/personal/'>Personal</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2008/04/17/expelled-an-investigative-documentary/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p></p>  <p>So I won&#8217;t stray from programming entries very often on this blog unless there is something really important I feel needs to be said.</p>  <p>I, for one, am tired of the Michael Moore documentaries that do nothing but complain about how crappy our nation is.&#160; I also am not a fan of Al Gore&#8217;s biased misrepresentation of the facts about Global Warming and his claims that the whole scientific community is behind him; I personally think he doesn&#8217;t care about Global Warming all that much and just loves all this attention and wealth that he is accumulating.&#160; But that is a discussion for another time and place&#8230;</p>  <p>Well, to keep this brief, there is a new documentary coming out in movie theaters around the nation tomorrow by Ben Stein.&#160; It is called <u>Expelled</u>, and it is an investigative documentary around the systematic persecution by &quot;Big Science&quot; against anyone who questions the theory of Darwinism and proposes the idea that there might have been Intelligent Design.&#160; The movie is a campaign to convince &quot;Big Science&quot; of their close-mindedness, and I support this movement and hope it succeeds.</p>  <p>Here are some links if you are interested further:</p>  <ul>   <li>Trailer:&#160; <a href="http://www.youtube.com/watch?v=xGCxbhGaVfE">http://www.youtube.com/watch?v=xGCxbhGaVfE</a> </li>    <li>Movie Theater Locater:&#160; <a title="http://www.expelledthemovie.com/theaterap.php" href="http://www.expelledthemovie.com/theaterap.php">http://www.expelledthemovie.com/theaterap.php</a> </li>    <li>2 Official Web Sites:      <ul>       <li><a href="http://www.getexpelled.com/">http://www.getexpelled.com/</a> </li>        <li><a href="http://www.expelledthemovie.com/">http://www.expelledthemovie.com/</a> </li>     </ul>   </li> </ul>  <p>Ok, back to programming now!</p></div>
-
-		
-		
-	</div>
-
-</article>
-
 <nav id="pagenavi">
     
         <a href="/blog/page/10/" class="prev">Prev</a>
@@ -289,6 +340,18 @@ Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Sha
 
 
 
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-36228026-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
 
 
 		</div>
@@ -298,9 +361,18 @@ Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Sha
 </div>
 <h1><a href="/">Mike Murray</a></h1>
 <nav id="main-nav"><ul class="main">
-	<li><a href="/">Blog</a></li>
-	<li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
 </ul>
+
+<br />
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:mkmurray.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+
 </nav>
 <br/>
 <h3 class="alignleft">please code responsibly</h3>

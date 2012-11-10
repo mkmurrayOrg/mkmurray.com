@@ -7,8 +7,8 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="I learned about a pair of SQL keywords I didn&#8217;t know existed before. I suppose I shouldn&#8217;t have been so surprised
-this ability existed &hellip;">
+	<meta name="description" content="As a dev team, we have been watching and discussing various training videos and
+conference talks every morning for a few months now. This week we &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -19,7 +19,24 @@ this ability existed &hellip;">
 	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
-	
+	<link href='http://alexgorbatchev.com/pub/sh/current/styles/shCore.css' rel='stylesheet' type='text/css'/>
+<link href='http://alexgorbatchev.com/pub/sh/current/styles/shThemeRDark.css' rel='stylesheet' type='text/css'/>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shCore.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shAutoloader.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushCpp.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushCSharp.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushCss.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushJScript.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushPlain.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushPowerShell.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushRuby.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushSql.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushXml.js' type='text/javascript'></script>
+<script type='text/javascript'>
+     SyntaxHighlighter.config.bloggerMode = true;
+     SyntaxHighlighter.all();
+</script>
+
 </head>
 
 <body>
@@ -30,6 +47,195 @@ this ability existed &hellip;">
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2012/11/10/refactoring-legacy-code-starts-with-test-coverage/">Refactoring Legacy Code Starts With Test Coverage</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-11-10T15:37:00-07:00" pubdate data-updated="true">Nov 10<span>th</span>, 2012</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/legacy-code/'>Legacy Code</a>, <a class='category' href='/blog/categories/refactoring/'>Refactoring</a>, <a class='category' href='/blog/categories/ruby/'>Ruby</a>, <a class='category' href='/blog/categories/testing/'>Testing</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2012/11/10/refactoring-legacy-code-starts-with-test-coverage/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<p>As a dev team, we have been watching and discussing various training videos and
+conference talks every morning for a few months now. This week we watched a
+recorded conference talk by Ruby developer <a href="http://kytrinyx.com/">Katrina Owen</a>
+entitled <a href="http://www.youtube.com/watch?v=J4dlF0kcThQ">Therapeutic Refactoring</a>.
+I was especially impressed with her strategy for refactoring legacy code.</p>
+
+<p>I&#8217;m sure everyone can agree that the safest way to refactor code and be 100%
+positive that the functionality hasn&#8217;t regressed is to have a good suite of
+tests. And if you don&#8217;t have sufficient test coverage (or any at all), then now
+is the right time to add it before refactoring.</p>
+
+<p>However, I have found myself skipping this step in the past, feeling justified
+because the quality of the code was so poor or the deadline was so short. It is
+irresponsible of me to assume that I have not changed the functionality of the
+code with no proof in the form of passing tests that sufficiently cover all
+scenarios and use cases.  Nonetheless, watching Katrina&#8217;s presentation has
+given me renewed commitment and a sound plan of attack against legacy code that
+may be ugly and very unfamiliar to me.</p>
+
+<p>Here is the example method that Katrina uses during her presentation (which is
+later revealed as a piece of code that she vaguely remembers coding herself and
+now abhors):</p>
+
+<pre class="brush: ruby">
+    module XYZService
+
+      def self.xyz_filename(target)
+        # File format:
+        # [day of month zero-padded][three-letter prefix] \
+        # _[kind]_[age_if_kind_personal]_[target.id] \
+        # _[8 random chars]_[10 first chars of title].jpg
+        filename = "#{target.publish_on.strftime("%d")}"
+        filename << "#{target.xyz_category_prefix}"
+        filename << "#{target.kind.gsub("_", "")}"
+        filename << "_%03d" % (target.age || 0) if target.personal?
+        filename << "_#{target.id.to_s}"
+        filename << "_#{Digest::SHA1.hexdigest(rand(10000).to_s)[0,8]}"
+        truncated_title = target.title.gsub(/[^\[a-z\]]/i, '').downcase
+        truncate_to = truncated_title.length > 9 ? 9 : truncated_title.length
+        filename << "_#{truncated_title[0..(truncate_to)]}"
+        filename << ".jpg"
+        return filename
+      end
+
+    end
+</pre>
+
+
+<p>It certainly isn&#8217;t the worst lines of code ever written and it is getting the
+job done, but it is definitely not very readable and quite difficult to
+understand its purpose and logic. About the only thing that can be discerned is
+that it is intended to generate a filename in a specific format.</p>
+
+<p>Katrina starts by writing a very simple and seemlingly useless test (which she
+calls a &#8220;Mickey Mouse test&#8221; in her GitHub commit message) in order to begin test
+coverage of this method:</p>
+
+<pre class="brush: ruby">
+    require_relative './xyz_service'
+
+    describe XYZService do
+
+      let(:target) do
+        stub(:target)
+      end
+
+      subject { XYZService.xyz_filename(target) }
+
+      it 'works' do
+        subject.should eq('something')
+      end
+
+    end
+</pre>
+
+
+<p>Without much knowledge of what this method&#8217;s purpose or inputs are, we can only
+pass in an empty stub object as input and then assert something rediculous for
+the result. We expect this test to not only fail to pass, but it is also likely
+to error during runtime (or even at compile time if in a statically typed
+language like C#). The idea is to create a quick feedback loop that aids us in
+finding the context and inputs required to make the code execute without runtime
+error. Then we can finally see the actual return value and modify our dummy
+assertion to begin expecting that output.</p>
+
+<p>After iterating in this fashion, Katrina arrives at the following test which is
+a bit more useful:</p>
+
+<pre class="brush: ruby">
+    require_relative './xyz_service'
+    require 'date'
+
+    describe XYZService do
+
+      let(:target) do
+        messages = {
+          :publish_on => Date.new(2012, 3, 14),
+          :xyz_category_prefix => 'abc',
+          :kind => 'unicorn',
+          :personal? => false,
+          :id => 1337,
+          :title => 'magic & superglue'
+        }
+        stub(:target, messages)
+      end
+
+      subject { XYZService.xyz_filename(target) }
+
+      it 'works' do
+        subject.should eq('14abcunicorn_1337_cb6c53bc_magicsuper.jpg')
+      end
+
+    end
+</pre>
+
+
+<p>However, this test doesn&#8217;t pass because the <code>cb6c53bc</code> portion of the resultant
+filename is different every execution of the test. A simple regex allows the
+test to pass all of the time:</p>
+
+<pre class="brush: ruby">
+    subject.should match(/14abcunicorn_1337_[0-9a-f]{8}_magicsuper\.jpg/)
+</pre>
+
+
+<p>Even though we now have a passing test, we have not yet exercised the different
+input values and all code paths and branches through the method. This must be
+done in order to fully understand, document, and test cover the logic and
+purpose of the method. This would be done in the normal unit testing fashion
+that is shown in just about every testing demo by adding more test scenarios and
+assertions that excercise the varying use cases.</p>
+
+<p>One interesting development that occurred while Katrina was using this process
+was that she actually found a bug in the implementation of the original
+<code>xyz_filename</code> method, specifically an extra set of braces in the regex on line
+14.</p>
+
+<p>Now that we are fully covered with tests (and a bug fixed), we are free to
+refactor the code into smaller, more readable chunks of code logic that are more
+cohesive and more reusable as well. This is what Katrina does for the remainder
+of her presentation, and it is just as instructive as this first part. However,
+today I wanted to focus on her strategy for writing test coverage against a
+legacy codebase.</p>
+
+<p>I like how what Katrina is demonstrating seems to utilize a black box testing
+approach at first, and then progresses to a more white box approach as we begin
+to explore the different parts of the implementation. Perhaps such a strategy
+should have been obvious to me, but Katrina&#8217;s conference talk really struck a
+chord with me and encouraged me to commit to doing better with test coverage in
+legacy codebases before I begin making modifications or additions.</p>
+
+<p>I highly recommend viewing the entire video, as it is only 30 minutes long and
+an entertaining watch.</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -93,24 +299,26 @@ named <code>Id</code> and an integer column named <code>ProductId</code>. In add
 
 <p>The unpivoting of the <code>ProductAvailability</code> table to prepare it for joining can be done like so:</p>
 
-<pre><code>SELECT
-    Unpivoted.ProductId,
-    Unpivoted.StateCode,
-    Unpivoted.IsAvailable
-FROM ProductAvailability
-UNPIVOT
-(
-    IsAvailable FOR StateCode
-    IN (AK,AL,AR,AZ,CA,CO,CT,
-        DC,DE,FL,GA,HI,IA,ID,
-        IL,IN,KS,KY,LA,MA,MD,
-        ME,MI,MN,MO,MS,MT,NC,
-        ND,NE,NH,NJ,NM,NV,NY,
-        OH,OK,OR,PA,PR,RI,SC,
-        SD,TN,TX,UT,VA,VT,WA,
-        WI,WV,WY)
-) AS Unpivoted
-</code></pre>
+<pre class="brush: sql">
+    SELECT
+      Unpivoted.ProductId,
+      Unpivoted.StateCode,
+      Unpivoted.IsAvailable
+    FROM ProductAvailability
+    UNPIVOT
+    (
+      IsAvailable FOR StateCode
+      IN (AK,AL,AR,AZ,CA,CO,CT,
+          DC,DE,FL,GA,HI,IA,ID,
+          IL,IN,KS,KY,LA,MA,MD,
+          ME,MI,MN,MO,MS,MT,NC,
+          ND,NE,NH,NJ,NM,NV,NY,
+          OH,OK,OR,PA,PR,RI,SC,
+          SD,TN,TX,UT,VA,VT,WA,
+          WI,WV,WY)
+    ) AS Unpivoted
+</pre>
+
 
 <p>The interesting part is obviously the <code>UNPIVOT</code> clause. Here we are declaring a list of column names to unpivot and
 also naming two new columns in which to place the old column&#8217;s name and value (<code>StateCode</code> and <code>IsAvailable</code>
@@ -121,18 +329,19 @@ easily join with the <code>ProductSales</code> table.</p>
 <p>Here is an example of such a query where we are trying to find the products which have no sales in a state for
 which it is marked as available for sale:</p>
 
-<pre><code>SELECT
-    ProductStateAvailability.ProductId,
-    ProductStateAvailability.StateCode
-FROM
-(
+<pre class="brush: sql">
     SELECT
+      ProductStateAvailability.ProductId,
+      ProductStateAvailability.StateCode
+    FROM
+    (
+      SELECT
         Unpivoted.ProductId,
         Unpivoted.StateCode,
         Unpivoted.IsAvailable
-    FROM ProductAvailability
-    UNPIVOT
-    (
+      FROM ProductAvailability
+      UNPIVOT
+      (
         IsAvailable FOR StateCode
         IN (AK,AL,AR,AZ,CA,CO,CT,
             DC,DE,FL,GA,HI,IA,ID,
@@ -142,14 +351,15 @@ FROM
             OH,OK,OR,PA,PR,RI,SC,
             SD,TN,TX,UT,VA,VT,WA,
             WI,WV,WY)
-    ) AS Unpivoted
-    WHERE Unpivoted.IsAvailable = 1
-) AS ProductStateAvailability
-INNER JOIN ProductSales
-    ON ProductSales.StateCode = ProductStateAvailability.StateCode
-    AND ProductSales.ProductId = ProductStateAvailability.ProductId
-WHERE ProductSales.TotalSales = 0
-</code></pre>
+      ) AS Unpivoted
+      WHERE Unpivoted.IsAvailable = 1
+    ) AS ProductStateAvailability
+    INNER JOIN ProductSales
+      ON ProductSales.StateCode = ProductStateAvailability.StateCode
+      AND ProductSales.ProductId = ProductStateAvailability.ProductId
+    WHERE ProductSales.TotalSales = 0
+</pre>
+
 
 <p>I hope you find the <code>PIVOT</code> and <code>UNPIVOT</code> SQL keywords just as helpful as I did if you ever find yourself in a bind
 with two tables that are seemingly impossible to join.</p>
@@ -287,44 +497,6 @@ Great post, I didn&#39;t see this one when I was writing my post about authentic
 
 </article>
 
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2011/05/31/develop-with-passion-bootcamp-course-denver-2011/">Develop With Passion Bootcamp Course - Denver 2011</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-05-31T09:27:00-06:00" pubdate data-updated="true">May 31<span>st</span>, 2011</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/bdd/'>BDD</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/code-organization/'>Code Organization</a>, <a class='category' href='/blog/categories/develop-with-passion/'>Develop With Passion</a>, <a class='category' href='/blog/categories/mspec/'>MSpec</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/nothin-but-net/'>Nothin But .NET</a>, <a class='category' href='/blog/categories/solid/'>SOLID</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2011/05/31/develop-with-passion-bootcamp-course-denver-2011/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p><a href="http://paceyourself.net/" target="_blank">A very talented coworker</a> and I recently went to JP Boodhoo’s <a href="http://www.jpboodhoo.com/training.oo" target="_blank">Develop with Passion bootcamp training course</a> (previously known as Nothin but .NET). I had originally heard of the course from <a href="http://www.davesquared.net/" target="_blank">Dave Tchepak</a> who <a href="http://www.davesquared.net/2009/08/nothin-but-net-sydney-2009-day-1.html" target="_blank">attended the course nearly two years ago</a>. This blog post is a wrap-up of my thoughts and feelings about the course itself, <a href="http://www.jpboodhoo.com/" target="_blank">JP Boodhoo</a> as the instructor &amp; experienced craftsman, and the .NET development community in general.</p> <span class="fullpost">   <p>My prior impressions of the course from what I had read was that I would be in awe of JP&#8217;s coding and design skills and very overwhelmed with the feeling that I didn&#8217;t really know how to code; also that I would get no sleep at all that week, going from early morning to past midnight every day. I had also heard from a previous course member (off the record) that JP’s organization and direction with course material was a bit disorganized back then (luckily this has changed significantly since he had taken the course). I was really excited to see some good BDD in action, get my TDD passion ignited again (I had actually mentioned on twitter recently that my motivation for test was waning as of late), and see JP&#8217;s mad Vim skills (since I have gotten into that the last few months).</p>    <p>Overall, I was pleasantly surprised with the fulfillment of most of my positive expectations and initial impressions going into the course. JP&#8217;s personality and passion are infectious, and his teaching skills are pretty top-notch. The course material was well-structured and there was a clear direction for what we hoped to cover throughout the week (and yet, he was still flexible enough to be able to briefly entertain an off-topic direction the students wanted to take the course). He stayed true to the advertised 9am-9pm every day no matter what. He said that when he did the late nighters with previous courses, people came back the next day with little sleep and trashed as far as coding &amp; learning capabilities go.</p>    <p>Watching him code so efficiently is quite a treat. He automates anything he does more than once so that a particular task doesn’t ever get in his way and hold him back the next time. His <a href="http://www.autohotkey.com/" target="_blank">AutoHotkey</a> scripts and automation tools that he has put together are absolutely incredible. He briefly touched the mouse two times the entire week, and it only for when one of his programs or Windows VM was wigging out. Screens and dialogs flew by so fast, you could tell he wasn&#8217;t going to let any UI (even Visual Studio) get in the way of his productivity to code. He mentioned he will be open sourcing some of his scripts that he uses to keep his development environment consistent across OS platforms. Definitely cool stuff.</p>    <p>As far as JP&#8217;s actual coding/design skills, I am absolutely floored. He certainly understands C# and .NET well. But it&#8217;s his Object-Oriented design skills that blew us away. I&#8217;ve realized I don&#8217;t really know OO design. I think too mechanically about the implementation of the solution instead of focusing on breaking down the problem into smaller manageable chunks. His TDD skills (both Top Down Design and Test Driven Development) are amazing. I&#8217;ve never been a fan of the TDD samples and intros I&#8217;ve seen (where the instructors do the absolute dumbest thing to make the test pass; JP admitted that style didn’t jive with him either). I&#8217;ve always thought that Behavior Driven Development and Top-Down Design were the way to go if I were to have tests drive my designs (or have tests at all for that matter; I&#8217;m still having trouble finding enthusiasm for tests written after development for modules and units). So it was great to see a master at that particular craft. It made me excited to use tests as a tool to guide my OO design, behavior discovery, and problem solving.</p>    <p>Some of you may recall that I had <a href="http://murrayon.net/2009/11/anagram-code-kata-bdd-mspec.html" target="_blank">previously investigated BDD, Machine.Specifications, and Top-Down Design a year and a half ago doing the Anagram Code Kata</a>. I think I can recognize better design and responsibility break-up and assignment nowadays. I likely will blog on these subjects again this year with new &amp; improved passion and knowledge.</p>    <p>There was one sad takeaway for me personally from the course, which was a sense of disappointment in the .NET development community in general. Giving myself some time since the course to really think it through, I’m realizing I’m probably being too tough on our community, as I know each Dev community out there suffers from it’s own set of problems. But I don’t want to excuse our shortcomings either; rather, I would like to point them out so that we can focus on them and root those weaknesses out. I think our community in specific is unique in that there is a big shot company that dictates the direction our community should take, sometimes taking credit for all the innovation. Things are improving lately no doubt; it appears Microsoft is listening more and more and trying to let outsiders get involved and contribute.</p>    <p>But we as .NET devs need to step up and take matters into our own hands, we need to take better control of the code we write and encourage best practices within the realms of our responsibilities and influence. I believe many .NET shops rely on the tools sent down from above so heavily that we don’t really solve problems anymore. JP’s focus on problem solving and code katas from the course attack this deficiency at its core. I do somewhat blame our university Computer Science programs for not teaching real OO (a great discussion on formalism versus hermeneutics in a book I highly recommend, <a href="http://www.amazon.com/Object-Thinking-DV-Microsoft-Professional-David/dp/0735619654" target="_blank">Object Thinking</a>), but at some point we have to take what we were given and no matter our current standing, focus on sharpening our skills through practice and continuous learning. It boils down to individual responsibility for our current skill set and progression as a software craftsman. JP’s course does a terrific job of waking you up to that realization and inspiring you to be a better professional at your craft.</p>    <p>I have a few takeaways from the course that I’ll publicly spell out now. First, I (and hopefully our whole team) need to better understand design patterns and have them become integral to our code discussions. JP was all about efficiency in keystrokes and related dev tasks, and it seems natural that our language and code discussions could benefit from more efficient communication using design pattern terminology to convey a lot about a specific design concept in only a few words. Second, I hope that I (and our team again) can really put our tests to work for us, helping us recognize the problem to be solved or the behavior that needs to be captured, and then guiding us toward a simple solution. The third takeaway is related to that last part, and that is to have simple solutions that are distributed across simple object implementations (focusing on behaviors) that adhere to SOLID principles. It appears the key is to not focus on implementation specifics until the very last responsible moment; if done right, the implementations to create should be so clear cut and trivial, almost spelled right out in the tests themselves. It’s hard to put into words, but it seems crucial to focus first on the collaborators needed while designing code at the higher levels, finding ways to offload as much responsibility as possible (at least that’s what it felt like) onto dependencies that have yet to be designed and implemented. Designing Top-Down in this way gave such simple and elegant solutions that were totally extensible and adhered to the <a href="http://en.wikipedia.org/wiki/Open/closed_principle" target="_blank">Open/Closed Principle</a> better than any other code I have ever seen before. Perhaps as I blog more about this, I’ll be able to better put this style of coding into words (especially as I try to better understand it myself; it all seems so magical still!).</p>    <p>Overall, a great course that I highly recommend to all. JP has mentioned doing a similar course in Ruby, which I personally find especially interesting, given the same design/coding techniques would seem to run against a lot less friction compared to the heavy reliance on interfaces and mocking that C# require.</p>    <p>Stay tuned as I try to put some of this stuff into practice!</p> </span>  </div>
-
-		
-		
-	</div>
-
-</article>
-
 <nav id="pagenavi">
     
     
@@ -364,6 +536,18 @@ Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Sha
 
 
 
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-36228026-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
 
 
 		</div>
@@ -373,9 +557,18 @@ Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Sha
 </div>
 <h1><a href="/">Mike Murray</a></h1>
 <nav id="main-nav"><ul class="main">
-	<li><a href="/">Blog</a></li>
-	<li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
 </ul>
+
+<br />
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:mkmurray.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+
 </nav>
 <br/>
 <h3 class="alignleft">please code responsibly</h3>

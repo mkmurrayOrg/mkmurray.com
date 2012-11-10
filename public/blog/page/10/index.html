@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="Again, I promise I won&#8217;t do this very often (since this is a programming blog), but the world needs to know&#8230; Irena Sendler (http://en. &hellip;">
+	<meta name="description" content="If you are using LINQ-to-SQL, it is often helpful to see the SQL generated and the resultant query results.&#160; You can do this, even while &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -18,7 +18,24 @@
 	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
-	
+	<link href='http://alexgorbatchev.com/pub/sh/current/styles/shCore.css' rel='stylesheet' type='text/css'/>
+<link href='http://alexgorbatchev.com/pub/sh/current/styles/shThemeRDark.css' rel='stylesheet' type='text/css'/>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shCore.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shAutoloader.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushCpp.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushCSharp.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushCss.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushJScript.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushPlain.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushPowerShell.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushRuby.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushSql.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushXml.js' type='text/javascript'></script>
+<script type='text/javascript'>
+     SyntaxHighlighter.config.bloggerMode = true;
+     SyntaxHighlighter.all();
+</script>
+
 </head>
 
 <body>
@@ -29,6 +46,52 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/08/19/linq-to-sql-debug-visualizer/">LINQ to SQL Debug Visualizer</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-08-19T17:10:00-06:00" pubdate data-updated="true">Aug 19<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/linq/'>LINQ</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/sql/'>SQL</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/08/19/linq-to-sql-debug-visualizer/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>If you are using LINQ-to-SQL, it is often helpful to see the SQL generated and the resultant query results.&#160; You can do this, even while debugging, with the LINQ to SQL Debug Visualizer.&#160; Debug Visualizers are the dialogs that pop up when you hover over a statement and click the little magnifying glass in the hovering menu.</p>  <p>I believe by default Visual Studio will show you the generated SQL when you over over a LINQ statement, but there is no way Debug Visualizer to help see the SQL in a more user-friendly view.&#160; Scott Guthrie gave a blog post describing a simple download that can give you this enhanced view of the SQL, and even the ability to execute the query and see the raw data returned from your database:</p>  <p><a title="http://weblogs.asp.net/scottgu/archive/2007/07/31/linq-to-sql-debug-visualizer.aspx" href="http://weblogs.asp.net/scottgu/archive/2007/07/31/linq-to-sql-debug-visualizer.aspx">http://weblogs.asp.net/scottgu/archive/2007/07/31/linq-to-sql-debug-visualizer.aspx</a></p>  <p>Included in the post are instructions of how to extract the necessary DLL library, and where to place it in Visual Studio&#8217;s file hierarchy.</p>  <p>A really simple enhancement for working with and debugging LINQ-to-SQL that is definitely worth the minimal effort to acquire it.</p>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Raja Venkatesh</div>
+<div class='content'>
+Hi, A similar visualizer for L2E is available at http://visualstudiogallery.msdn.microsoft.com/en-us/99468ece-689b-481c-868c-19e00e0a4e69<br />This works for any database.<br /><br />Regards<br />Venkat</div>
+</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -216,78 +279,6 @@ Excellent!  Now if only my current company had some linux servers for me to play
 
 </article>
 
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2008/07/03/randomly-reordering-an-array-beware-of-bias/">Randomly Reordering an Array - Beware of Bias</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-07-03T16:34:00-06:00" pubdate data-updated="true">Jul 3<span>rd</span>, 2008</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/algorithms/'>Algorithms</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/error/'>Error</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2008/07/03/randomly-reordering-an-array-beware-of-bias/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p>So I came upon the following blog post and found that I (just as the author has done) have been using a naive algorithm for randomly reordering arrays (mostly notably used when shuffling a deck of cards):</p>  <p><a title="http://scottonwriting.net/sowblog/posts/13356.aspx" href="http://scottonwriting.net/sowblog/posts/13356.aspx">http://scottonwriting.net/sowblog/posts/13356.aspx</a></p>  <p>I agree I have seen this simple iterate-and-swap reordering algorithm all over the place, even in my education at college.&#160; I can think of a few applications that I am using it in right now.&#160; Here is some example C# code demonstrating the faulty algorithm:</p> <span class='fullpost'> <div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 225px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none">Random rnd = <span style="color: #0000ff">new</span> Random();
-
-<span style="color: #0000ff">for</span> (<span style="color: #0000ff">int</span> i = 0; i &lt; deck.Length; i++)
-{
-   <span style="color: #008000">// Set swapWithPos to a random position,</span>
-   <span style="color: #008000">//    such that 0 &lt;= swapWithPos &lt; deck.Length</span>
-   <span style="color: #0000ff">int</span> swapWithPos = rnd.Next(deck.Length);
-
-   <span style="color: #008000">// Swap the value at the &quot;current&quot;</span>
-   <span style="color: #008000">//    position (i) with value at swapWithPos</span>
-   <span style="color: #0000ff">int</span> tmp = deck[i];
-   deck[i] = deck[swapWithPos];
-   deck[swapWithPos] = tmp;
-}</pre></div>
-<p>Apparently, there is some bias introduced by this algorithm while reordering the array.&#160; For example, with a 3 item array of values <font face="Courier New">[0, 1, 2]</font>, there are 27 outcomes, but only 6 unique permutations.&#160; Half of the permutations (<font face="Courier New">[0, 2, 1]</font>, <font face="Courier New">[1, 0, 2]</font>, and <font face="Courier New">[1, 2, 0]</font>) each appear 5 times in the 27 outcomes, while the other half of the permutations (<font face="Courier New">[0, 1, 2]</font>, <font face="Courier New">[2, 0, 1]</font>, and <font face="Courier New">[2, 1, 0]</font>) each appear only 4 times each.&#160; There is a slight bias toward half of the permutations in this example.</p><p>With a few modifications, this algorithm can be morphed into the <a href="http://en.wikipedia.org/wiki/Fisher-Yates_shuffle">Fisher-Yates Shuffle (also known as the Knuth Shuffle)</a>, which provides for an unbiased way to guarantee each permutation to be equally likely.&#160; Here is some example C# code showing the more correct reordering algorithm:</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 325px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none">Random rnd = <span style="color: #0000ff">new</span> Random();
-
-<span style="color: #008000">// The number of items left to shuffle (loop invariant).</span>
-<span style="color: #0000ff">int</span> i = deck.length;
-
-<span style="color: #0000ff">while</span> (i &gt; 1)
-{
-    <span style="color: #008000">// Set swapWithPos to a random position,</span>
-    <span style="color: #008000">//    such that 0 &lt;= swapWithPos &lt; i</span>
-    <span style="color: #0000ff">int</span> swapWithPos = rnd.Next(i);
-
-    <span style="color: #008000">// Decrement i in order to make it the last pertinent index</span>
-    --i;
-
-    <span style="color: #008000">// Swap the value at the &quot;current&quot;</span>
-    <span style="color: #008000">//    position (i) with value at swapWithPos</span>
-    <span style="color: #0000ff">int</span> tmp = deck[i];
-    deck[i] = deck[swapWithPos];
-    deck[swapWithPos] = tmp;
-}</pre></div><p>This algorithm has built into it some method for setting aside a growing set of already shuffled items as it iterates through the array.&#160; Perhaps it is this feature that eliminates the bias toward a certain subset of the permutations (I can&#8217;t really tell from my readings).</p><p><u><strong>FOLLOWUP (01/05/09):</strong></u>&#160; I found this article today on the same subject, but with a lot more graphs and detailed explanations:&#160; <a href="http://www.codinghorror.com/blog/archives/001015.html">The Danger of Na&#239;vet&#233;</a></p>
-</span>  </div>
-
-		
-		
-	</div>
-
-</article>
-
 <nav id="pagenavi">
     
         <a href="/blog/page/9/" class="prev">Prev</a>
@@ -329,6 +320,18 @@ Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Sha
 
 
 
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-36228026-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
 
 
 		</div>
@@ -338,9 +341,18 @@ Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Sha
 </div>
 <h1><a href="/">Mike Murray</a></h1>
 <nav id="main-nav"><ul class="main">
-	<li><a href="/">Blog</a></li>
-	<li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
 </ul>
+
+<br />
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:mkmurray.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+
 </nav>
 <br/>
 <h3 class="alignleft">please code responsibly</h3>

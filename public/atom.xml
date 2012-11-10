@@ -4,7 +4,7 @@
   <title><![CDATA[Mike Murray]]></title>
   <link href="http://mkmurray.com/atom.xml" rel="self"/>
   <link href="http://mkmurray.com/"/>
-  <updated>2012-11-03T23:33:20-06:00</updated>
+  <updated>2012-11-10T15:43:46-07:00</updated>
   <id>http://mkmurray.com/</id>
   <author>
     <name><![CDATA[Mike Murray]]></name>
@@ -12,6 +12,167 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Refactoring Legacy Code Starts with Test Coverage]]></title>
+    <link href="http://mkmurray.com/blog/2012/11/10/refactoring-legacy-code-starts-with-test-coverage/"/>
+    <updated>2012-11-10T15:37:00-07:00</updated>
+    <id>http://mkmurray.com/blog/2012/11/10/refactoring-legacy-code-starts-with-test-coverage</id>
+    <content type="html"><![CDATA[<p>As a dev team, we have been watching and discussing various training videos and
+conference talks every morning for a few months now. This week we watched a
+recorded conference talk by Ruby developer <a href="http://kytrinyx.com/">Katrina Owen</a>
+entitled <a href="http://www.youtube.com/watch?v=J4dlF0kcThQ">Therapeutic Refactoring</a>.
+I was especially impressed with her strategy for refactoring legacy code.</p>
+
+<p>I&#8217;m sure everyone can agree that the safest way to refactor code and be 100%
+positive that the functionality hasn&#8217;t regressed is to have a good suite of
+tests. And if you don&#8217;t have sufficient test coverage (or any at all), then now
+is the right time to add it before refactoring.</p>
+
+<p>However, I have found myself skipping this step in the past, feeling justified
+because the quality of the code was so poor or the deadline was so short. It is
+irresponsible of me to assume that I have not changed the functionality of the
+code with no proof in the form of passing tests that sufficiently cover all
+scenarios and use cases.  Nonetheless, watching Katrina&#8217;s presentation has
+given me renewed commitment and a sound plan of attack against legacy code that
+may be ugly and very unfamiliar to me.</p>
+
+<p>Here is the example method that Katrina uses during her presentation (which is
+later revealed as a piece of code that she vaguely remembers coding herself and
+now abhors):</p>
+
+<pre class="brush: ruby">
+    module XYZService
+
+      def self.xyz_filename(target)
+        # File format:
+        # [day of month zero-padded][three-letter prefix] \
+        # _[kind]_[age_if_kind_personal]_[target.id] \
+        # _[8 random chars]_[10 first chars of title].jpg
+        filename = "#{target.publish_on.strftime("%d")}"
+        filename << "#{target.xyz_category_prefix}"
+        filename << "#{target.kind.gsub("_", "")}"
+        filename << "_%03d" % (target.age || 0) if target.personal?
+        filename << "_#{target.id.to_s}"
+        filename << "_#{Digest::SHA1.hexdigest(rand(10000).to_s)[0,8]}"
+        truncated_title = target.title.gsub(/[^\[a-z\]]/i, '').downcase
+        truncate_to = truncated_title.length > 9 ? 9 : truncated_title.length
+        filename << "_#{truncated_title[0..(truncate_to)]}"
+        filename << ".jpg"
+        return filename
+      end
+
+    end
+</pre>
+
+
+<p>It certainly isn&#8217;t the worst lines of code ever written and it is getting the
+job done, but it is definitely not very readable and quite difficult to
+understand its purpose and logic. About the only thing that can be discerned is
+that it is intended to generate a filename in a specific format.</p>
+
+<p>Katrina starts by writing a very simple and seemlingly useless test (which she
+calls a &#8220;Mickey Mouse test&#8221; in her GitHub commit message) in order to begin test
+coverage of this method:</p>
+
+<pre class="brush: ruby">
+    require_relative './xyz_service'
+
+    describe XYZService do
+
+      let(:target) do
+        stub(:target)
+      end
+
+      subject { XYZService.xyz_filename(target) }
+
+      it 'works' do
+        subject.should eq('something')
+      end
+
+    end
+</pre>
+
+
+<p>Without much knowledge of what this method&#8217;s purpose or inputs are, we can only
+pass in an empty stub object as input and then assert something rediculous for
+the result. We expect this test to not only fail to pass, but it is also likely
+to error during runtime (or even at compile time if in a statically typed
+language like C#). The idea is to create a quick feedback loop that aids us in
+finding the context and inputs required to make the code execute without runtime
+error. Then we can finally see the actual return value and modify our dummy
+assertion to begin expecting that output.</p>
+
+<p>After iterating in this fashion, Katrina arrives at the following test which is
+a bit more useful:</p>
+
+<pre class="brush: ruby">
+    require_relative './xyz_service'
+    require 'date'
+
+    describe XYZService do
+
+      let(:target) do
+        messages = {
+          :publish_on => Date.new(2012, 3, 14),
+          :xyz_category_prefix => 'abc',
+          :kind => 'unicorn',
+          :personal? => false,
+          :id => 1337,
+          :title => 'magic & superglue'
+        }
+        stub(:target, messages)
+      end
+
+      subject { XYZService.xyz_filename(target) }
+
+      it 'works' do
+        subject.should eq('14abcunicorn_1337_cb6c53bc_magicsuper.jpg')
+      end
+
+    end
+</pre>
+
+
+<p>However, this test doesn&#8217;t pass because the <code>cb6c53bc</code> portion of the resultant
+filename is different every execution of the test. A simple regex allows the
+test to pass all of the time:</p>
+
+<pre class="brush: ruby">
+    subject.should match(/14abcunicorn_1337_[0-9a-f]{8}_magicsuper\.jpg/)
+</pre>
+
+
+<p>Even though we now have a passing test, we have not yet exercised the different
+input values and all code paths and branches through the method. This must be
+done in order to fully understand, document, and test cover the logic and
+purpose of the method. This would be done in the normal unit testing fashion
+that is shown in just about every testing demo by adding more test scenarios and
+assertions that excercise the varying use cases.</p>
+
+<p>One interesting development that occurred while Katrina was using this process
+was that she actually found a bug in the implementation of the original
+<code>xyz_filename</code> method, specifically an extra set of braces in the regex on line
+14.</p>
+
+<p>Now that we are fully covered with tests (and a bug fixed), we are free to
+refactor the code into smaller, more readable chunks of code logic that are more
+cohesive and more reusable as well. This is what Katrina does for the remainder
+of her presentation, and it is just as instructive as this first part. However,
+today I wanted to focus on her strategy for writing test coverage against a
+legacy codebase.</p>
+
+<p>I like how what Katrina is demonstrating seems to utilize a black box testing
+approach at first, and then progresses to a more white box approach as we begin
+to explore the different parts of the implementation. Perhaps such a strategy
+should have been obvious to me, but Katrina&#8217;s conference talk really struck a
+chord with me and encouraged me to commit to doing better with test coverage in
+legacy codebases before I begin making modifications or additions.</p>
+
+<p>I highly recommend viewing the entire video, as it is only 30 minutes long and
+an entertaining watch.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Using SQL PIVOT and UNPIVOT]]></title>
@@ -51,24 +212,26 @@ named <code>Id</code> and an integer column named <code>ProductId</code>. In add
 
 <p>The unpivoting of the <code>ProductAvailability</code> table to prepare it for joining can be done like so:</p>
 
-<pre><code>SELECT
-    Unpivoted.ProductId,
-    Unpivoted.StateCode,
-    Unpivoted.IsAvailable
-FROM ProductAvailability
-UNPIVOT
-(
-    IsAvailable FOR StateCode
-    IN (AK,AL,AR,AZ,CA,CO,CT,
-        DC,DE,FL,GA,HI,IA,ID,
-        IL,IN,KS,KY,LA,MA,MD,
-        ME,MI,MN,MO,MS,MT,NC,
-        ND,NE,NH,NJ,NM,NV,NY,
-        OH,OK,OR,PA,PR,RI,SC,
-        SD,TN,TX,UT,VA,VT,WA,
-        WI,WV,WY)
-) AS Unpivoted
-</code></pre>
+<pre class="brush: sql">
+    SELECT
+      Unpivoted.ProductId,
+      Unpivoted.StateCode,
+      Unpivoted.IsAvailable
+    FROM ProductAvailability
+    UNPIVOT
+    (
+      IsAvailable FOR StateCode
+      IN (AK,AL,AR,AZ,CA,CO,CT,
+          DC,DE,FL,GA,HI,IA,ID,
+          IL,IN,KS,KY,LA,MA,MD,
+          ME,MI,MN,MO,MS,MT,NC,
+          ND,NE,NH,NJ,NM,NV,NY,
+          OH,OK,OR,PA,PR,RI,SC,
+          SD,TN,TX,UT,VA,VT,WA,
+          WI,WV,WY)
+    ) AS Unpivoted
+</pre>
+
 
 <p>The interesting part is obviously the <code>UNPIVOT</code> clause. Here we are declaring a list of column names to unpivot and
 also naming two new columns in which to place the old column&#8217;s name and value (<code>StateCode</code> and <code>IsAvailable</code>
@@ -79,18 +242,19 @@ easily join with the <code>ProductSales</code> table.</p>
 <p>Here is an example of such a query where we are trying to find the products which have no sales in a state for
 which it is marked as available for sale:</p>
 
-<pre><code>SELECT
-    ProductStateAvailability.ProductId,
-    ProductStateAvailability.StateCode
-FROM
-(
+<pre class="brush: sql">
     SELECT
+      ProductStateAvailability.ProductId,
+      ProductStateAvailability.StateCode
+    FROM
+    (
+      SELECT
         Unpivoted.ProductId,
         Unpivoted.StateCode,
         Unpivoted.IsAvailable
-    FROM ProductAvailability
-    UNPIVOT
-    (
+      FROM ProductAvailability
+      UNPIVOT
+      (
         IsAvailable FOR StateCode
         IN (AK,AL,AR,AZ,CA,CO,CT,
             DC,DE,FL,GA,HI,IA,ID,
@@ -100,14 +264,15 @@ FROM
             OH,OK,OR,PA,PR,RI,SC,
             SD,TN,TX,UT,VA,VT,WA,
             WI,WV,WY)
-    ) AS Unpivoted
-    WHERE Unpivoted.IsAvailable = 1
-) AS ProductStateAvailability
-INNER JOIN ProductSales
-    ON ProductSales.StateCode = ProductStateAvailability.StateCode
-    AND ProductSales.ProductId = ProductStateAvailability.ProductId
-WHERE ProductSales.TotalSales = 0
-</code></pre>
+      ) AS Unpivoted
+      WHERE Unpivoted.IsAvailable = 1
+    ) AS ProductStateAvailability
+    INNER JOIN ProductSales
+      ON ProductSales.StateCode = ProductStateAvailability.StateCode
+      AND ProductSales.ProductId = ProductStateAvailability.ProductId
+    WHERE ProductSales.TotalSales = 0
+</pre>
+
 
 <p>I hope you find the <code>PIVOT</code> and <code>UNPIVOT</code> SQL keywords just as helpful as I did if you ever find yourself in a bind
 with two tables that are seemingly impossible to join.</p>
@@ -1144,16 +1309,6 @@ public int ScoreDice(int[] selectedDice)
     return score;
 }
 </pre></div>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Web Deployment Tool]]></title>
-    <link href="http://mkmurray.com/blog/2009/09/29/web-deployment-tool/"/>
-    <updated>2009-09-29T17:45:00-06:00</updated>
-    <id>http://mkmurray.com/blog/2009/09/29/web-deployment-tool</id>
-    <content type="html"><![CDATA[<div class='post'>
-<p>It appears that the IIS team at Microsoft has officially completed a 1.0 version of the deployment utility I mentioned at the end of <a title="Visual Studio Web Deployment Projects" href="http://murrayon.net/2008/02/visual-studio-web-deployment-projects.html">my previous post about Visual Studio Web Deployment Projects</a> almost two years ago.&#160; It includes a command-line tool named MSDeploy that helps with deploying and syncing web projects across all of the web servers in your server farm.&#160; The installation also includes all kinds of packaging and deployment features that seem really handy.&#160; You can even do migrations from IIS 6 to IIS 7 or package your apps to be distributed via the <a href="http://www.microsoft.com/web/downloads/platform.aspx">Microsoft Web Platform Installer</a>.</p>  <p>I thought that maybe the tool creates MSI installers, but it appears the package may actually just be a ZIP file that you can import and export through the IIS Manager or various other command-line tools or PowerShell Cmdlets.</p>  <p>Here is the page where you can read more about the toolset and download the installer:&#160; <a title="http://www.iis.net/extensions/WebDeploymentTool" href="http://www.iis.net/extensions/WebDeploymentTool">http://www.iis.net/extensions/WebDeploymentTool</a></p>  </div>
 ]]></content>
   </entry>
   

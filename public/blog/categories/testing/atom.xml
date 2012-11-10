@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Testing | Mike Murray]]></title>
   <link href="http://mkmurray.com/blog/categories/testing/atom.xml" rel="self"/>
   <link href="http://mkmurray.com/"/>
-  <updated>2012-11-03T23:33:20-06:00</updated>
+  <updated>2012-11-10T15:43:46-07:00</updated>
   <id>http://mkmurray.com/</id>
   <author>
     <name><![CDATA[Mike Murray]]></name>
@@ -12,6 +12,167 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Refactoring Legacy Code Starts with Test Coverage]]></title>
+    <link href="http://mkmurray.com/blog/2012/11/10/refactoring-legacy-code-starts-with-test-coverage/"/>
+    <updated>2012-11-10T15:37:00-07:00</updated>
+    <id>http://mkmurray.com/blog/2012/11/10/refactoring-legacy-code-starts-with-test-coverage</id>
+    <content type="html"><![CDATA[<p>As a dev team, we have been watching and discussing various training videos and
+conference talks every morning for a few months now. This week we watched a
+recorded conference talk by Ruby developer <a href="http://kytrinyx.com/">Katrina Owen</a>
+entitled <a href="http://www.youtube.com/watch?v=J4dlF0kcThQ">Therapeutic Refactoring</a>.
+I was especially impressed with her strategy for refactoring legacy code.</p>
+
+<p>I'm sure everyone can agree that the safest way to refactor code and be 100%
+positive that the functionality hasn't regressed is to have a good suite of
+tests. And if you don't have sufficient test coverage (or any at all), then now
+is the right time to add it before refactoring.</p>
+
+<p>However, I have found myself skipping this step in the past, feeling justified
+because the quality of the code was so poor or the deadline was so short. It is
+irresponsible of me to assume that I have not changed the functionality of the
+code with no proof in the form of passing tests that sufficiently cover all
+scenarios and use cases.  Nonetheless, watching Katrina's presentation has
+given me renewed commitment and a sound plan of attack against legacy code that
+may be ugly and very unfamiliar to me.</p>
+
+<p>Here is the example method that Katrina uses during her presentation (which is
+later revealed as a piece of code that she vaguely remembers coding herself and
+now abhors):</p>
+
+<pre class="brush: ruby">
+    module XYZService
+
+      def self.xyz_filename(target)
+        # File format:
+        # [day of month zero-padded][three-letter prefix] \
+        # _[kind]_[age_if_kind_personal]_[target.id] \
+        # _[8 random chars]_[10 first chars of title].jpg
+        filename = "#{target.publish_on.strftime("%d")}"
+        filename << "#{target.xyz_category_prefix}"
+        filename << "#{target.kind.gsub("_", "")}"
+        filename << "_%03d" % (target.age || 0) if target.personal?
+        filename << "_#{target.id.to_s}"
+        filename << "_#{Digest::SHA1.hexdigest(rand(10000).to_s)[0,8]}"
+        truncated_title = target.title.gsub(/[^\[a-z\]]/i, '').downcase
+        truncate_to = truncated_title.length > 9 ? 9 : truncated_title.length
+        filename << "_#{truncated_title[0..(truncate_to)]}"
+        filename << ".jpg"
+        return filename
+      end
+
+    end
+</pre>
+
+
+<p>It certainly isn't the worst lines of code ever written and it is getting the
+job done, but it is definitely not very readable and quite difficult to
+understand its purpose and logic. About the only thing that can be discerned is
+that it is intended to generate a filename in a specific format.</p>
+
+<p>Katrina starts by writing a very simple and seemlingly useless test (which she
+calls a "Mickey Mouse test" in her GitHub commit message) in order to begin test
+coverage of this method:</p>
+
+<pre class="brush: ruby">
+    require_relative './xyz_service'
+
+    describe XYZService do
+
+      let(:target) do
+        stub(:target)
+      end
+
+      subject { XYZService.xyz_filename(target) }
+
+      it 'works' do
+        subject.should eq('something')
+      end
+
+    end
+</pre>
+
+
+<p>Without much knowledge of what this method's purpose or inputs are, we can only
+pass in an empty stub object as input and then assert something rediculous for
+the result. We expect this test to not only fail to pass, but it is also likely
+to error during runtime (or even at compile time if in a statically typed
+language like C#). The idea is to create a quick feedback loop that aids us in
+finding the context and inputs required to make the code execute without runtime
+error. Then we can finally see the actual return value and modify our dummy
+assertion to begin expecting that output.</p>
+
+<p>After iterating in this fashion, Katrina arrives at the following test which is
+a bit more useful:</p>
+
+<pre class="brush: ruby">
+    require_relative './xyz_service'
+    require 'date'
+
+    describe XYZService do
+
+      let(:target) do
+        messages = {
+          :publish_on => Date.new(2012, 3, 14),
+          :xyz_category_prefix => 'abc',
+          :kind => 'unicorn',
+          :personal? => false,
+          :id => 1337,
+          :title => 'magic & superglue'
+        }
+        stub(:target, messages)
+      end
+
+      subject { XYZService.xyz_filename(target) }
+
+      it 'works' do
+        subject.should eq('14abcunicorn_1337_cb6c53bc_magicsuper.jpg')
+      end
+
+    end
+</pre>
+
+
+<p>However, this test doesn't pass because the <code>cb6c53bc</code> portion of the resultant
+filename is different every execution of the test. A simple regex allows the
+test to pass all of the time:</p>
+
+<pre class="brush: ruby">
+    subject.should match(/14abcunicorn_1337_[0-9a-f]{8}_magicsuper\.jpg/)
+</pre>
+
+
+<p>Even though we now have a passing test, we have not yet exercised the different
+input values and all code paths and branches through the method. This must be
+done in order to fully understand, document, and test cover the logic and
+purpose of the method. This would be done in the normal unit testing fashion
+that is shown in just about every testing demo by adding more test scenarios and
+assertions that excercise the varying use cases.</p>
+
+<p>One interesting development that occurred while Katrina was using this process
+was that she actually found a bug in the implementation of the original
+<code>xyz_filename</code> method, specifically an extra set of braces in the regex on line
+14.</p>
+
+<p>Now that we are fully covered with tests (and a bug fixed), we are free to
+refactor the code into smaller, more readable chunks of code logic that are more
+cohesive and more reusable as well. This is what Katrina does for the remainder
+of her presentation, and it is just as instructive as this first part. However,
+today I wanted to focus on her strategy for writing test coverage against a
+legacy codebase.</p>
+
+<p>I like how what Katrina is demonstrating seems to utilize a black box testing
+approach at first, and then progresses to a more white box approach as we begin
+to explore the different parts of the implementation. Perhaps such a strategy
+should have been obvious to me, but Katrina's conference talk really struck a
+chord with me and encouraged me to commit to doing better with test coverage in
+legacy codebases before I begin making modifications or additions.</p>
+
+<p>I highly recommend viewing the entire video, as it is only 30 minutes long and
+an entertaining watch.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Anagram Code Kata Part 5 – Domain Objects Over Language Primitives]]></title>
@@ -418,73 +579,6 @@ Yes, this is a good start for a great idea (code kata done slowly).<br /><br />R
 <div class='author'>David</div>
 <div class='content'>
 Looks good Mike!<br /><br />I wouldn&#39;t call the previous spec a mistake or &quot;foolish&quot; though. I seen working on simple cases like Count advocated lots of places for doing TDD, I&#39;ve just always struggled with getting from those cases to the main responsibilities of the class.<br /><br />Looking forward to the rest of the series.</div>
-</div>
-</div>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Anagram Code Kata Part 1 – Getting Started]]></title>
-    <link href="http://mkmurray.com/blog/2009/11/12/anagram-code-kata-part-1-getting-started/"/>
-    <updated>2009-11-12T15:03:00-07:00</updated>
-    <id>http://mkmurray.com/blog/2009/11/12/anagram-code-kata-part-1-getting-started</id>
-    <content type="html"><![CDATA[<div class='post'>
-<p>This post is part of a <a href="http://murrayon.net/2009/11/anagram-code-kata-bdd-mspec.html" target="_blank">series on coding Kata, BDD, MSpec, and SOLID principles</a>.&#160; Feel free to visit the above link which points to the introductory post, also containing an index of all posts in the series.</p>  <p>This post will provide resources that serve as an introduction to the <a href="http://github.com/machine/machine.specifications" target="_blank">MSpec BDD testing framework</a>.&#160; We will also set up our Visual Studio solution, explain the Anagram Code Kata problem statement, and write our first specification and test.</p> <span class="fullpost">   <h3>Machine.Specifications (MSpec)</h3>    <p>The author of this BDD testing framework is <a href="http://codebetter.com/blogs/aaron.jensen/default.aspx" target="_blank">Aaron Jensen</a> of <a href="http://codebetter.com/" target="_blank">CodeBetter.com</a>.&#160; Probably the best introduction to the framework (and lightly touching on general principles of BDD) is <a href="http://blog.wekeroad.com/" target="_blank">Rob Conery’s</a> post entitled <a href="http://blog.wekeroad.com/blog/make-bdd-your-bff-2" target="_blank">Make BDD Your BFF</a>.&#160; MSpec is hosted on <a href="http://github.com/" target="_blank">GitHub</a> using the <a href="http://en.wikipedia.org/wiki/Git_(software)" target="_blank">Git source control software</a> (and <a href="http://github.com/machine/machine.specifications" target="_blank">here is the link for the repository again</a>).&#160; Download the code and build it to get the necessary libraries that you need into a <font face="Courier New">Bin</font> folder.&#160; My MSpec libraries are a few months old, as I haven’t upgraded my source since my initial download back then.&#160; I have not set up TestDriven.NET and am not sure it will be necessary for this simple coding exercise.&#160; I am using NUnit for the actual testing framework underneath MSpec; the following article may be of interest to you if you would like to use a newer version of NUnit than what MSpec targets:</p>    <p><a href="http://codebetter.com/blogs/howard.dierking/archive/2009/11/08/using-latest-nunit-version-with-mspec.aspx" target="_blank">Using Latest NUnit Version with MSpec</a></p>    <p>MSpec helps you organize your code into Specifications, a core BDD concept.&#160; It is inspired by early BDD testing frameworks like Ruby’s <a href="http://rspec.info/" target="_blank">RSpec</a>.&#160; The syntax and arrangement can be a little odd for a static language like C#, but I think I like the direction it is heading.&#160; Again, the best way to get familiar with the syntax, set up the MSpec Test Runner, and configure HTML reporting output is to read <a href="http://blog.wekeroad.com/blog/make-bdd-your-bff-2" target="_blank">Rob’s introductory post on BDD and MSpec</a>.</p>    <h3>Setting Up the Visual Studio Solution</h3>    <p>Let’s begin by creating a C# console application named <font face="Courier New">AnagramCodeKata</font> targeting .NET Framework 3.5.&#160; The solution name (and solution folder) will be the same.&#160; For our dependencies on MSpec (and NUnit), I have created a physical file system folder named <font face="Courier New">Libraries</font> and made it a sibling folder to the project’s physical folder (same level as the solution file).&#160; That folder contains the following DLL libraries from the <font face="Courier New">Bin</font> folder of the compiled MSpec source code:</p>    <ul>     <li><font face="Courier New">CommandLine.dll</font> </li>      <li><font face="Courier New">Machine.Specifications.ConsoleRunner.exe</font> </li>      <li><font face="Courier New">Machine.Specifications.dll</font> </li>      <li><font face="Courier New">Machine.Specifications.NUnit.dll</font> </li>      <li><font face="Courier New">Machine.Specifications.Reporting.dll</font> </li>      <li><font face="Courier New">nunit.framework.dll</font> </li>   </ul>    <p>Then within our Solution Explorer, we only need to make references to 3 of these libraries (namely <font face="Courier New">Machine.Specifications.dll</font>, <font face="Courier New">Machine.Specifications.NUnit.dll</font>, and <font face="Courier New">nunit.framework.dll</font>).&#160; I have also created two folders within our project in Solution Explorer, naming them <font face="Courier New">Reports</font> and <font face="Courier New">Specifications</font>.&#160; The <font face="Courier New">Reports</font> folder will contain the HTML-generated report of running our tests every time.&#160; The <font face="Courier New">Specifications</font> folder will hold our specifications and tests.&#160; This is what our current Solution Explorer looks like now:</p>    <p><a href="http://lh3.ggpht.com/_rps657FzHZ0/SvyGOtiALTI/AAAAAAAAADM/Xeygzia8cho/s1600-h/anagramScreenshot%5B6%5D.png"><img style="border-right-width: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto" title="anagramScreenshot" border="0" alt="anagramScreenshot" src="http://lh4.ggpht.com/_rps657FzHZ0/SvyGO870IZI/AAAAAAAAADQ/lDW6F6bIuhI/anagramScreenshot_thumb%5B4%5D.png?imgmax=800" width="289" height="340" /></a> </p>    <p>Also notice the <font face="Courier New">MSpecRunner </font>button at the top, which I’ve created to execute a custom External Tool that points to <font face="Courier New">Machine.Specifications.ConsoleRunner.exe</font> and passes in the appropriate parameters.&#160; This helpful setup was put forth by Rob Conery in the link to his introductory blog post that I provided above.</p>    <h3>Anagram Problem Statement</h3>    <p>So let’s go ahead and look at the <a href="http://codekata.pragprog.com/2007/01/kata_six_anagra.html">Anagram problem</a> we are trying to solve.&#160; Here’s a quick summary of what we are trying to accomplish:</p>    <blockquote>     <p>“The challenge is fairly simple: given a file containing one word per line, print out all the combinations of words that are anagrams; each line in the output contains all the words from the input that are anagrams of each other.”</p>   </blockquote>    <p>Unfortunately, Dave Thomas’ <font face="Courier New">wordlist.txt</font> link is broken on his blog post, and when responding to commenters asking for a fixed link to the text file, he pointed us all to some website that aggregates links to several word lists from around the Web.&#160; Many of us readers wanted to know the exact word list file he used so that we could compare our results to his.&#160; In his post, he states that there should be 2,530 sets of anagrams and 5,680 total words participating in those anagram sets.&#160; The tough part about this is that we’ve got to have the same word list text file.&#160; I searched the web and found a few, but I only found one that might be the same list.&#160; It is from some guy’s personal GitHub repository:</p>    <p><a title="http://github.com/krist0ff/code_kata/tree/ba975c3a64f11a81db2f3716b40de046f1ca7ef4/kata6" href="http://github.com/krist0ff/code_kata/tree/ba975c3a64f11a81db2f3716b40de046f1ca7ef4/kata6">http://github.com/krist0ff/code_kata/tree/ba975c3a64f11a81db2f3716b40de046f1ca7ef4/kata6</a></p>    <p>If you’re visiting this blog post, months or years after it was originally written, I obviously can’t guarantee this file will still be out there.&#160; You can try emailing me or commenting here and I can hopefully send it to you via email if I still have it.&#160; But more importantly, as we progress with this series, we’ll find out if it’s even the right word list or not.</p>    <p>Lastly, I’d like to look at the objectives for the coding kata that Dave Thomas outlines:</p>    <blockquote>     <p>“Apart from having some fun with words, this kata should make you think somewhat about algorithms. The simplest algorithms to find all the anagram combinations may take inordinate amounts of time to do the job. Working though alternatives should help bring the time down by orders of magnitude. To give you a possible point of comparison, I hacked a solution together in 25 lines of Ruby. It runs on the word list from my web site in 1.5s on a 1GHz PPC. It’s also an interesting exercise in testing: can you write unit tests to verify that your code is working correctly before setting it to work on the full dictionary.”</p>   </blockquote>    <p>I don’t think we’ll focus on runtime as much, but we’ll certainly revisit our algorithm as necessary if we have unacceptable wait times for the code to finish.&#160; To complete this section, let’s go ahead and add the <font face="Courier New">wordlist.txt</font> to our solution at the root of of our Project node.</p>    <h3>How About Some Actual Code?!</h3>    <p>So let’s now start off by creating our first specification.&#160; I have created a new C# file named <font face="Courier New">AnagramsFinderSpecs.cs</font> under our <font face="Courier New">Specifications</font> folder in our solution.&#160; I attempted to write our first test, but already feel like I’m not inline with “<a href="http://www.davesquared.net/2009/11/favour-test-driving-logic-over-data.html">favoring test driving logic over just testing data</a>.”</p>    <pre class="brush: csharp">using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Machine.Specifications;
-
-namespace AnagramCodeKata.Specifications
-{
-    [Subject(typeof(AnagramsFinder), &quot;Finding Anagrams&quot;)]
-    public class when_given_text_file_with_word_on_each_line
-    {
-        static int result;
-        static AnagramsFinder sut;
-
-        Establish context = () =&gt;
-        {
-            sut = new AnagramsFinder();
-        };
-
-        Because of = () =&gt;
-        {
-            result = sut.ParseTextFile(&quot;wordslist.txt&quot;);
-        };
-
-        It should_result_in_count_of_2530_anagram_sets = () =&gt;
-        {
-            result.ShouldEqual(2530);
-        };
-    }
-}</pre>
-
-  <p>If you can’t make out the funky structure and syntax, again refer back to Rob Conery’s introductory post to all of this stuff that I link to at the top.&#160; He does a great job of explaining what’s going on here.</p>
-
-  <p>Also, please remember that I have no clue what I’m doing and I’m just trying to copy people who know what they are doing.&#160; I am hoping that I’ll be corrected by those who have a better idea of how to approach all of this.&#160; This is a good stopping point because of my desire for feedback and the feeling of uncertainty I’m already getting.</p>
-
-  <p>Seriously, please guide me in the right direction or validate where I’m headed, because even I’m not sure where that is yet.&#160; I will say this, I’m pretty sure I shouldn’t be reading in <font face="Courier New">wordslist.txt</font> yet, and that this might be where I need to start using a mocking framework.</p>
-
-  <p>Stay tuned, there’s more to come.&#160; I just can’t tell what it will be about yet.&#160; It’ll still be fun though, I promise.</p>
-</span>  </div>
-
-
-<h2>Comments</h2>
-
-
-<div class='comments'>
-<div class='comment'>
-<div class='author'>Mike Murray</div>
-<div class='content'>
-Yes, thank you.  You&#39;ve given me some clairty now and some great ideas that I&#39;ll try implementing over the weekend.</div>
-</div>
-<div class='comment'>
-<div class='author'>David</div>
-<div class='content'>
-Hi Mike,<br /><br />Like you, I&#39;m a bit wary of that first spec you&#39;ve written (that doesn&#39;t mean it&#39;s wrong obviously -- I&#39;m new to this too :)). <br /><br />You&#39;re right that you are testing data -- loading the wordslist.txt file and checking for the right number of anagram combinations. By the way, this is probably a good example of an integration test for when you are done! :)<br /><br />Whenever I have a hard problem like this that I am having trouble solving, I try and cheat. If you keep this class simple, but push the tricky bits lower down the heirarchy then that may help you start.<br /><br />Here&#39;s how I would update the current spec to help implement your test (this won&#39;t be a spoiler because I&#39;d change the test. I&#39;ll go into that later). <br /><br />In this case I can think of two responsibilities: getting the words from our file, and then counting the number of anagrams found in those words. So maybe your spec&#39;s context could stub out a IFileReader or similar which will return an IEnumerable&lt;string&gt; (filled with some fake data) when asked to get the lines in wordslist.txt. You could then give these words to an IAnagramCounter, which will return 2530.<br /><br />Your test and because can remain the same -- only the context will change (which is what I love about this style of writing specs).<br /><br />Of course this isn&#39;t specifying what your AnagramFinder should actually do... the kata aim is to print all the anagram combinations to the screen. So you may be better off trying this approach of pushing down logic but rewrite the spec to match the exact problem you are trying to solve.<br /><br />I&#39;m not sure if this will help or lead you down a dead end, but it is the approach I would take.<br /><br />Hope it helps!<br />David</div>
 </div>
 </div>
 

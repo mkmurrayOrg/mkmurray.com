@@ -40,23 +40,25 @@ named `Id` and an integer column named `ProductId`. In addition it will have a s
 `char(2)`) named `StateCode` and an integer column named `TotalSales`.
 
 The unpivoting of the `ProductAvailability` table to prepare it for joining can be done like so:
+<pre class="brush: sql">
     SELECT
-        Unpivoted.ProductId,
-        Unpivoted.StateCode,
-        Unpivoted.IsAvailable
+      Unpivoted.ProductId,
+      Unpivoted.StateCode,
+      Unpivoted.IsAvailable
     FROM ProductAvailability
     UNPIVOT
     (
-        IsAvailable FOR StateCode
-        IN (AK,AL,AR,AZ,CA,CO,CT,
-            DC,DE,FL,GA,HI,IA,ID,
-            IL,IN,KS,KY,LA,MA,MD,
-            ME,MI,MN,MO,MS,MT,NC,
-            ND,NE,NH,NJ,NM,NV,NY,
-            OH,OK,OR,PA,PR,RI,SC,
-            SD,TN,TX,UT,VA,VT,WA,
-            WI,WV,WY)
+      IsAvailable FOR StateCode
+      IN (AK,AL,AR,AZ,CA,CO,CT,
+          DC,DE,FL,GA,HI,IA,ID,
+          IL,IN,KS,KY,LA,MA,MD,
+          ME,MI,MN,MO,MS,MT,NC,
+          ND,NE,NH,NJ,NM,NV,NY,
+          OH,OK,OR,PA,PR,RI,SC,
+          SD,TN,TX,UT,VA,VT,WA,
+          WI,WV,WY)
     ) AS Unpivoted
+</pre>
 
 The interesting part is obviously the `UNPIVOT` clause. Here we are declaring a list of column names to unpivot and
 also naming two new columns in which to place the old column's name and value (`StateCode` and `IsAvailable`
@@ -66,34 +68,36 @@ easily join with the `ProductSales` table.
 
 Here is an example of such a query where we are trying to find the products which have no sales in a state for
 which it is marked as available for sale:
+<pre class="brush: sql">
     SELECT
-        ProductStateAvailability.ProductId,
-        ProductStateAvailability.StateCode
+      ProductStateAvailability.ProductId,
+      ProductStateAvailability.StateCode
     FROM
     (
-        SELECT
-            Unpivoted.ProductId,
-            Unpivoted.StateCode,
-            Unpivoted.IsAvailable
-        FROM ProductAvailability
-        UNPIVOT
-        (
-            IsAvailable FOR StateCode
-            IN (AK,AL,AR,AZ,CA,CO,CT,
-                DC,DE,FL,GA,HI,IA,ID,
-                IL,IN,KS,KY,LA,MA,MD,
-                ME,MI,MN,MO,MS,MT,NC,
-                ND,NE,NH,NJ,NM,NV,NY,
-                OH,OK,OR,PA,PR,RI,SC,
-                SD,TN,TX,UT,VA,VT,WA,
-                WI,WV,WY)
-        ) AS Unpivoted
-        WHERE Unpivoted.IsAvailable = 1
+      SELECT
+        Unpivoted.ProductId,
+        Unpivoted.StateCode,
+        Unpivoted.IsAvailable
+      FROM ProductAvailability
+      UNPIVOT
+      (
+        IsAvailable FOR StateCode
+        IN (AK,AL,AR,AZ,CA,CO,CT,
+            DC,DE,FL,GA,HI,IA,ID,
+            IL,IN,KS,KY,LA,MA,MD,
+            ME,MI,MN,MO,MS,MT,NC,
+            ND,NE,NH,NJ,NM,NV,NY,
+            OH,OK,OR,PA,PR,RI,SC,
+            SD,TN,TX,UT,VA,VT,WA,
+            WI,WV,WY)
+      ) AS Unpivoted
+      WHERE Unpivoted.IsAvailable = 1
     ) AS ProductStateAvailability
     INNER JOIN ProductSales
-        ON ProductSales.StateCode = ProductStateAvailability.StateCode
-        AND ProductSales.ProductId = ProductStateAvailability.ProductId
+      ON ProductSales.StateCode = ProductStateAvailability.StateCode
+      AND ProductSales.ProductId = ProductStateAvailability.ProductId
     WHERE ProductSales.TotalSales = 0
+</pre>
 
 I hope you find the `PIVOT` and `UNPIVOT` SQL keywords just as helpful as I did if you ever find yourself in a bind
 with two tables that are seemingly impossible to join.

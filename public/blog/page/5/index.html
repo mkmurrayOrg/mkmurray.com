@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="I came across a surprising restriction on variable declarations that I thought I would share. My own investigation into C# was prompted by an answer &hellip;">
+	<meta name="description" content="It appears that the IIS team at Microsoft has officially completed a 1.0 version of the deployment utility I mentioned at the end of my previous &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -18,7 +18,24 @@
 	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
-	
+	<link href='http://alexgorbatchev.com/pub/sh/current/styles/shCore.css' rel='stylesheet' type='text/css'/>
+<link href='http://alexgorbatchev.com/pub/sh/current/styles/shThemeRDark.css' rel='stylesheet' type='text/css'/>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shCore.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shAutoloader.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushCpp.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushCSharp.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushCss.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushJScript.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushPlain.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushPowerShell.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushRuby.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushSql.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushXml.js' type='text/javascript'></script>
+<script type='text/javascript'>
+     SyntaxHighlighter.config.bloggerMode = true;
+     SyntaxHighlighter.all();
+</script>
+
 </head>
 
 <body>
@@ -29,6 +46,44 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2009/09/29/web-deployment-tool/">Web Deployment Tool</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-09-29T17:45:00-06:00" pubdate data-updated="true">Sep 29<span>th</span>, 2009</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/deployment-and-installers/'>Deployment and Installers</a>, <a class='category' href='/blog/categories/iis/'>IIS</a>, <a class='category' href='/blog/categories/msi/'>MSI</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>, <a class='category' href='/blog/categories/powershell/'>PowerShell</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>, <a class='category' href='/blog/categories/web/'>Web</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2009/09/29/web-deployment-tool/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>It appears that the IIS team at Microsoft has officially completed a 1.0 version of the deployment utility I mentioned at the end of <a title="Visual Studio Web Deployment Projects" href="http://murrayon.net/2008/02/visual-studio-web-deployment-projects.html">my previous post about Visual Studio Web Deployment Projects</a> almost two years ago.&#160; It includes a command-line tool named MSDeploy that helps with deploying and syncing web projects across all of the web servers in your server farm.&#160; The installation also includes all kinds of packaging and deployment features that seem really handy.&#160; You can even do migrations from IIS 6 to IIS 7 or package your apps to be distributed via the <a href="http://www.microsoft.com/web/downloads/platform.aspx">Microsoft Web Platform Installer</a>.</p>  <p>I thought that maybe the tool creates MSI installers, but it appears the package may actually just be a ZIP file that you can import and export through the IIS Manager or various other command-line tools or PowerShell Cmdlets.</p>  <p>Here is the page where you can read more about the toolset and download the installer:&#160; <a title="http://www.iis.net/extensions/WebDeploymentTool" href="http://www.iis.net/extensions/WebDeploymentTool">http://www.iis.net/extensions/WebDeploymentTool</a></p>  </div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -190,44 +245,6 @@ Yield definitely seems like a more elegant way to build collections. I&#8217;ve 
 
 </article>
 
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2009/02/19/sql-server-express-2005-remote-connections/">SQL Server Express 2005 Remote Connections</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-02-19T10:36:00-07:00" pubdate data-updated="true">Feb 19<span>th</span>, 2009</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/asp-net/'>ASP.NET</a>, <a class='category' href='/blog/categories/database/'>Database</a>, <a class='category' href='/blog/categories/error/'>Error</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/sql/'>SQL</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2009/02/19/sql-server-express-2005-remote-connections/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p>I developed an ASP.NET site connecting to a local SQL Server Express 2005 instance on my development box.&#160; To further my informal testing, I wanted to host the site under IIS 7 on a Windows Server 2008 box, but I wanted to just use the same database remotely.&#160; I got the following error message when the site tried to hit the database:</p>  <blockquote>   <p>&quot;An error has occurred while establishing a connection to the server.&#160; When connecting to SQL Server 2005, this failure may be caused by the fact that under the default settings SQL Server does not allow remote connections.&#160; (provider: Named Pipes Provider, error: 40 - Could not open connection to SQL Server)&quot;</p> </blockquote>  <p>Apparently SQL Server Express 2005 is not automatically configured for remote access during installation (which really isn&#8217;t surprising as it is the Express version).&#160; Remote connections can be enabled though with a few relatively painless steps.&#160; See the following link for the procedure:</p>  <ul>   <li><a href="http://www.datamasker.com/SSE2005_NetworkCfg.htm">Configuring SQL Server Express 2005 for Remote Access when SQL Server does not allow remote connections</a></li> </ul>  <p>Hope this is helpful.</p>  </div>
-
-		
-		
-	</div>
-
-</article>
-
 <nav id="pagenavi">
     
         <a href="/blog/page/4/" class="prev">Prev</a>
@@ -269,6 +286,18 @@ Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Sha
 
 
 
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-36228026-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
 
 
 		</div>
@@ -278,9 +307,18 @@ Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Sha
 </div>
 <h1><a href="/">Mike Murray</a></h1>
 <nav id="main-nav"><ul class="main">
-	<li><a href="/">Blog</a></li>
-	<li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
 </ul>
+
+<br />
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:mkmurray.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+
 </nav>
 <br/>
 <h3 class="alignleft">please code responsibly</h3>

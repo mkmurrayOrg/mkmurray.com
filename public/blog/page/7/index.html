@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="This blog post is part of a series about the ASP.NET Providers (namely Membership, Role Management, and Profile).&#160; The introductory post in the &hellip;">
+	<meta name="description" content="This blog post is part of a series about the ASP.NET Providers (namely Membership, Role Management, and Profile). The introductory post in the &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -18,7 +18,24 @@
 	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
-	
+	<link href='http://alexgorbatchev.com/pub/sh/current/styles/shCore.css' rel='stylesheet' type='text/css'/>
+<link href='http://alexgorbatchev.com/pub/sh/current/styles/shThemeRDark.css' rel='stylesheet' type='text/css'/>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shCore.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shAutoloader.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushCpp.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushCSharp.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushCss.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushJScript.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushPlain.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushPowerShell.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushRuby.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushSql.js' type='text/javascript'></script>
+<script src='http://alexgorbatchev.com/pub/sh/current/scripts/shBrushXml.js' type='text/javascript'></script>
+<script type='text/javascript'>
+     SyntaxHighlighter.config.bloggerMode = true;
+     SyntaxHighlighter.all();
+</script>
+
 </head>
 
 <body>
@@ -29,6 +46,52 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2009/01/30/asp-net-providers-membership/">ASP.NET Providers - Membership</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-01-30T14:21:00-07:00" pubdate data-updated="true">Jan 30<span>th</span>, 2009</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/asp-net/'>ASP.NET</a>, <a class='category' href='/blog/categories/asp-net-providers-series/'>ASP.NET Providers Series</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/encryption/'>Encryption</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/sql/'>SQL</a>, <a class='category' href='/blog/categories/security/'>Security</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>, <a class='category' href='/blog/categories/web/'>Web</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2009/01/30/asp-net-providers-membership/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>This blog post is part of a series about the ASP.NET Providers (namely Membership, Role Management, and Profile). The introductory post in the series can be found at the following link, which introduces the <a href="http://en.wikipedia.org/wiki/Provider_model" target="_blank">Provider Model pattern</a> and gives a personal example of an implementation I have been working on:</p><ul><li><a href="http://murrayon.net/2009/01/aspnet-providers-membership-role-and.html">ASP.NET Providers - Membership, Role, and Profile</a></li></ul><p>This post will deal with adding the Membership functionality to your website.</p> <span class='fullpost'> <h3>Membership Provider Configuration</h3><p>Now that your DB is set up, there are a few snippets that need to be added to your <span style="font-family: courier new">Web.config</span>. It involves adding a connection string and adding a new membership provider, as in the sample below:</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 350px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #0000ff">&lt;</span><span style="color: #800000">configuration</span><span style="color: #0000ff">&gt;</span><br />    <span style="color: #0000ff">&lt;</span><span style="color: #800000">connectionStrings</span><span style="color: #0000ff">&gt;</span><br />        <span style="color: #0000ff">&lt;</span><span style="color: #800000">add</span> <span style="color: #ff0000">name</span><span style="color: #0000ff">=&quot;MyDB&quot;</span> <span style="color: #ff0000">connectionString</span><span style="color: #0000ff">=&quot;...&quot;</span> <span style="color: #0000ff">/&gt;</span><br />    <span style="color: #0000ff">&lt;/</span><span style="color: #800000">connectionStrings</span><span style="color: #0000ff">&gt;</span><br />    <span style="color: #0000ff">&lt;</span><span style="color: #800000">system.web</span><span style="color: #0000ff">&gt;</span><br />        ... authentication &amp; authorization settings ...<br /><br />        <span style="color: #0000ff">&lt;</span><span style="color: #800000">membership</span> <span style="color: #ff0000">defaultProvider</span><span style="color: #0000ff">=&quot;ConfiguredMembershipProvider&quot;</span><span style="color: #0000ff">&gt;</span><br />            <span style="color: #0000ff">&lt;</span><span style="color: #800000">providers</span><span style="color: #0000ff">&gt;</span><br />                <span style="color: #0000ff">&lt;</span><span style="color: #800000">add</span> <span style="color: #ff0000">name</span><span style="color: #0000ff">=&quot;ConfiguredMembershipProvider&quot;</span><br />                     <span style="color: #ff0000">type</span><span style="color: #0000ff">=&quot;System.Web.Security.SqlMembershipProvider&quot;</span><br />                     <span style="color: #ff0000">connectionStringName</span><span style="color: #0000ff">=&quot;MyDB&quot;</span><br />                     <span style="color: #ff0000">applicationName</span><span style="color: #0000ff">=&quot;SampleWebSite&quot;</span><br />                     <span style="color: #ff0000">minRequiredPasswordLength</span><span style="color: #0000ff">=&quot;5&quot;</span><br />                     <span style="color: #ff0000">minRequiredNonalphanumericCharacters</span><span style="color: #0000ff">=&quot;0&quot;</span> <span style="color: #0000ff">/&gt;</span><br />            <span style="color: #0000ff">&lt;/</span><span style="color: #800000">providers</span><span style="color: #0000ff">&gt;</span><br />        <span style="color: #0000ff">&lt;/</span><span style="color: #800000">membership</span><span style="color: #0000ff">&gt;</span><br />    <span style="color: #0000ff">&lt;/</span><span style="color: #800000">system.web</span><span style="color: #0000ff">&gt;</span><br /><span style="color: #0000ff">&lt;/</span><span style="color: #800000">configuration</span><span style="color: #0000ff">&gt;</span></pre></div><p><strong><u>WARNING</u>: </strong>According to Microsoft, you should <strong><u>never</u></strong> use the default provider settings and should <strong><u>always</u></strong> add a new, configured provider; in addition you <strong><u>must</u></strong> be sure to specify the <span style="font-family: courier new">applicationName</span> attribute! See <a title="Always set the " href="http://weblogs.asp.net/scottgu/archive/2006/04/22/Always-set-the-_2200_applicationName_2200_-property-when-configuring-ASP.NET-2.0-Membership-and-other-Providers.aspx" other="other" and="and" configuring="configuring" when="when" property="property" membership="membership" net="ASP.NET" 0="2.0">Scott Guthrie&#8217;s blog post on this topic</a> for more details. Apparently, you can also use a value of <span style="font-family: courier new">&quot;/&quot;</span> for the <span style="font-family: courier new">applicationName</span> and it will use the root application name.</p><p>The last two attributes of the <span style="font-family: courier new">add</span> node are only a couple of several membership features you can configure. For a complete list of attributes you can configure, see <a href="http://msdn.microsoft.com/en-us/library/whae3t94.aspx">&lt;add&gt; Element for Providers for Membership</a>.</p><h3>Securing Site Content by Requiring Authentication</h3><p>With 5 more lines of configuration added to your <span style="font-family: courier new">Web.config</span>, you can have the whole site secured and accessible only by user account authentication. Even better, you can make that 6 lines added to the <span style="font-family: courier new">Web.config</span>, add a <span style="font-family: courier new">Login.aspx</span> page, and drop in a <span style="font-family: courier new">Login</span> control from the Toolbox and you will get auto-redirect to the login page if someone tries to hit any page you&#8217;ve now secured. The framework is even smart enough to return you to that desired page after successful login; it accomplishes this by redirecting you to the login page but by adding a <span style="font-family: courier new">ReturnUrl</span> query string attribute to know where to go after authentication.</p><p>Here are the additional lines for your <span style="font-family: courier new">Web.config</span> (put them under the <span style="font-family: courier new">system.web</span> node):</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 200px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #0000ff">&lt;</span><span style="color: #800000">authorization</span><span style="color: #0000ff">&gt;</span><br />    <span style="color: #0000ff">&lt;</span><span style="color: #800000">deny</span> <span style="color: #ff0000">users</span><span style="color: #0000ff">=&quot;?&quot;</span> <span style="color: #0000ff">/&gt;</span><br /><span style="color: #0000ff">&lt;/</span><span style="color: #800000">authorization</span><span style="color: #0000ff">&gt;</span><br /><br /><span style="color: #0000ff">&lt;</span><span style="color: #800000">authentication</span> <span style="color: #ff0000">mode</span><span style="color: #0000ff">=&quot;Forms&quot;</span><span style="color: #0000ff">&gt;</span><br />    <span style="color: #0000ff">&lt;</span><span style="color: #800000">forms</span> <span style="color: #ff0000">defaultUrl</span><span style="color: #0000ff">=&quot;index.html&quot;</span> <span style="color: #ff0000">loginUrl</span><span style="color: #0000ff">=&quot;Login.aspx&quot;</span> <span style="color: #0000ff">/&gt;</span><br /><span style="color: #0000ff">&lt;/</span><span style="color: #800000">authentication</span><span style="color: #0000ff">&gt;</span></pre></div><p><u><strong>NOTE</strong></u>: You will likely already have an <span style="font-family: courier new">authentication</span> node in your <span style="font-family: courier new">Web.config</span>, but it&#8217;s <span style="font-family: courier new">mode</span> may be set to the default <span style="font-family: courier new">&quot;Windows&quot;</span> value. To use the Membership Provider for authentication, you must have this value set to <span style="font-family: courier new">&quot;Forms.&quot;</span></p><p>The optional 6th line I spoke of earlier is the <span style="font-family: courier new">forms</span> node under the <span style="font-family: courier new">authentication</span> node. The <span style="font-family: courier new">defaultUrl</span> attribute of this line is used to tell the framework where to go after successful login if there is no <span style="font-family: courier new">ReturnUrl</span> specified in the query string. The <span style="font-family: courier new">loginUrl</span> attribute is used to specify the page the user is redirected to if they are attempting to hit a page that requires authentication.</p><p>The <span style="font-family: courier new">deny</span> node is using the question mark (<span style="font-family: courier new">?</span>) wildcard character, which is used for anonymous users (or those that haven&#8217;t been authenticated yet); the asterisk (<span style="font-family: courier new">*</span>) wildcard is used to signify all users browsing the site. Since we are dealing with the <span style="font-family: courier new">Web.config</span> at the root of the site, this <span style="font-family: courier new">deny</span> rule will apply to the whole site and it&#8217;s subdirectories. You can either put a <span style="font-family: courier new">Web.config</span> in each subfolder that requires an overriding or more restrictive set of <span style="font-family: courier new">allow</span> and <span style="font-family: courier new">deny</span> rules, or you can actually specify <span style="font-family: courier new">location</span> elements in your <span style="font-family: courier new">Web.config</span>, as is shown in the following example (basically you could have several of these <span style="font-family: courier new">location</span> elements, each with their own <span style="font-family: courier new">authorization</span> rules):</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 200px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #0000ff">&lt;</span><span style="color: #800000">configuration</span><span style="color: #0000ff">&gt;</span><br />    <span style="color: #0000ff">&lt;</span><span style="color: #800000">location</span> <span style="color: #ff0000">path</span><span style="color: #0000ff">=&quot;Login.aspx&quot;</span><span style="color: #0000ff">&gt;</span><br />        <span style="color: #0000ff">&lt;</span><span style="color: #800000">system.web</span><span style="color: #0000ff">&gt;</span><br />            <span style="color: #0000ff">&lt;</span><span style="color: #800000">authorization</span><span style="color: #0000ff">&gt;</span><br />                <span style="color: #0000ff">&lt;</span><span style="color: #800000">allow</span> <span style="color: #ff0000">users</span><span style="color: #0000ff">=&quot;?&quot;</span> <span style="color: #0000ff">/&gt;</span><br />            <span style="color: #0000ff">&lt;/</span><span style="color: #800000">authorization</span><span style="color: #0000ff">&gt;</span><br />        <span style="color: #0000ff">&lt;/</span><span style="color: #800000">system.web</span><span style="color: #0000ff">&gt;</span><br />    <span style="color: #0000ff">&lt;/</span><span style="color: #800000">location</span><span style="color: #0000ff">&gt;</span><br /><span style="color: #0000ff">&lt;/</span><span style="color: #800000">configuration</span><span style="color: #0000ff">&gt;</span></pre></div><p>As far as I can tell, this sample configuration above isn&#8217;t necessary if you have specified your login page in the <span style="font-family: courier new">loginUrl</span> attribute of the <span style="font-family: courier new">authentication/forms</span> node like we did in the previous code snippet. But this sample is at least illustrative of the location-based authorization rules.</p><p>Personally, I decided to create a folder named<span style="font-family: courier new"> Public</span> in my site and I give it its own <span style="font-family: courier new">Web.config</span> that allows all users (including anonymous ones) access to the containing web pages. This folder currently contains the login, user account registration, account activation (a link included in the email sent upon registration), and password retrieval pages, all of which would need unrestricted access for anonymous users.</p><h3>Test Your Membership Provider</h3><p>With all of this now in place, you should be able to use the <span style="font-family: courier new">ASP.NET Website Administration Tool</span> launched from Visual Studio to create a few new user accounts. I mentioned how to launch this utility earlier in this series with a post titled <a href="http://murrayon.net/2009/01/aspnet-providers-getting-started.html">ASP.NET Providers - Getting Started</a>. Then you can double-check your membership system is working by logging in with your newly created credentials. Also, you can now create a user account registration page (utilizing the <span style="font-family: courier new">CreateUserWizard</span> control) and a password retrieval/reset page (using the <span style="font-family: courier new">PasswordRecovery</span> control). All of the controls I have named throughout this post are highly skinable and configurable via numerous attributes and templates; they also contain flexible task workflows that you can override or plug into by registering to any of several event listeners.</p><p>One other thing that needs to be done if you want to enable the email notification capabilities is to set the SMTP settings in your <font face="Courier New">Web.config</font>.&#160; Here is a snippet you would put right above the <font face="Courier New">system.web</font> node:</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 200px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #0000ff">&lt;</span><span style="color: #800000">system.net</span><span style="color: #0000ff">&gt;</span>
+    <span style="color: #0000ff">&lt;</span><span style="color: #800000">mailSettings</span><span style="color: #0000ff">&gt;</span>
+        <span style="color: #0000ff">&lt;</span><span style="color: #800000">smtp</span> <span style="color: #ff0000">from</span><span style="color: #0000ff">=&quot;service@website.com&quot;</span><span style="color: #0000ff">&gt;</span>
+            <span style="color: #0000ff">&lt;</span><span style="color: #800000">network</span> <span style="color: #ff0000">host</span><span style="color: #0000ff">=&quot;mail.domain.com&quot;</span> <span style="color: #ff0000">port</span><span style="color: #0000ff">=&quot;25&quot;</span>
+                     <span style="color: #ff0000">userName</span><span style="color: #0000ff">=&quot;...&quot;</span> <span style="color: #ff0000">password</span><span style="color: #0000ff">=&quot;...&quot;</span> <span style="color: #0000ff">/&gt;</span>
+        <span style="color: #0000ff">&lt;/</span><span style="color: #800000">smtp</span><span style="color: #0000ff">&gt;</span>
+    <span style="color: #0000ff">&lt;/</span><span style="color: #800000">mailSettings</span><span style="color: #0000ff">&gt;</span>
+<span style="color: #0000ff">&lt;/</span><span style="color: #800000">system.net</span><span style="color: #0000ff">&gt;</span></pre></div><h3>Membership API and MembershipInfo Class</h3><p>There is also a <span style="font-family: courier new">Membership</span> API and an accompanying <span style="font-family: courier new">MembershipInfo</span> class that you can call in order to retrieve and update user info from the database if you wanted to create your own custom controls or page logic. For instance, the following is code that I adapted <a title="Examining ASP.NET 2.0&#39;s Membership, Roles, and Profile - Part 11" href="http://aspnet.4guysfromrolla.com/articles/062508-1.aspx">from Part 11 of the tutorial I mentioned earlier</a> in the introductory post of this series; this code activates an account when a user clicks the link emailed to them during registration:</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 650px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #0000ff">public</span> <span style="color: #0000ff">partial</span> <span style="color: #0000ff">class</span> Verify : System.Web.UI.Page<br />{<br />    <span style="color: #0000ff">protected</span> <span style="color: #0000ff">void</span> Page_Load(<span style="color: #0000ff">object</span> sender, EventArgs e)<br />    {<br />        <span style="color: #008000">//Make sure valid querystring value was passed</span><br />        <span style="color: #0000ff">if</span> (<span style="color: #0000ff">string</span>.IsNullOrEmpty(Request.QueryString[<span style="color: #006080">&quot;ID&quot;</span>]) ||<br />            !Regex.IsMatch(Request.QueryString[<span style="color: #006080">&quot;ID&quot;</span>],<br />                <span style="color: #006080">@&quot;[0-9a-f]{8}\-([0-9a-f]{4}\-){3}[0-9a-f]{12}&quot;</span>))<br />        {<br />            InformationLabel.Text = <span style="color: #006080">&quot;An invalid ID value was passed &quot;</span> +<br />                <span style="color: #006080">&quot;in through the query string.&quot;</span>;<br />        }<br />        <span style="color: #0000ff">else</span><br />        {<br />            <span style="color: #008000">//ID exists and is kosher, approve user</span><br />            <span style="color: #008000">//Get the ID sent in on query string</span><br />            Guid userId = <span style="color: #0000ff">new</span> Guid(Request.QueryString[<span style="color: #006080">&quot;ID&quot;</span>]);<br /><br />            <span style="color: #008000">//Get user object</span><br />            MembershipUser userInfo = Membership.GetUser(userId);<br /><br />            <span style="color: #0000ff">if</span> (userInfo == <span style="color: #0000ff">null</span>)<br />            {<br />                <span style="color: #008000">//Could not find user!</span><br />                InformationLabel.Text = <span style="color: #006080">&quot;The user account could not &quot;</span> +<br />                    <span style="color: #006080">&quot;be found in the membership database.&quot;</span>;<br />            }<br />            <span style="color: #0000ff">else</span><br />            {<br />                <span style="color: #008000">//User is valid, approve them</span><br />                userInfo.IsApproved = <span style="color: #0000ff">true</span>;<br />                Membership.UpdateUser(userInfo);<br /><br />                <span style="color: #008000">//Display a message</span><br />                InformationLabel.Text = <span style="color: #006080">&quot;Your account has been &quot;</span> +<br />                    <span style="color: #006080">&quot;verified and you can now log into the site.&quot;</span>;<br />            }<br />        }<br />    }<br />}</pre></div><h3>Read On!</h3><p>Continue onward by reading the next blog post in this series found at the following link:</p><ul><li><a href="http://murrayon.net/2009/02/aspnet-providers-role-management.html">ASP.NET Providers - Role Management</a></li></ul>
+</span>  </div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -190,44 +253,6 @@ I needed to use the built-in authentication handling for only a single page and 
 
 </article>
 
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2008/12/01/correctly-using-random-number-generators/">Correctly Using Random Number Generators</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-12-01T17:13:00-07:00" pubdate data-updated="true">Dec 1<span>st</span>, 2008</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/algorithms/'>Algorithms</a>, <a class='category' href='/blog/categories/code-organization/'>Code Organization</a>, <a class='category' href='/blog/categories/error/'>Error</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2008/12/01/correctly-using-random-number-generators/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p>Today I read another guy&#8217;s blog post that reminded me of my own &quot;Aha!&quot; moment I had a while back with Random Number Generators.&#160; It&#8217;s something I will never forget about Random Number Generators but taken for granted, realizing that it might not be obvious to everyone how these objects are intended to be used.&#160; Here is the blog entry that I read about creating and seeding a Random Number Generator once:</p>  <p><a title="http://silverlight.net/blogs/msnow/archive/2008/12/01/silverlight-tip-of-the-day-77-creating-an-efficient-random-generator.aspx" href="http://silverlight.net/blogs/msnow/archive/2008/12/01/silverlight-tip-of-the-day-77-creating-an-efficient-random-generator.aspx">http://silverlight.net/blogs/msnow/archive/2008/12/01/silverlight-tip-of-the-day-77-creating-an-efficient-random-generator.aspx</a></p>  <p>However, I must admit that I think <a title="Mike Snow" href="http://silverlight.net/blogs/msnow/about.aspx">Mike Snow</a> should have titled his post something similar to the title of my post.&#160; And I will tell you why&#8230;</p> <span class='fullpost'> <p>In the MSDN documentation that Mike quotes, there is a key sentence everyone needs to take note of, as you can ignorantly introduce bugs into your code:</p>  <blockquote>   <p>&quot;As a result, different Random objects that are created in close succession by a call to the default constructor will have identical default seed values and, therefore, will produce identical sets of random numbers.&quot;</p> </blockquote>  <p>I have actually build a piece of code where this has happened.&#160; I wrote a <font face="Courier New">for</font> loop that iterated quickly enough that the construction of the <font face="Courier New">Random</font> objects resulted in identical random number seeds.&#160; The result was that I asked for several random numbers in quick succession and got the same exact &quot;random&quot; number across all my requests each time I ran the code.&#160; So not only did I get &quot;identical sets of random numbers,&quot; but I got identical random numbers.</p>  <p>As Mike Snow and the MSDN documentation states (and from my own experience), Random Number Generators are designed to be constructed once and intended to live long and prosper within your application.&#160; It can serve <u>all</u> of the random number needs within your application (i.e., you don&#8217;t need a different Random Number Generator for different use cases or different object types).&#160; All you need is a one-time created random number seed and then you can forever generate random numbers of any type and within any range of numbers.&#160; I can&#8217;t currently think of a situation when you may need to reseed your Random Number Generator.&#160; Let me know if you think of one.</p> </span>  </div>
-
-		
-		
-	</div>
-
-</article>
-
 <nav id="pagenavi">
     
         <a href="/blog/page/6/" class="prev">Prev</a>
@@ -269,6 +294,18 @@ Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Sha
 
 
 
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-36228026-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
 
 
 		</div>
@@ -278,9 +315,18 @@ Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Sha
 </div>
 <h1><a href="/">Mike Murray</a></h1>
 <nav id="main-nav"><ul class="main">
-	<li><a href="/">Blog</a></li>
-	<li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
 </ul>
+
+<br />
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:mkmurray.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+
 </nav>
 <br/>
 <h3 class="alignleft">please code responsibly</h3>
