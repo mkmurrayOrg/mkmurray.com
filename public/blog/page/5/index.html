@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="It appears that the IIS team at Microsoft has officially completed a 1.0 version of the deployment utility I mentioned at the end of my previous &hellip;">
+	<meta name="description" content="This is just a test post to see if I&#8217;m smart enough to add the javascript SyntaxHighlighter to my blog. ;) public int ScoreDice(int[] &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -46,6 +46,65 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2009/10/23/trying-out-syntaxhighlighter/">Trying Out SyntaxHighlighter</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-10-23T19:54:00-06:00" pubdate data-updated="true">Oct 23<span>rd</span>, 2009</time></div>
+		<div class="tags">
+
+</div>
+		
+			<span class="comments"><a href="/blog/2009/10/23/trying-out-syntaxhighlighter/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>This is just a test post to see if I&#8217;m smart enough to add the javascript <a href="http://alexgorbatchev.com/wiki/SyntaxHighlighter:Demo">SyntaxHighlighter</a> to my blog. ;)</p>
+
+<pre class="brush: csharp">
+public int ScoreDice(int[] selectedDice)
+{
+    int score = 0;
+
+    foreach (IScoringCombo scoreCombo in ScoringCombos)
+    {
+        IEnumerable&lt;int&gt; satisfyingIndices = scoreCombo.SatisfiedBy(selectedDice);
+
+        if (satisfyingIndices.Count() &gt; 0)
+        {
+            score += scoreCombo.ScoreDice(selectedDice);
+
+            // Remove the dice at satisfyingIndices from selectedDice collection so not double-scored
+            selectedDice = selectedDice
+                .Select((value, index) =&gt; index)
+                .Except(satisfyingIndices)
+                .ToArray();
+        }
+    }
+
+    return score;
+}
+</pre></div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -192,52 +251,6 @@
 	<div class="entry-content">
 		<div class='post'>
 <p>I just noticed in today&#8217;s Tuesday round of Microsoft Updates that there is an optional software download for PowerShell 1.0 on Windows XP.&#160; PowerShell has been one of those things that I really want to learn, but just haven&#8217;t devoted the time.&#160; I desperately would like to replace my use of the Command Prompt with Windows PowerShell.</p>  <p>PowerShell really is more than just your regular <a href="http://en.wikipedia.org/wiki/Command_line_interpreter">Command Line Interpreter</a> that you have been used to, especially compared to the <a href="http://en.wikipedia.org/wiki/Command_Prompt_(Windows)">Windows Command Prompt</a>.&#160; You get the power of the command line shells that you may have tried out in Linux environments, but it really does go beyond those as well.&#160; PowerShell is (from Wikipedia) <font face="Courier New">&quot;Microsoft&#8217;s new extensible command line shell and task-based scripting technology.&quot;</font>&#160; Here is a quote from an MSDN document that better explains the advantages PowerShell brings:</p> <span class='fullpost'> <blockquote>   <p>&quot;Unlike most shells, which accept and return text, Windows PowerShell is built on top of the .NET common language runtime (CLR) and the .NET Framework, and accepts and returns .NET objects. This fundamental change in the environment brings entirely new tools and methods to the management and configuration of Windows.</p>   <p>&quot;Windows PowerShell introduces the concept of a cmdlet (pronounced &quot;command-let&quot;), a simple, single-function command-line tool built into the shell. You can use each cmdlet separately, but their power is realized when you use these simple tools in combination to perform complex tasks. Windows PowerShell includes more than one hundred basic core cmdlets, and you can write your own cmdlets and share them with other users.</p>   <p>&quot;Like many shells, Windows PowerShell gives you access to the file system on the computer. In addition, Windows PowerShell providers enable you to access other data stores, such as the registry and the digital signature certificate stores, as easily as you access the file system.&quot;</p> </blockquote>  <p>If you want to know more about PowerShell, I would suggest the following readings:</p>  <ul>   <li><a href="http://en.wikipedia.org/wiki/Windows_PowerShell">Wikipedia - Windows PowerShell</a></li>    <li><a href="http://msdn.microsoft.com/en-us/library/aa973757(VS.85).aspx">MSDN - Windows PowerShell Getting Started Guide</a></li> </ul>  <p>Also, <a href="http://codebetter.com/members/james.kovacs.aspx">James Kovacs</a> from <a href="http://codebetter.com/">CodeBetter.com</a> has been doing <a href="http://codebetter.com/blogs/james.kovacs/archive/tags/PowerShell/default.aspx">a series of posts on the basics of PowerShell</a> that is a great light introduction to how a developer would find the tool most useful.&#160; Here are two of the starting posts from that series:</p>  <ul>   <li><a href="http://codebetter.com/blogs/james.kovacs/archive/2009/02/01/getting-started-with-powershell-developer-edition.aspx">Getting Started with PowerShell - Developer Edition</a></li>    <li><a href="http://codebetter.com/blogs/james.kovacs/archive/2009/02/07/powershell-processes-and-piping.aspx">PowerShell, Processes, and Piping</a></li> </ul> </span>  </div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2009/03/02/the-yield-keyword-in-c-aka-execution-control-hot-potato/">The &#8220;Yield&#8221; Keyword in C# (AKA Execution Control Hot Potato)</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-03-02T17:51:00-07:00" pubdate data-updated="true">Mar 2<span>nd</span>, 2009</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/linq/'>LINQ</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2009/03/02/the-yield-keyword-in-c-aka-execution-control-hot-potato/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p>I actually read about this topic a while back when I saw a C# code sample containing an unfamiliar keyword &#8211; <font face="Courier New">yield</font>.&#160; Well just today I saw another code sample using this keyword again, and had since forgotten everything I had learned.&#160; As I Googled the topic again, I happened across the same article I read back then, a terrific blog post by <a href="http://flimflan.com/blog/">Joshua Flanagan</a>.&#160; Here is a link to Joshua&#8217;s simple introduction to the <font face="Courier New">yield</font> C# keyword:</p>  <p><a href="http://flimflan.com/blog/ThePowerOfYieldReturn.aspx">The power of yield (return)</a></p>  <p>I would also suggest the following MSDN article as well:</p>  <p><a href="http://msdn.microsoft.com/en-us/library/9k7k7cf0.aspx">yield (C# Reference)</a></p>  <p>I&#8217;ll give you the gist of this .NET 2.0 feature.&#160; If you have a method that returns an iterative collection and the consumers of your function will only need <a title="foreach, in (C# Reference)" href="http://msdn.microsoft.com/en-us/library/ttw7t8t6.aspx"><font face="Courier New">foreach</font></a>, read-only access to that collection, then it is good practice to have your method return the universal <font face="Courier New">IEnumerable</font> collection (as opposed to you arbitrarily selecting an implementation-specific collection to be forced upon the consumers of your code).&#160; In C#, when you are returning an <font face="Courier New">IEnumerable</font> collection from a method, you are allowed to use the <font face="Courier New">yield</font> keyword in order to transform your method into what Microsoft calls an &quot;iterator block&quot;.&#160; Here is a quote from the MSDN article I mentioned above to explain this phrase and the <font face="Courier New">yield</font> keyword:</p> <span class='fullpost'> <blockquote>   <p>&quot;The <strong>yield</strong> keyword signals to the compiler that the method in which it appears is an iterator block.&#160; The compiler generates a class to implement the behavior that is expressed in the iterator block.&#160; In the iterator block, the <strong>yield</strong> keyword is used together with the <strong>return</strong> keyword to provide a value to the enumerator object.&#160; This is the value that is returned, for example, in each loop of a <strong>foreach</strong> statement.&#160; The <strong>yield</strong> keyword is also used with <strong>break</strong> to signal the end of iteration.&quot;</p> </blockquote>  <p>You are essentially building an enumerator (or iterator), and with each iteration of your <font face="Courier New">foreach</font> loop in the calling, consuming code, you are executing your method containing the iterator block until it reaches a <font face="Courier New">yield return</font> statement.&#160; At this point, only one item at a time in the collection is returned back to the consuming <font face="Courier New">foreach</font> loop for immediate logic execution by the body of the loop.&#160; On the next iteration of the consuming <font face="Courier New">foreach</font> loop, the method containing the iterator block will be called again and another single item in the collection will be returned for similar logic execution.</p>  <p>This game of execution control <a href="http://en.wikipedia.org/wiki/Hot_Potato_(game)">Hot Potato</a> has its benefits, in that you can stop the flip-flop of execution control when the music has stopped.&#160; In this analogy, I am comparing the &quot;music stopping&quot; to your code satisfying some logic that makes the rest of your <font face="Courier New">foreach</font> loop iterations unnecessary (perhaps you have found the one item in the collection you were looking for by meeting the sufficient requirements of an <font face="Courier New">if</font> statement).&#160; The benefit is that when you <font face="Courier New"><a title="break (C# Reference)" href="http://msdn.microsoft.com/en-us/library/adbctzc4.aspx">break</a></font> out of the consuming <font face="Courier New">foreach</font> loop before completing the iterations, you prevent wasteful code execution and memory use.&#160; This feature prevents one piece of code from fully populating a potentially large collection of items, just to have another consuming piece of code iterate partially through the list and then prematurely exit.&#160; Consider the savings especially when adding each item to the collection may be computationally intensive or if each item in the collection is itself a very large data structure.&#160; In the Hot Potato analogy, this would be as if the kids in the circle who didn&#8217;t touch the &quot;hot potato&quot; never existed in the game, saving floor space and unnecessary tosses to people you don&#8217;t really want to target for humiliating removal from the game.</p>  <p>For good sample code snippets of using the <font face="Courier New">yield</font> keyword, see the links provided above.</p>  <p>I hope to identify situations in the near future where I could benefit from using this C# keyword.&#160; Hopefully then I won&#8217;t forget a year down the road from now and then have to re-search the internet for Joshua&#8217;s blog post and the MSDN article to remind myself what I already learned.</p>  <p><strong><u>FOLLOWUP (03/26/09)</u></strong>:&#160; So I&#8217;m not sure how I missed it, but it took reading a very recent article by <a href="http://www.4guysfromrolla.com/ScottMitchell.shtml">Scott Mitchell</a> of <a href="http://www.4guysfromrolla.com/">4GuysFromRolla.com</a> to understand the real reason the <font face="Courier New">yield</font> keyword was introduced.&#160; The introduction of this keyword in .NET 2.0 was most helpful in the case of fulfilling the requirements of implementing the <font face="Courier New">IEnumerable</font> interface, which typically required you to create a sub-class that implemented <font face="Courier New">IEnumerator</font>.&#160; In many cases, it allowed you to take about 50 lines of code and turn it into 2 lines of code using the <font face="Courier New">yield</font> keyword.&#160; The introduction of LINQ brought heavy reliance on enumerating using the <font face="Courier New">yield</font> keyword in order to <a href="http://en.wikipedia.org/wiki/Pipeline_(software)">pipeline</a> <a href="http://en.wikipedia.org/wiki/Language_Integrated_Query#Standard_Query_Operators">query operators</a> together.&#160; Scott Mitchell takes you through this whole journey, tying all of the loose ends together to create a complete history of this keyword and how it&#8217;s most commonly utilized.&#160; Please visit the following article to get the whole picture:</p>  <ul>   <li><a href="http://aspnet.4guysfromrolla.com/articles/032509-1.aspx">An Extensive Examination of LINQ: The Ins and Outs of Query Operators</a></li> </ul> </span>  </div>
-<h2>Comments</h2>
-<div class='comments'>
-<div class='comment'>
-<div class='author'>Esteban Araya</div>
-<div class='content'>
-Yield definitely seems like a more elegant way to build collections. I&#8217;ve used yield to generate a list of N random elements. Cool stuff.</div>
-</div>
-</div>
 
 		
 		

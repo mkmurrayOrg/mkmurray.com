@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="So I don&#8217;t think I want to get into the details of why we have a solution with over 50,000 unchanging content files in it, but basically we &hellip;">
+	<meta name="description" content="So after being able to successfully build that large deployment project I was talking about by using the 3GB switch, a day or two later I began &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -46,6 +46,44 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2007/12/18/-unrecoverable-build-error-when-building-very-large-vs-deployment-project/">&#8220;Unrecoverable Build Error&#8221; When Building Very Large vs Deployment Project</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2007-12-18T15:07:00-07:00" pubdate data-updated="true">Dec 18<span>th</span>, 2007</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/build/'>Build</a>, <a class='category' href='/blog/categories/deployment-and-installers/'>Deployment and Installers</a>, <a class='category' href='/blog/categories/error/'>Error</a>, <a class='category' href='/blog/categories/msi/'>MSI</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2007/12/18/-unrecoverable-build-error-when-building-very-large-vs-deployment-project/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>So after being able to successfully build that large deployment project I was talking about by <a title="Building a Monster VS 2005 (or 2008) Deployment Project" href="http://murrayon.net/2007/12/building-monster-vs-2005-or-2008.html">using the 3GB switch</a>, a day or two later I began getting an &quot;<font face="Courier New">Unrecoverable build error</font>&quot; message accompanied with a &quot;<font face="Courier New">Send Error Report</font>&quot; dialog.&#160; It didn&#8217;t kill the IDE process, but did stop the installer build.&#160; I verified that I was able to build other deployment and non-deployment projects without any problems.</p> <span class='fullpost'> <p>So after searching around, I tried a few solutions people said helped them solve the problem.&#160; Some of the simple and straight forward ones I tried were simply restarting the IDE and doing a clean on the solution; I even resorted to a machine reboot.&#160; I next tried all of the applicable solutions from this Microsoft article:&#160; <a title="http://support.microsoft.com/kb/329214" href="http://support.microsoft.com/kb/329214">http://support.microsoft.com/kb/329214</a> (or this one says the same thing basically:&#160; <a title="http://msdn2.microsoft.com/en-us/library/ms228633(VS.80).aspx" href="http://msdn2.microsoft.com/en-us/library/ms228633(VS.80).aspx">http://msdn2.microsoft.com/en-us/library/ms228633(VS.80).aspx</a>).&#160; I also found another guy that said to try doing a <font face="Courier New">regsvr32</font> on <font face="Courier New">ole32.dll</font>.&#160; By the way, here is the typical location of <font face="Courier New">mergemod.dll</font>:&#160; <font face="Courier New">C:\Program Files\Common Files\Microsoft Shared\MSI Tools\</font> and here is the typical location of <font face="Courier New">ole32.dll</font>:&#160; <font face="Courier New">C:\WINDOWS\System32\</font>.</p>  <p>None of it seemed to help my situation.&#160; So I tried uninstalling Visual Studio, and then uninstalling all versions of the .NET Framework with the help of this handy tool:&#160; <a title="http://blogs.msdn.com/astebner/archive/2006/05/30/611355.aspx" href="http://blogs.msdn.com/astebner/archive/2006/05/30/611355.aspx">http://blogs.msdn.com/astebner/archive/2006/05/30/611355.aspx</a>.Then I went ahead and reinstalled everything and gave it a nice machine reboot.&#160; Even this charade proved unsuccessful.</p>  <p>The good news in all of this was that I am still currently the only developer that cannot build this deployment project.&#160; So it is definitely something with my machine that is the problem and not with the actual deployment project itself (we were concerned for a little while about the &quot;multiple folders with the same name&quot; issue mentioned in the Microsoft articles).</p>  <p>So when I get time, I may try to do an OS reinstall and be extra careful of what and when stuff gets installed.&#160; Luckily I have got my personal files on a separate partition, so only the system partition will have to be blown away.&#160; If this proves successful, which it should, I will make an additional note to this post.&#160; Good luck if you ever get this same problem.</p>  <p><strong><u>FOLLOWUP (01/18/08)</u></strong>:&#160; So it turns out that my computer actually crashed a few days later.&#160; When I formatted my hard drive and did a fresh install of Windows, everything seemed to be fine again so I didn&#8217;t question the hardware anymore.&#160; Then I turned on the <font face="Courier New">3GB</font> Windows switch for Windows and everything went haywire.&#160; I removed 2 of my 4 GB of RAM and then everything was fine.&#160; I tried all kinds of combinations with different memory sticks in different memory slots with different totals of RAM.&#160; It seemed I could only run in <font face="Courier New">3GB</font> Windows mode with 2 GB of RAM; however, in normal Windows mode, I could successfully run with all 4 GB of RAM.&#160; So I opted for the 4 GB and will continue to allow someone else to build the monster deployment project, which he has been able to do every time without any issues using the <font face="Courier New">3GB</font> Windows switch.</p>  <p><u><strong>FOLLOWUP (06/17/08)</strong></u>:&#160; For the last 6 months, I have tried two or three times to get another machine to build these installers using the <font face="Courier New">3GB</font> Windows boot switch and modifying the <font face="Courier New">DevEnv.exe</font> executable to be &quot;<font face="Courier New">Large Address Aware</font>&quot;; all of my attempts have been unsuccessful.&#160; Currently, we only have one guy&#8217;s laptop that can handle the build and is running stable with the <font face="Courier New">3GB</font> switch (and we have no clue why it works).&#160; He has been using a local account on his machine for like 9 months and he just recently switched to a domain account.&#160; The interesting thing is that we could no longer build the installers anymore.&#160; But when we went back to using a regular local account (not on the domain), his laptop was able to build the installers again.&#160; With that knowledge, I just now tried building the installers on my machine using a local account; unfortunately, it was unsuccessful.&#160; However, I also don&#8217;t have the <font face="Courier New">3GB</font> switch turned on.&#160; Perhaps the combination of the two is why his laptop is able to build the installers.&#160; I may finish this test of my hypothesis soon, but not right now.</p>  <p><strong><u>FOLLOWUP (06/18/08)</u></strong>:&#160; <strong>I got it working!!!</strong>&#160; The problem was being logged in with a domain user account for some reason.&#160; I am really not sure why; there must be something different about using a domain user account (perhaps during the login process or some restriction set on our domain user accounts or policies).&#160; I did test it without the changes involving the <font face="Courier New">3GB</font> switch, but they are necessary as well.&#160; In fact in my setup, I also didn&#8217;t put the box on the domain at all, just to be sure.&#160; The box runs very stable as far as I can tell with these modifications to Windows and the Visual Studio executable.</p> </span>  </div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">

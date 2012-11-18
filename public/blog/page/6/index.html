@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="I developed an ASP.NET site connecting to a local SQL Server Express 2005 instance on my development box.&#160; To further my informal testing, I &hellip;">
+	<meta name="description" content="I actually read about this topic a while back when I saw a C# code sample containing an unfamiliar keyword &#8211; yield.&#160; Well just today I &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -46,6 +46,52 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2009/03/02/the-yield-keyword-in-c-aka-execution-control-hot-potato/">The &#8220;Yield&#8221; Keyword in C# (AKA Execution Control Hot Potato)</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-03-02T17:51:00-07:00" pubdate data-updated="true">Mar 2<span>nd</span>, 2009</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/linq/'>LINQ</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2009/03/02/the-yield-keyword-in-c-aka-execution-control-hot-potato/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>I actually read about this topic a while back when I saw a C# code sample containing an unfamiliar keyword &#8211; <font face="Courier New">yield</font>.&#160; Well just today I saw another code sample using this keyword again, and had since forgotten everything I had learned.&#160; As I Googled the topic again, I happened across the same article I read back then, a terrific blog post by <a href="http://flimflan.com/blog/">Joshua Flanagan</a>.&#160; Here is a link to Joshua&#8217;s simple introduction to the <font face="Courier New">yield</font> C# keyword:</p>  <p><a href="http://flimflan.com/blog/ThePowerOfYieldReturn.aspx">The power of yield (return)</a></p>  <p>I would also suggest the following MSDN article as well:</p>  <p><a href="http://msdn.microsoft.com/en-us/library/9k7k7cf0.aspx">yield (C# Reference)</a></p>  <p>I&#8217;ll give you the gist of this .NET 2.0 feature.&#160; If you have a method that returns an iterative collection and the consumers of your function will only need <a title="foreach, in (C# Reference)" href="http://msdn.microsoft.com/en-us/library/ttw7t8t6.aspx"><font face="Courier New">foreach</font></a>, read-only access to that collection, then it is good practice to have your method return the universal <font face="Courier New">IEnumerable</font> collection (as opposed to you arbitrarily selecting an implementation-specific collection to be forced upon the consumers of your code).&#160; In C#, when you are returning an <font face="Courier New">IEnumerable</font> collection from a method, you are allowed to use the <font face="Courier New">yield</font> keyword in order to transform your method into what Microsoft calls an &quot;iterator block&quot;.&#160; Here is a quote from the MSDN article I mentioned above to explain this phrase and the <font face="Courier New">yield</font> keyword:</p> <span class='fullpost'> <blockquote>   <p>&quot;The <strong>yield</strong> keyword signals to the compiler that the method in which it appears is an iterator block.&#160; The compiler generates a class to implement the behavior that is expressed in the iterator block.&#160; In the iterator block, the <strong>yield</strong> keyword is used together with the <strong>return</strong> keyword to provide a value to the enumerator object.&#160; This is the value that is returned, for example, in each loop of a <strong>foreach</strong> statement.&#160; The <strong>yield</strong> keyword is also used with <strong>break</strong> to signal the end of iteration.&quot;</p> </blockquote>  <p>You are essentially building an enumerator (or iterator), and with each iteration of your <font face="Courier New">foreach</font> loop in the calling, consuming code, you are executing your method containing the iterator block until it reaches a <font face="Courier New">yield return</font> statement.&#160; At this point, only one item at a time in the collection is returned back to the consuming <font face="Courier New">foreach</font> loop for immediate logic execution by the body of the loop.&#160; On the next iteration of the consuming <font face="Courier New">foreach</font> loop, the method containing the iterator block will be called again and another single item in the collection will be returned for similar logic execution.</p>  <p>This game of execution control <a href="http://en.wikipedia.org/wiki/Hot_Potato_(game)">Hot Potato</a> has its benefits, in that you can stop the flip-flop of execution control when the music has stopped.&#160; In this analogy, I am comparing the &quot;music stopping&quot; to your code satisfying some logic that makes the rest of your <font face="Courier New">foreach</font> loop iterations unnecessary (perhaps you have found the one item in the collection you were looking for by meeting the sufficient requirements of an <font face="Courier New">if</font> statement).&#160; The benefit is that when you <font face="Courier New"><a title="break (C# Reference)" href="http://msdn.microsoft.com/en-us/library/adbctzc4.aspx">break</a></font> out of the consuming <font face="Courier New">foreach</font> loop before completing the iterations, you prevent wasteful code execution and memory use.&#160; This feature prevents one piece of code from fully populating a potentially large collection of items, just to have another consuming piece of code iterate partially through the list and then prematurely exit.&#160; Consider the savings especially when adding each item to the collection may be computationally intensive or if each item in the collection is itself a very large data structure.&#160; In the Hot Potato analogy, this would be as if the kids in the circle who didn&#8217;t touch the &quot;hot potato&quot; never existed in the game, saving floor space and unnecessary tosses to people you don&#8217;t really want to target for humiliating removal from the game.</p>  <p>For good sample code snippets of using the <font face="Courier New">yield</font> keyword, see the links provided above.</p>  <p>I hope to identify situations in the near future where I could benefit from using this C# keyword.&#160; Hopefully then I won&#8217;t forget a year down the road from now and then have to re-search the internet for Joshua&#8217;s blog post and the MSDN article to remind myself what I already learned.</p>  <p><strong><u>FOLLOWUP (03/26/09)</u></strong>:&#160; So I&#8217;m not sure how I missed it, but it took reading a very recent article by <a href="http://www.4guysfromrolla.com/ScottMitchell.shtml">Scott Mitchell</a> of <a href="http://www.4guysfromrolla.com/">4GuysFromRolla.com</a> to understand the real reason the <font face="Courier New">yield</font> keyword was introduced.&#160; The introduction of this keyword in .NET 2.0 was most helpful in the case of fulfilling the requirements of implementing the <font face="Courier New">IEnumerable</font> interface, which typically required you to create a sub-class that implemented <font face="Courier New">IEnumerator</font>.&#160; In many cases, it allowed you to take about 50 lines of code and turn it into 2 lines of code using the <font face="Courier New">yield</font> keyword.&#160; The introduction of LINQ brought heavy reliance on enumerating using the <font face="Courier New">yield</font> keyword in order to <a href="http://en.wikipedia.org/wiki/Pipeline_(software)">pipeline</a> <a href="http://en.wikipedia.org/wiki/Language_Integrated_Query#Standard_Query_Operators">query operators</a> together.&#160; Scott Mitchell takes you through this whole journey, tying all of the loose ends together to create a complete history of this keyword and how it&#8217;s most commonly utilized.&#160; Please visit the following article to get the whole picture:</p>  <ul>   <li><a href="http://aspnet.4guysfromrolla.com/articles/032509-1.aspx">An Extensive Examination of LINQ: The Ins and Outs of Query Operators</a></li> </ul> </span>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Esteban Araya</div>
+<div class='content'>
+Yield definitely seems like a more elegant way to build collections. I&#8217;ve used yield to generate a list of N random elements. Cool stuff.</div>
+</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -304,79 +350,6 @@ Very good question.<BR/><BR/>In my particular use case, the need to delete a use
 Has anybody came up with a way to automatically delete custom profile table along with the rest of the membership information?</div>
 </div>
 </div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2009/02/05/asp-net-providers-role-management/">ASP.NET Providers - Role Management</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-02-05T16:45:00-07:00" pubdate data-updated="true">Feb 5<span>th</span>, 2009</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/asp-net/'>ASP.NET</a>, <a class='category' href='/blog/categories/asp-net-providers-series/'>ASP.NET Providers Series</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/security/'>Security</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>, <a class='category' href='/blog/categories/web/'>Web</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2009/02/05/asp-net-providers-role-management/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p>This blog post is part of a series about the ASP.NET Providers (namely Membership, Role Management, and Profile). The introductory post in the series can be found at the following link, which introduces the <a href="http://en.wikipedia.org/wiki/Provider_model">Provider Model pattern</a> and gives a personal example of an implementation I have been working on:</p>  <ul>   <li><a href="http://murrayon.net/2009/01/aspnet-providers-membership-role-and.html">ASP.NET Providers - Membership, Role, and Profile</a> </li> </ul>  <p>This post will deal with adding Role Management to your website.</p> <span class='fullpost'> <h3>Role Management</h3>  <p>Creating roles and assigning users accounts to them is a great way to group users together under similar permissions and abilities.&#160; The ASP.NET Roles Management service allows you to restrict page viewing (or even just certain regions of a page) based on roles you define; you can even apply roles security to specific methods or classes using <a title="Introduction to Attributes (C#)" href="http://msdn.microsoft.com/en-us/library/aa288059(VS.71).aspx">attributes</a>, which I will show an example of a little later.</p>  <p>In order to add role management to your site, add an XML fragment like the one below; the process is much the same as it was with the <a title="ASP.NET Providers - Membership" href="http://murrayon.net/2009/01/aspnet-providers-membership.html">Membership Provider</a>:</p>  <div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 300px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #0000ff">&lt;</span><span style="color: #800000">configuration</span><span style="color: #0000ff">&gt;</span>
-    <span style="color: #0000ff">&lt;</span><span style="color: #800000">connectionStrings</span><span style="color: #0000ff">&gt;</span>
-        <span style="color: #0000ff">&lt;</span><span style="color: #800000">add</span> <span style="color: #ff0000">name</span><span style="color: #0000ff">=&quot;MyDB&quot;</span> <span style="color: #ff0000">connectionString</span><span style="color: #0000ff">=&quot;...&quot;</span> <span style="color: #0000ff">/&gt;</span>
-    <span style="color: #0000ff">&lt;/</span><span style="color: #800000">connectionStrings</span><span style="color: #0000ff">&gt;</span>
-    <span style="color: #0000ff">&lt;</span><span style="color: #800000">system.web</span><span style="color: #0000ff">&gt;</span>
-        ... authentication &amp; authorization settings ...
-        <span style="color: #0000ff">&lt;</span><span style="color: #800000">roleManager</span> <span style="color: #ff0000">enabled</span><span style="color: #0000ff">=&quot;true&quot;</span>
-                     <span style="color: #ff0000">defaultProvider</span><span style="color: #0000ff">=&quot;ConfiguredRoleProvider&quot;</span><span style="color: #0000ff">&gt;</span>
-            <span style="color: #0000ff">&lt;</span><span style="color: #800000">providers</span><span style="color: #0000ff">&gt;</span>
-                <span style="color: #0000ff">&lt;</span><span style="color: #800000">add</span> <span style="color: #ff0000">name</span><span style="color: #0000ff">=&quot;ConfiguredRoleProvider&quot;</span>
-                     <span style="color: #ff0000">type</span><span style="color: #0000ff">=&quot;System.Web.Security.SqlRoleProvider&quot;</span>
-                     <span style="color: #ff0000">connectionStringName</span><span style="color: #0000ff">=&quot;MyDB&quot;</span>
-                     <span style="color: #ff0000">applicationName</span><span style="color: #0000ff">=&quot;SampleWebSite&quot;</span> <span style="color: #0000ff">/&gt;</span>
-            <span style="color: #0000ff">&lt;/</span><span style="color: #800000">providers</span><span style="color: #0000ff">&gt;</span>
-        <span style="color: #0000ff">&lt;/</span><span style="color: #800000">roleManager</span><span style="color: #0000ff">&gt;</span>
-    <span style="color: #0000ff">&lt;/</span><span style="color: #800000">system.web</span><span style="color: #0000ff">&gt;</span>
-<span style="color: #0000ff">&lt;/</span><span style="color: #800000">configuration</span><span style="color: #0000ff">&gt;</span></pre></div><p><strong><u>WARNING</u>: </strong>According to Microsoft, you should <strong><u>never</u></strong> use the default provider settings and should <strong><u>always</u></strong> add a new, configured provider; in addition you <strong><u>must</u></strong> be sure to specify the <font face="Courier New">applicationName</font> attribute! See <a href="http://weblogs.asp.net/scottgu/archive/2006/04/22/Always-set-the-_2200_applicationName_2200_-property-when-configuring-ASP.NET-2.0-Membership-and-other-Providers.aspx">Scott Guthrie&#8217;s blog post on this topic</a> for more details. Apparently, you can also use a value of <font face="Courier New">&quot;/&quot;</font> for the <font face="Courier New">applicationName</font> and it will use the root application name.</p><p>Role names can be used in the <font face="Courier New">Web.config</font> in the same place we used the user class wildcard characters (namely, <font face="Courier New">*</font> for all users and <font face="Courier New">?</font> for anonymous users); the following sample fragment would go under the <font face="Courier New">system.web</font> node:</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 200px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #0000ff">&lt;</span><span style="color: #800000">authorization</span><span style="color: #0000ff">&gt;</span>
-    <span style="color: #0000ff">&lt;</span><span style="color: #800000">deny</span> <span style="color: #ff0000">users</span><span style="color: #0000ff">=&quot;BannedUsers,?&quot;</span> <span style="color: #0000ff">/&gt;</span>
-    <span style="color: #0000ff">&lt;</span><span style="color: #800000">allow</span> <span style="color: #ff0000">users</span><span style="color: #0000ff">=&quot;PremiumUsers&quot;</span> <span style="color: #0000ff">/&gt;</span>
-<span style="color: #0000ff">&lt;/</span><span style="color: #800000">authorization</span><span style="color: #0000ff">&gt;</span></pre></div><p>Role names can be defined by using the <font face="Courier New">ASP.NET Website Administration Tool</font> launched from Visual Studio that I referred to earlier in this series with a post titled <a href="http://murrayon.net/2009/01/aspnet-providers-getting-started.html">ASP.NET Providers - Getting Started</a>.&#160; You can also use this utility to assign users to one or more roles.&#160; Roles can be programmatically assigned and verified in code as well, using the provided <font face="Courier New">Roles</font> .NET API.</p><h3>Attribute-based Role Management</h3><p>In order to put authorization rules on classes or methods, you use the attribute named <font face="Courier New">PrincipalPermission</font>.&#160; Here is a sample that contains a method only accessible by a user with the username of <font face="Courier New">administrator</font>&#160;<u>AND</u> in the role group <font face="Courier New">Admin</font>:</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 200px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none">[PrincipalPermission(SecurityAction.Demand, Name=<span style="color: #006080">&quot;administrator&quot;</span>, Role=<span style="color: #006080">&quot;Admin&quot;</span>)]
-<span style="color: #0000ff">public</span> <span style="color: #0000ff">void</span> SomeMethod(...)
-{
-    ...
-}</pre></div><p>The <u>OR</u> version of the above logic (meaning the user account being verified need only satisfy one of these authorization rules) would be represented like this:</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 200px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none">[PrincipalPermission(SecurityAction.Demand, Name=<span style="color: #006080">&quot;administrator&quot;</span>)]
-[PrincipalPermission(SecurityAction.Demand, Role=<span style="color: #006080">&quot;Admin&quot;</span>)]
-<span style="color: #0000ff">public</span> <span style="color: #0000ff">void</span> SomeOtherMethod(...)
-{
-    ...
-}</pre></div><p>Here is an interesting sample that restricts a page to authenticated users (those not visiting anonymously); you would put the attribute on the code-behind of an ASPX page, like this example for <font face="Courier New">SomePage.aspx</font>:</p><div style="border-right: gray 1px solid; padding-right: 4px; border-top: gray 1px solid; padding-left: 4px; font-size: 8pt; padding-bottom: 4px; margin: 20px 0px 10px; border-left: gray 1px solid; width: 97.5%; cursor: text; max-height: 200px; line-height: 12pt; padding-top: 4px; border-bottom: gray 1px solid; font-family: consolas, &#39;Courier New&#39;, courier, monospace; background-color: #f4f4f4"><pre style="padding-right: 0px; padding-left: 0px; font-size: 8pt; padding-bottom: 0px; margin: 0em; width: 100%; color: black; border-top-style: none; line-height: 12pt; padding-top: 0px; font-family: consolas, &#39;Courier New&#39;, courier, monospace; border-right-style: none; border-left-style: none; background-color: #f4f4f4; border-bottom-style: none"><span style="color: #0000ff">using</span> System.Security.Permissions;
-
-[PrincipalPermission(SecurityAction.Demand, Authenticated=<span style="color: #0000ff">true</span>)]
-<span style="color: #0000ff">public</span> <span style="color: #0000ff">partial</span> <span style="color: #0000ff">class</span> SomePage : System.Web.UI.Page
-{
-    ...
-}</pre></div><p>In all of these cases, if the authorization criteria is not met, a <font face="Courier New">SecurityException</font> is thrown.&#160; You would want to catch that exception and perform alternate logic or display a more user-friendly error message.</p><h3>Read On!</h3><p>Continue onward by reading the next blog post in this series found at the following link:</p><ul><li><a href="http://murrayon.net/2009/02/aspnet-providers-profile.html">ASP.NET Providers - Profile</a> </li></ul>
-</span>  </div>
 
 		
 		

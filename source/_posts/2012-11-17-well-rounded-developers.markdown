@@ -1,0 +1,60 @@
+---
+layout: post
+title: "Well-Rounded Developers"
+date: 2012-11-17 19:32
+comments: true
+categories:
+ - Job Satisfaction
+ - Self-Improvement
+---
+
+I had the opportunity this week to talk with some terrific Computer Science
+students nearing graduation and who were beginning to look for employment. It
+provided me the chance to put into words the amazing culture and environment
+that exists at my workplace. The software development team at [Extend
+Health](https://www.extendhealth.com/) is second to none in both talent and
+passion for creating clean, modular code that is maintainable because of its
+extensibility. Everyone on the team contributes and has a trusted voice. It
+truly is an environment I've never seen before and am certainly proud to be
+apart of.
+
+One of the main things that hit me while talking to these graduating students
+was how well-rounded our developers have come. No, I'm not talking about the
+amount of soda and treats we consume. I'm referring to the varying skills each
+one of us have developed. From front-end to back-end or web sites to desktop
+apps, every single member of the team is capable of jumping into any of our
+codebases and tackling new features or bugs with a excellent degree of
+competentcy. I find this fascinating because it is not the norm at many medium
+to large size companies. It is typical for a developer to be hired to a
+position or team where he or she works on a single project and codebase for a
+few years until they get bored enough to change positions within the company or
+go somewhere else completely. This has not been the case for all of the
+developers at Extend Health.
+
+We are currently divided into four teams of about four or five devs each. While
+each team may have past experience with a certain project or codebase, they are
+not automatically the chosen team to work on it again the next time. Because of
+this, there is shared knowledge across teams and team members, instead of all
+the knowledge residing in only one person's head. This avoids the "what if
+someone gets hit by a bus" problem [my coworker Ryan just blogged
+about](http://rhauert.wordpress.com/2012/11/17/the-bus-factor/). The other side
+effect is that our developers have all become well-rounded in varying languages
+and platforms, solving both front-end and back-end problems. Contrast this with
+how I used to classify my dev skill set four or five years ago before working
+at Extend Health. I used to consider myself a back-end systems developer,
+feeling it was important to have specialization in order to differentiate myself
+and provide a chance to develop focused and in-depth experience. I also fooled
+myself into thinking that I preferred this designation because web development
+was trivial and only the hardest and most worthwhile problems were in the
+back-end systems. Instead, I merely lacked some meaningful experience with
+front-end web development, which is harder to come by in the typical work
+enivronment I described above. However in my current employment, I've become a
+much more well-rounded software developer.
+
+I'm not entirely positive if our environment and team dynamic were
+intentionally setup to ensure we were all well-rounded developers (though every
+other good aspect of our dev culture seems to have been carefully pieced
+together by [Corey](http://coreykaylor.com/)). Regardless, I am appreciatevly
+taking note of the advantageous results of such a configuration. This is one
+very important aspect of true job satisfaction and also in avoiding high
+turnover and attrition in workforce.

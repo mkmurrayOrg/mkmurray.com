@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="I have been intrigued by the Reactive Extensions for .NET (Rx Framework) for quite a while now, especially the fundamental shift from a “push” data &hellip;">
+	<meta name="description" content="I am currently reading the Real-World Functional Programming book from Manning Publications. It’s mostly an exercise in learning F#, but also to &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -46,6 +46,104 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2010/09/06/f-pipeline-operator-in-c/">F# Pipeline Operator in C#?</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-09-06T20:22:00-06:00" pubdate data-updated="true">Sep 6<span>th</span>, 2010</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/algorithms/'>Algorithms</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/code-organization/'>Code Organization</a>, <a class='category' href='/blog/categories/f-/'>F#</a>, <a class='category' href='/blog/categories/functional-programming/'>Functional Programming</a>, <a class='category' href='/blog/categories/linq/'>LINQ</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>, <a class='category' href='/blog/categories/solid/'>SOLID</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2010/09/06/f-pipeline-operator-in-c/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>I am currently reading the <a href="http://www.manning.com/petricek/" target="_blank">Real-World Functional Programming</a> book from <a href="http://www.manning.com/" target="_blank">Manning Publications</a>. It’s mostly an exercise in learning F#, but also to improve my C# code as well. I finally learned what the F# pipelining operator (<font face="Courier New">|&gt;</font>) is all about, and I was so impressed I thought I would try to figure out how to bring it into C# if possible.</p> <span class="fullpost">   <h3>Introducing the F# Pipeline Operator</h3>    <p>Here is some F# code that defines a list of integers and a pair of functions.&#160; They are then used in a few “higher-order” functions (functions that utilize other functions as parameters or return values, according to my book).&#160; <font face="courier new">List.filter</font> is equivalent to the LINQ <font face="Courier New">IEnumerable.Where()</font> extension method, and <font face="Courier New">List.map</font> is equivalent to <font face="Courier New">IEnumerable.Select()</font>.</p>    <pre class="brush: csharp">let numbers = [ 1 .. 10 ]
+let isOdd(n) = n % 2 = 1
+let square(n) = n * n
+
+List.filter isOdd numbers
+List.map square (List.filter isOdd numbers)</pre>
+
+  <p>The interesting part is the last line of code, where it is argued that you lose a little bit of code readability because the function that is actually executed first (<font face="Courier New">List.filter</font>) is found second in the expression statement.&#160; Enter the F# pipelining operator:</p>
+
+  <pre class="brush: csharp">let squared =
+  numbers
+  |&gt; List.filter isOdd
+  |&gt; List.map square</pre>
+
+  <p>Even though we’re no longer a compact, one-liner expression, I think we’ve gained some code readability.&#160; It says to take the list <font face="Courier New">numbers</font> and perform the following manipulations in the exact order listed.&#160; Cool stuff, if I say so myself.</p>
+
+  <h3>“There is No Charge for Awesomeness…or Attractiveness”</h3>
+
+  <p>(Sorry, I’ve been watching the movie <a href="http://www.imdb.com/title/tt0441773/" target="_blank">Kung Fu Panda</a> a lot with my kids lately.&#160; Funny stuff.)&#160; So can this awesomeness be brought over into C#?&#160; I opened up Visual Studio and tried to see if I could figure out how to define my own operator or reuse one of the existing ones.</p>
+
+  <p>I realize C# is a pretty tough language to flip keywords and operators around and invent new syntax with (ok, it’s impossible), but I tried anyway.&#160; The type of code readability issue I wanted to remedy is the same as with the F# code snippet above.&#160; I thought it would be nice to make C# code like the following statement more readable and digestible (especially the execution order):</p>
+
+  <pre class="brush: csharp">Convert.ToInt32(Context.Request[“requestParam”].Trim());</pre>
+
+  <p>As I started to (unsuccessfully) beat out some pretty rough code, I ran into problems with trying to make extension methods that are operator definition overloads and errors saying “<font face="Courier New">One of the parameters of a binary operator must be the containing type.</font>”&#160; It just wasn’t working and then I began to realize that C# already has a pipelining syntax, even if only in one small subset of the .NET API.&#160; You can find a decent pipelining syntax with the <a href="http://en.wikipedia.org/wiki/Fluent_interface" target="_blank">Fluent Interface</a> used for the LINQ extension methods.&#160; Its power is in the fact that the functions return the object type that was passed in and acted upon, so that more functions can be chained on afterward in a composable manner.&#160; The ability to do things like <font face="Courier New">collection.Where().Select().OrderBy()</font> is a much more declarative and functional solution to imperative <font face="Courier New">for</font> loops (and it makes it more readable and intention revealing in my opinion).&#160; It’s a difference in describing more <u><em>what</em></u> you want to be accomplished rather than <em><u>how</u></em> it is to be accomplished (especially when the <u><em>how</em></u> in programming languages is more readable to a computer than it is a human).</p>
+
+  <p>So the good news is that you indeed can have a nice pipelining syntax in C#, especially for APIs that are designed with Fluent Interfaces like LINQ.&#160; However, it doesn’t solve code readability issues with code snippets like the C# fragment I showed above.&#160; For those regular, non-fluent method calls in the rest of the .NET API, you must use old-fashioned Object-Oriented Programming practices of breaking code up into meaningful, atomic units of statements and naming and encapsulating functions cohesively in order to get more readable code.</p>
+</span>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>Jonas Elfström</div>
+<div class='content'>
+This looks a whole lot like the Thrush Combinator.<br /><a href="http://alicebobandmallory.com/articles/2009/10/06/the-thrush-combinator-in-c" rel="nofollow">I implemented</a> that one in C# a while ago</div>
+</div>
+<div class='comment'>
+<div class='author'>Richard Beauchamp</div>
+<div class='content'>
+This comment has been removed by the author.</div>
+</div>
+<div class='comment'>
+<div class='author'>Mike Murray</div>
+<div class='content'>
+Funny you should mention the Maybe Monad, as I&#39;ve been looking into Monads off and on for several months trying to figure out how I could use them in everyday code.  I likely will be posting something on this in the somewhat near future.</div>
+</div>
+<div class='comment'>
+<div class='author'>Anonymous</div>
+<div class='content'>
+Just a small hint from someone who uses something like this in productive code on a day-to-day basis:<br /><br />Take your time and extend the static methods a bit. It won&#39;t hurt to build something like a maybe-monad in there.<br /><br />You know - check if the input is null and return null if so.<br /><br />For this you need either:<br />- &quot;where U : class&quot;<br />- use Equals<br /><br />For the same reason I give somethink like a &quot;DefaultValue&quot; Funktion that checks the input for null and responses with the default-value if so, if not it will give the original value.</div>
+</div>
+<div class='comment'>
+<div class='author'>Mike Murray</div>
+<div class='content'>
+Very intriguing! Man I wish I had thought about that.  I suppose I&#39;m still new to designing APIs that pass around Funcs.<br /><br />I was able to make the following code work with the type inference (and without having to specify the types to the Then method):<br /><br />var blah = &quot;576 &quot;<br />.Then(x =&gt; x.Trim())<br />.Then(x =&gt; Convert.ToInt32(x));<br /><br />Not too bad really.  A little too much C# syntax though, but I&#39;d argue it might be more readable than what we started with, the code everyone writes.  It appears my code snippet doesn&#39;t even need the second extension method.<br /><br />Thanks for sharing!</div>
+</div>
+<div class='comment'>
+<div class='author'>Yusuf Motara</div>
+<div class='content'>
+You could try this:<br /><br />static class Extn {<br />    public static U Then&lt;T,U&gt;(this T o, Func&lt;T, U&gt; f) { return f(o); }<br />    public static U Then&lt;T, U&gt;(this T o, Func&lt;T, Func&lt;U&gt;&gt; fe) { return fe(o)(); }<br />}<br /><br />&#8230; which lets you write the more-readable:<br /><br />var blah = &quot;576  &quot;<br />   .Then&lt;string,string&gt;(x =&gt; x.Trim)<br />   .Then(Convert.ToInt32);<br /><br />Unfortunately, it seems that you need to make the generic parameters explicit; C#&#39;s type inference is nowhere near as good as F#&#39;s.</div>
+</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -493,76 +591,6 @@ return results.Values.Where(x =&gt; x.Count &gt; 1);</pre>
 
   <p>Thanks for sticking with me thus far.</p>
 </span>  </div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2009/12/18/anagram-code-kata-part-3-use-common-sense/">Anagram Code Kata Part 3 – Use Common Sense</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-12-18T18:10:00-07:00" pubdate data-updated="true">Dec 18<span>th</span>, 2009</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/anagram-code-kata-series/'>Anagram Code Kata Series</a>, <a class='category' href='/blog/categories/bdd/'>BDD</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/mspec/'>MSpec</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/mocking/'>Mocking</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>, <a class='category' href='/blog/categories/solid/'>SOLID</a>, <a class='category' href='/blog/categories/testing/'>Testing</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2009/12/18/anagram-code-kata-part-3-use-common-sense/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p>This post is part of a <a href="http://murrayon.net/2009/11/anagram-code-kata-bdd-mspec.html">series on coding Kata, BDD, MSpec, and SOLID principles</a>.&#160; Feel free to visit the above link which points to the introductory post, also containing an index of all posts in the series.</p>  <p>In this post, we will discuss how far to take the idea of creating mockable contracts via interfaces for testing purposes and to keep responsibilities modular.&#160; As I solicited feedback from commenters, I was getting hung up on applying this concept to every object and dependency.&#160; We’ll talk about how I’m now thinking that overly strict adherence to the practice can drive you nuts and decrease productivity.&#160; It is meant to help guide your design process along rather than hinder it.&#160; We’ll finish this post off with one of our two dependencies implemented in an extremely simple manner.</p> <span class="fullpost">   <h3><font face="Courier New">IFileParser</font> Dependency</h3>    <p>When we left off last time, we had defined two separate responsibilities that <font face="Courier New">AnagramsFinder</font> was going to push down into its dependencies.&#160; As I started to write a specification test for the newly created <font face="Courier New">NewlineFileParser</font>, I realized it would be difficult to stub based on providing a file path to a text file as the only parameter.&#160; I began having thoughts that maybe I could break up another pair of dependencies for file parsing, namely obtaining a file stream (or file contents string) from a path and then parsing the file contents into a list of multiple lines.&#160; But then again, my first of the two dependencies is still dependent on the physical file system and I cannot get away from this unless I somehow mock up an in-memory file system.&#160; This began to feel silly to me as I was hoping I would just use the built-in .NET APIs for file systems and string parsing.</p>    <p>After emailing <a href="http://www.davesquared.net/" target="_blank">Dave</a> and <a href="http://adotnetdude.blogspot.com/" target="_blank">Esteban</a> asking for guidance, the revelation I received via these two fine gentlemen is that file parsing is not an essential purpose of this application nor exercise (at least not yet; we won’t be focusing on performance unless it appears to be grossly deficient as we go along).&#160; What we could do is write integration tests instead, where we have a set of simple test files sitting in a folder that we run our <font face="Courier New">NewlineFileParser</font> against to ensure it working as we expect.&#160; But I don’t think I’m even going to do this at this point.&#160; I really do want to get to the core of the application.&#160; Plus, I feel certain that I can trust the implementation of <font face="Courier New">File.ReadAllLines()</font> from the .NET Framework.</p>    <p>Unless it needs to be changed further down the road, the following code implementation will likely be sufficient for the remainder of this coding exercise:</p>    <pre class="brush: csharp">public class NewlineFileParser : IFileParser
-{
-    public IEnumerable&lt;string&gt; ExtractWordListFromFile(string filePath)
-    {
-        return File.ReadAllLines(filePath);
-    }
-}</pre>
-
-  <p>I feel great about this because I haven’t gone insane trying to mock and test everything in sight, nor have I broken up every single responsibility in such small chunks that it becomes tedious.&#160; Instead, I have broken up the two core responsibilities of <font face="Courier New">AnagramsFinder</font> which means I can change and test the two dependencies independent of each other and from their manager class.&#160; Even though I haven’t written a ton of code yet, I feel the tests specs have driven my design into a cohesive, decoupled design that should prove flexible if requirements change or if I encounter friction later on and need to rethink my design.&#160; A flexible architecture for the application is being flushed out based on a “top-to-bottom” design view of the requirements.</p>
-
-  <h3>Create Stubs or Assert Methods were Called</h3>
-
-  <p><a href="http://papamufflon.blogspot.com/">Tobias Walter</a> left <a href="http://murrayon.net/2009/11/anagram-code-kata-part-2-mocking-and.html#comments">a comment on my last post</a> with some suggestions that I would like to get clarification on and discuss further with my growing audience of three now.&#160; He compared some of my implementation to <a href="http://www.davesquared.net/2009/11/favour-test-driving-logic-over-data.html">Dave’s implementation on his Favour test driving logic over data post</a>, but the comparison was lost on me.&#160; It seemed Tobias was saying that I had gone too far breaking up the responsibilities into such small dependencies.&#160; I am unsure what his argument was, but as far as I could tell both Dave and I broke up a managing class into two separate responsibilities so that the more crucial of the two could be tested independently.&#160; Also in doing so, we both created stubs that were given specific dummy responses to method calls using Rhino.Mocks.&#160; One more comment I would like to say is that I broke the file parsing responsibility away into its own dependency more because of the need to isolate the anagrams grouping than because file parsing is of itself a difficult task.&#160; If Tobias or anyone else could try to clarify his argument, that would really help me understand the merits of his suggestions.</p>
-
-  <p>Another suggestion that Tobias brought up that I would like to petition feedback on is to use the mocking feature of testing whether a method was called instead of creating a stub programmed with a dummy response.&#160; I have to admit, I’m not sure when to use one method over another.&#160; I guess I’ve felt in the past that testing whether a method was called seems silly, since it seems odd to have your test know the implementation and inner method calls of the subject under test.&#160; But I am now realizing that my stubs appear to be doing the same thing, but with dummy input and output programmed in.&#160; If you have an opinion or experience on this subject, please leave some feedback in the comments of this post.</p>
-
-  <h3>What’s Next?</h3>
-
-  <p>In my next post I hope to summarize this mocking debate brought up above regarding two differing methods of verifying my manager class is correctly managing its dependencies.&#160; I also hope to begin driving out the design and implementation of the <font face="Courier New">AnagramGrouper</font> dependency via behavior specification tests.&#160; Thanks and any feedback is greatly appreciated.</p>
-</span>  </div>
-<h2>Comments</h2>
-<div class='comments'>
-<div class='comment'>
-<div class='author'>David</div>
-<div class='content'>
-Hi Mike,<br /><br />In terms of the stubbing vs. asserting a method was called, the team I&#39;m on has found we rarely AssertWasCalled any more. Doing so explicitly couples our tests/specs to the implementation, whereas just stubbing calls in a SetUp seems easier to change without altering the fundamental assertions in our tests. <br /><br />The only time we use AssertWasCalled is for void methods to a service or similar where there is no observable side-effect from a unit perspective.<br /><br />YMMV. :)<br /><br />Regards,<br />David</div>
-</div>
-<div class='comment'>
-<div class='author'>Tobias Walter</div>
-<div class='content'>
-Hi Mike,<br /><br />great you continued this series.<br /><br />I think I messed things up and wrote incorrect things. In the meantime I managed to do this kata again and now I agree with you. Just forget my advice to mock it - this was wrong.<br /><br />However, I and my coworkers question if it&#39;s worth to write 30 lines of code to test a 2-lines-method? I think for this kata it will be enough to do some acceptance tests here.</div>
-</div>
-</div>
 
 		
 		

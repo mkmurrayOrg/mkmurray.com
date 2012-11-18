@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="Today I read another guy&#8217;s blog post that reminded me of my own &quot;Aha!&quot; moment I had a while back with Random Number Generators.&#160 &hellip;">
+	<meta name="description" content="I just watched a presentation that I thought would be about BAM (Business Activity Monitoring) from BizTalk, but instead it was some new project &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -46,6 +46,44 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/12/04/which-bam-is-which/">Which BAM Is Which?</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-12-04T16:54:00-07:00" pubdate data-updated="true">Dec 4<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/biztalk/'>BizTalk</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/12/04/which-bam-is-which/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>I just watched a presentation that I thought would be about <a title="BizTalk BAM" href="http://aspalliance.com/840_Business_Activity_Monitoring_BAM_with_BizTalk_Server_2006_from_Start_to_Finish">BAM (Business Activity Monitoring)</a> from <a href="http://www.microsoft.com/biztalk/en/us/default.aspx">BizTalk</a>, but instead it was <a title="Microsoft Research BAM" href="http://research.microsoft.com/~ejackson/bam.aspx">some new project that Microsoft Research cooked up that helps model cloud computing</a>.&#160; Interesting nonetheless, but not the BAM I thought I was getting.</p>  </div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -200,52 +238,6 @@ No it isn&#39;t, that is a missunderstanding. Linq to sql for SQL Server will al
 	<div class="entry-content">
 		<div class='post'>
 <p>Someone just sent me a link to a blog post talking about one of the new features of C# 4.0 that will be included with Visual Studio 2010.&#160; It is regarding <a href="http://en.wikipedia.org/wiki/Covariance_and_contravariance_(computer_science)">covariance and contravariance</a> support within the C# language.&#160; This support has been included since C# 2.0 (and consequently, .NET 2.0).&#160; However, it is currently flawed for delegates and interfaces using <a title="Generic Programming" href="http://en.wikipedia.org/wiki/Generic_programming">generics</a>.&#160; Follow this link to find out more about the proposed improvements for the future version of C#:</p>  <p><a title="http://blogs.msdn.com/charlie/archive/2008/10/28/linq-farm-covariance-and-contravariance-in-visual-studio-2010.aspx" href="http://blogs.msdn.com/charlie/archive/2008/10/28/linq-farm-covariance-and-contravariance-in-visual-studio-2010.aspx">http://blogs.msdn.com/charlie/archive/2008/10/28/linq-farm-covariance-and-contravariance-in-visual-studio-2010.aspx</a></p>  </div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2008/10/28/lazy-loading-with-linq/">Lazy Loading With LINQ</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-10-28T10:30:00-06:00" pubdate data-updated="true">Oct 28<span>th</span>, 2008</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/linq/'>LINQ</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2008/10/28/lazy-loading-with-linq/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p>I&#8217;ve been following <a title="Rob Conery&#39;s Blog" href="http://blog.wekeroad.com/">Rob Conery&#8217;s</a> <a href="http://blog.wekeroad.com/mvc-storefront/mvc-storefront-part-1/">ASP.NET MVC Storefront project</a> that he has been broadcasting to the world via webcasts.&#160; This project has been going on for over 6 months now and there are currently over 20 videos to watch if you really want to get up fully up to speed (which will literally take days).</p>  <p>Anyway, it&#8217;s a Storefront website application built on technologies such as <a href="http://netfx3.com/content/WFHome.aspx">Windows Workflow</a>, <a href="http://weblogs.asp.net/scottgu/archive/2007/10/14/asp-net-mvc-framework.aspx">ASP.NET MVC</a>, <a href="http://netfx3.com/content/WindowsCardspaceHome.aspx">CardSpace</a>, <a href="http://structuremap.sourceforge.net/Default.htm">StructureMap</a>, <a href="https://www.paypal.com/IntegrationCenter/ic_standard_home.html">PayPal Standard</a>, <a href="http://openid.net/">OpenID</a>, and many others.&#160; While slowly connecting all of these technologies together, Rob attempts to really learn <a title="Test Driven Development" href="http://en.wikipedia.org/wiki/Test-driven_development">TDD</a> at the same time.&#160; He&#8217;s an employee of Microsoft.</p>  <p>One of the things that I really like that he did was to modify the <a href="http://www.devx.com/dotnet/Article/33695/0/page/5">Repository Pattern</a> slightly by adding in <a href="http://msdn.microsoft.com/en-us/library/ms978599.aspx">Pipes and Filters Pattern</a> on top of it using the <font face="Courier New">IQueryable&lt;&gt;</font> generic in LINQ.&#160; It really is brilliant in my opinion, and if you want to get totally up to speed with just this small part of his project, watch the first 3-5 videos of Rob&#8217;s Storefront project.&#160; Then read a blog post by him about an issue he ran into and how he fixed it; the link to his post is at the bottom of this blog entry.</p> <span class='fullpost'> <p>In the process of making this new Repository pattern, he came across some issues with trying to do true Lazy Loading of an object&#8217;s relationships to other objects within his LINQ queries.&#160; Basically he wanted to harness the power of <font face="Courier New">IQueryable</font> used by LINQ queries to create the expression that queries against the database but not execute it unless needed.&#160; For instance, if you&#8217;ve got a <font face="Courier New">Product</font> object in your model and it contains a collection of <font face="Courier New">UserRating</font> objects, there will be times when you want to retrieve a <font face="Courier New">Product</font> with its <font face="Courier New">UserRatings</font> and times when you only need the <font face="Courier New">Product</font>.&#160; The most efficient way to do it (and coolest) would be to retrieve the object and its relationships the same way every time and let the <font face="Courier New">IQueryable</font> magic of LINQ know when to execute the query against the database and when to leave it as an unexecuted expression.</p>  <p>So Rob created the <font face="Courier New">LazyList</font> object that holds the <font face="Courier New">IQueryable</font> expression until you need to iterate over it or retrieve one of its elements, where it executes the query and fetches real data from the data source.&#160; Rob ran into some unexpected issues with the relationships not loading lazily but was able to solve the problem by using the keyword <font face="Courier New" color="#333333"><a title="LINQ Keyword: " let"" href="http://msdn.microsoft.com/en-us/library/bb383976.aspx">let</a></font> in LINQ.&#160; Read his full post about the issues and fixes (and get the source code for the <font face="Courier New">LazyList</font> class) at the following link:</p>  <p><a title="http://blog.wekeroad.com/blog/lazy-loading-with-the-lazylist/" href="http://blog.wekeroad.com/blog/lazy-loading-with-the-lazylist/">http://blog.wekeroad.com/blog/lazy-loading-with-the-lazylist/</a></p> </span>  </div>
-<h2>Comments</h2>
-<div class='comments'>
-<div class='comment'>
-<div class='author'>David</div>
-<div class='content'>
-Hi Mike,<br /><br />I really enjoyed Rob&#39;s series too. I&#39;ve been out of data-centric apps for a little while so I haven&#39;t really had a chance to play around with these ideas.<br /><br />One thing I have been following with interest is the DDD approach to this. I&#39;d really recommend having a read of some of <a href="http://www.udidahan.com/2009/06/29/dont-create-aggregate-roots/" rel="nofollow">Udi Dahan&#39;s posts</a>, as well as <a href="http://herdingcode.com/?p=189" rel="nofollow">Greg Young&#39;s recent appearance on Herding Code</a>. This stuff has really challenged my previous ideas on how operations like &quot;loading a Product&quot; should be approached.</div>
-</div>
-</div>
 
 		
 		

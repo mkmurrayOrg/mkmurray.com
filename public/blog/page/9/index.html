@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="A while back, I went on a research binge about LINQ and Lambda Expressions in C# 3.0.&#160; In my research I also learned about the amazing &hellip;">
+	<meta name="description" content="I&#8217;ve been following Rob Conery&#8217;s ASP.NET MVC Storefront project that he has been broadcasting to the world via webcasts.&#160; This &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -46,6 +46,52 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/10/28/lazy-loading-with-linq/">Lazy Loading With LINQ</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-10-28T10:30:00-06:00" pubdate data-updated="true">Oct 28<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/linq/'>LINQ</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/10/28/lazy-loading-with-linq/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>I&#8217;ve been following <a title="Rob Conery&#39;s Blog" href="http://blog.wekeroad.com/">Rob Conery&#8217;s</a> <a href="http://blog.wekeroad.com/mvc-storefront/mvc-storefront-part-1/">ASP.NET MVC Storefront project</a> that he has been broadcasting to the world via webcasts.&#160; This project has been going on for over 6 months now and there are currently over 20 videos to watch if you really want to get up fully up to speed (which will literally take days).</p>  <p>Anyway, it&#8217;s a Storefront website application built on technologies such as <a href="http://netfx3.com/content/WFHome.aspx">Windows Workflow</a>, <a href="http://weblogs.asp.net/scottgu/archive/2007/10/14/asp-net-mvc-framework.aspx">ASP.NET MVC</a>, <a href="http://netfx3.com/content/WindowsCardspaceHome.aspx">CardSpace</a>, <a href="http://structuremap.sourceforge.net/Default.htm">StructureMap</a>, <a href="https://www.paypal.com/IntegrationCenter/ic_standard_home.html">PayPal Standard</a>, <a href="http://openid.net/">OpenID</a>, and many others.&#160; While slowly connecting all of these technologies together, Rob attempts to really learn <a title="Test Driven Development" href="http://en.wikipedia.org/wiki/Test-driven_development">TDD</a> at the same time.&#160; He&#8217;s an employee of Microsoft.</p>  <p>One of the things that I really like that he did was to modify the <a href="http://www.devx.com/dotnet/Article/33695/0/page/5">Repository Pattern</a> slightly by adding in <a href="http://msdn.microsoft.com/en-us/library/ms978599.aspx">Pipes and Filters Pattern</a> on top of it using the <font face="Courier New">IQueryable&lt;&gt;</font> generic in LINQ.&#160; It really is brilliant in my opinion, and if you want to get totally up to speed with just this small part of his project, watch the first 3-5 videos of Rob&#8217;s Storefront project.&#160; Then read a blog post by him about an issue he ran into and how he fixed it; the link to his post is at the bottom of this blog entry.</p> <span class='fullpost'> <p>In the process of making this new Repository pattern, he came across some issues with trying to do true Lazy Loading of an object&#8217;s relationships to other objects within his LINQ queries.&#160; Basically he wanted to harness the power of <font face="Courier New">IQueryable</font> used by LINQ queries to create the expression that queries against the database but not execute it unless needed.&#160; For instance, if you&#8217;ve got a <font face="Courier New">Product</font> object in your model and it contains a collection of <font face="Courier New">UserRating</font> objects, there will be times when you want to retrieve a <font face="Courier New">Product</font> with its <font face="Courier New">UserRatings</font> and times when you only need the <font face="Courier New">Product</font>.&#160; The most efficient way to do it (and coolest) would be to retrieve the object and its relationships the same way every time and let the <font face="Courier New">IQueryable</font> magic of LINQ know when to execute the query against the database and when to leave it as an unexecuted expression.</p>  <p>So Rob created the <font face="Courier New">LazyList</font> object that holds the <font face="Courier New">IQueryable</font> expression until you need to iterate over it or retrieve one of its elements, where it executes the query and fetches real data from the data source.&#160; Rob ran into some unexpected issues with the relationships not loading lazily but was able to solve the problem by using the keyword <font face="Courier New" color="#333333"><a title="LINQ Keyword: " let"" href="http://msdn.microsoft.com/en-us/library/bb383976.aspx">let</a></font> in LINQ.&#160; Read his full post about the issues and fixes (and get the source code for the <font face="Courier New">LazyList</font> class) at the following link:</p>  <p><a title="http://blog.wekeroad.com/blog/lazy-loading-with-the-lazylist/" href="http://blog.wekeroad.com/blog/lazy-loading-with-the-lazylist/">http://blog.wekeroad.com/blog/lazy-loading-with-the-lazylist/</a></p> </span>  </div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>David</div>
+<div class='content'>
+Hi Mike,<br /><br />I really enjoyed Rob&#39;s series too. I&#39;ve been out of data-centric apps for a little while so I haven&#39;t really had a chance to play around with these ideas.<br /><br />One thing I have been following with interest is the DDD approach to this. I&#39;d really recommend having a read of some of <a href="http://www.udidahan.com/2009/06/29/dont-create-aggregate-roots/" rel="nofollow">Udi Dahan&#39;s posts</a>, as well as <a href="http://herdingcode.com/?p=189" rel="nofollow">Greg Young&#39;s recent appearance on Herding Code</a>. This stuff has really challenged my previous ideas on how operations like &quot;loading a Product&quot; should be approached.</div>
+</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -208,44 +254,6 @@ Intersting stuff. I really like the idea of giving other people hooks into your 
 That was my email signature for many, many years, starting around 1991 &#8230; but I got it from some BBS&#39;s random tagline generator, so I can&#39;t take credit for it.</div>
 </div>
 </div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2008/08/20/microsoft-windows-update-fails-on-every-update/">Microsoft/Windows Update Fails on Every Update</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-08-20T09:51:00-06:00" pubdate data-updated="true">Aug 20<span>th</span>, 2008</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/error/'>Error</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/patching-updating/'>Patching/Updating</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2008/08/20/microsoft-windows-update-fails-on-every-update/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p>Occasionally, Windows Update (or Microsoft Update) will see all of the updates you need (and possibly even download them) but will immediately fail all of the updates when trying to install them.&#160; Sometimes I have seen Windows Update error off after the green progress bar and before it can show me if there are any updates at all.</p>  <p>Every time this happens, I end up Googling the error code and finding the same fix every time (since I forget what the fix is each time).&#160; The error code I get is <font face="Courier New">0x80004002</font>.&#160; If you are unable to find the error code through the UI, you can check the Windows Update log at <font face="Courier New">%WINDIR%\WindowsUpdate.log</font> (which in my case, <font face="Courier New">%WINDIR%</font> translated to <font face="Courier New">C:\WINDOWS\</font>); you can even just type <font face="Courier New">%WINDIR%\WindowsUpdate.log</font> right into the &quot;<font face="Courier New">Run&#8230;</font>&quot; dialog.&#160; You can find the error code near the bottom of the log; just find the lines of text that have the same timestamp as when you unsuccessfully ran Windows Update.</p>  <p>Well, anyway, here&#8217;s the fix; run the following commands in a Command Prompt window (type <font face="Courier New">cmd</font> in the &quot;<font face="Courier New">Run&#8230;</font>&quot; dialog):</p>  <p><font face="Courier New">net stop wuauserv     <br />regsvr32 wups2.dll      <br />net start wuauserv</font></p>  <p>That&#8217;s all there is to it!&#160; It has worked every time for me.&#160; It may even be helpful to put these commands in a batch script (copy and paste the commands into <font face="Courier New">Notepad</font> and then save the text file with a <font face="Courier New">.bat</font> file extension) and keep the file in a place where you can easily find it again.</p>  </div>
 
 		
 		
