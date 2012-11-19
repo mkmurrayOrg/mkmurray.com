@@ -1,3 +1,9 @@
 // This File is imported last, and will override other styles in the cascade
 // Add styles here to make changes without digging in too much
 fieldset { border: none }
+
+#category-title { padding-top: 15px; }
+#category-list {
+  list-style-type: none;
+  margin: 20px;
+}

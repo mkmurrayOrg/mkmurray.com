@@ -4,6 +4,7 @@ title: "Well-Rounded Developers"
 date: 2012-11-17 19:32
 comments: true
 categories:
+ - Effective Teamwork
  - Job Satisfaction
  - Self-Improvement
 ---
