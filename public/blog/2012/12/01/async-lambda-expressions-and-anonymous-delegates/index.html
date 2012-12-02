@@ -3,11 +3,12 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Category: .net - Mike Murray</title>
+	<title>Async lambda expressions and anonymous delegates - Mike Murray</title>
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="Category: .net">
+	<meta name="description" content="I&#8217;ve known about the new async and await keywords in C# 5 for a while now,
+but I saw a use of it I hadn&#8217;t anticipated. I saw Jon Skeet &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -45,33 +46,132 @@
 				
 			
 			<div class="mid-col-container">
-				<div id="content" class="inner">
-	
-
-
-	
-	
-	<section class="archives"><h1 class="year">2012</h1>
-
-<article>
-	<h1 class="title"><a href="/blog/2012/12/01/async-lambda-expressions-and-anonymous-delegates/">Async lambda expressions and anonymous delegates</a></h1>
+				<div id="content" class="inner"><article class="post">
+	<h1 class="title">Async Lambda Expressions and Anonymous Delegates</h1>
 	<div class="meta">
-		<span class="date">Dec  1</span>
-		<br>
-		<span class="tags">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-01T22:34:00-07:00" pubdate data-updated="true">Dec 1<span>st</span>, 2012</time></div>
+		<div class="tags">
 
 
 	<a class='category' href='/blog/categories/-net/'>.net</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/delegates/'>Delegates</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/new-technology/'>New technology</a>, <a class='category' href='/blog/categories/threading/'>Threading</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual studio</a>
 
 
-</span>
-	    
-	    <span class="comments"><a href="/blog/2012/12/01/async-lambda-expressions-and-anonymous-delegates/#disqus_thread">Comments</a></span>
-	    
+</div>
+		
+			<span class="comments"><a href="#disqus_thread">Comments</a></span>
+		
 	</div>
+	<div class="entry-content"><p>I&#8217;ve known about the new <code>async</code> and <code>await</code> keywords in C# 5 for a while now,
+but I saw a use of it I hadn&#8217;t anticipated. I saw Jon Skeet create an
+asyncronous lambda expression and was caught a bit off guard. After thinking
+about it, it really isn&#8217;t that amazing, but I thought I would spread the word
+anyway because I think it could be a really handy feature.</p>
+
+<p>Anonymous functions are declared without a method name and can be passed around
+and invoked at will. Lambda expression syntax creates anonymous functions that
+can be used as delegates or expression trees. In C# 5, you can adorn functions
+with the <code>async</code> keyword which signifies that the function will return a <code>Task</code>
+object from the Task Parallel Library as a return value. You will also find
+somewhere in the method body the keyword <code>await</code> next to a statement that could
+take a while to process and be a blocking operation. Now your method can resume
+operation after the asyncronous operation has completed and has its result.</p>
+
+<p>Here is a simple example:</p>
+
+<pre class="brush: csharp">
+    public void ButtonClick()
+    {
+        ProcessFiles();
+    }
+
+    private async void ProcessFiles()
+    {
+        var files = new string[] { "file1.txt", "file2.txt", "file3.txt" };
+
+        foreach (var file in files)
+        {
+            var fileContents = await ReadTextAsync(file);
+            // likely do something with file contents
+        }
+    }
+
+    private async Task&lt;string&gt; ReadTextAsync(string filePath)
+    {
+        // Some text reading implementation that supports the TPL
+    }
+</pre>
+
+
+<p>The button click handler method would return at the first sign of a blocking
+operation and callback delegates are set up under the covers by the compiler to
+finish executing the rest of the code after the blocking process finishes.</p>
+
+<p>Here is the same example but using an async lambda expression:</p>
+
+<pre class="brush: csharp">
+    public void ButtonClick()
+    {
+        var files = new string[] { "file1.txt", "file2.txt", "file3.txt" };
+
+        files.ForEach(async file => await ReadTextAsync(file));
+    }
+
+    private async Task&lt;string&gt; ReadTextAsync(string filePath)
+    {
+        // Some text reading implementation that supports the TPL
+    }
+</pre>
+
+
+<p>Please overlook my disregard of single responsibility and encapsulation, and so
+on so forth. This is an overly simplified example intended solely to show what
+the syntax looks like. Either way, I could see this lighter weight syntax coming
+in handy in the future.</p>
+
+<p>In the same example where I saw async lambda syntax used, I also saw Jon Skeet
+show off a really clever extension method that took an enumerable collection of
+<code>Task</code> objects and reordered them so they could be enumerated and handled in the
+order that they complete their asynchronous operations. Perhaps I will show that
+piece of code next time.</p>
+</div>
+
 </article>
 
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
 
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
 </div>
 			</div>
 			<footer id="footer" class="inner">Copyright &copy; 2012
@@ -94,7 +194,10 @@ Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Sha
       var disqus_shortname = 'mkmurray';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://mkmurray.com/blog/2012/12/01/async-lambda-expressions-and-anonymous-delegates/';
+        var disqus_url = 'http://mkmurray.com/blog/2012/12/01/async-lambda-expressions-and-anonymous-delegates/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="This is just a test post to see if I&#8217;m smart enough to add the javascript SyntaxHighlighter to my blog. ;) public int ScoreDice(int[] &hellip;">
+	<meta name="description" content="Many forms of martial arts utilize the kata as a means for detailed, focused practice and training.&#160; The power of this practice comes from &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -46,6 +46,52 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2009/11/10/anagram-code-kata-bdd-mspec/">Anagram Code Kata – BDD & MSpec</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-11-10T21:32:00-07:00" pubdate data-updated="true">Nov 10<span>th</span>, 2009</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/anagram-code-kata-series/'>Anagram Code Kata Series</a>, <a class='category' href='/blog/categories/bdd/'>BDD</a>, <a class='category' href='/blog/categories/code-organization/'>Code Organization</a>, <a class='category' href='/blog/categories/mspec/'>MSpec</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>, <a class='category' href='/blog/categories/solid/'>SOLID</a>, <a class='category' href='/blog/categories/testing/'>Testing</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2009/11/10/anagram-code-kata-bdd-mspec/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>Many forms of martial arts utilize the <a href="http://en.wikipedia.org/wiki/Kata" target="_blank">kata</a> as a means for detailed, focused practice and training.&#160; The power of this practice comes from repetition and focus on simple fundamentals, “while attempting to maintain perfect form.”&#160; The principle goal is to “try out different combinations of techniques in a safe, practice environment to ultimately find out how to defeat your opponent”.&#160; In the last few years, this concept has taken hold within the software development world in the form of <a href="http://en.wikipedia.org/wiki/Code_Kata" target="_blank">Code Kata</a>, a phrase coined by <a href="http://pragprog.com/" target="_blank">Pragmatic Programmer</a> <a href="http://pragdave.pragprog.com/" target="_blank">Dave Thomas</a> (and <a href="http://codekata.pragprog.com/" target="_blank">here is his blog dedicated to the Code Kata</a>).</p>  <p>My inspiration for all of this is <a href="http://www.davesquared.net/2009/10/calculators-and-tale-of-two-tdds-pt-1.html" target="_blank">David Tchepak’s Calculator Kata series of posts</a>.&#160; Hopefully he will stop by and provide some helpful guidance and advice.&#160; I have selected the <a href="http://codekata.pragprog.com/2007/01/kata_six_anagra.html" target="_blank">Anagram Kata (code kata number 6)</a> for me to practice.&#160; My goals for this series of posts are:</p>  <ul>   <li>To practice coding and share my learning experience with you, while also soliciting feedback and suggestions. </li>    <li>To more fully understand the concepts driving <a href="http://en.wikipedia.org/wiki/Behavior_Driven_Development" target="_blank">Behavior Driven Development (BDD)</a> via a testing framework designed for such a practice, namely <a href="http://blog.wekeroad.com/blog/make-bdd-your-bff-2/" target="_blank">MSpec</a>. </li>    <li>To keep to the <a href="http://www.davesquared.net/2009/01/introduction-to-solid-principles-of-oo.html" target="_blank">SOLID principles of Object-Oriented Design</a>, especially <a href="http://www.davesquared.net/2009/11/favour-test-driving-logic-over-data.html" target="_blank">in favor of test driving logic over just testing data</a>. </li> </ul>  <p>Below I will keep an updated list of blog posts in this series.&#160; Hope you enjoy it!</p>  <ul>   <li><a href="http://murrayon.net/2009/11/anagram-code-kata-part-1-getting.html">Part 1 – Getting Started</a> </li>    <li><a href="http://murrayon.net/2009/11/anagram-code-kata-part-2-mocking-and.html" target="_blank">Part 2 – Mocking and SRP (Single Responsibility Principle)</a> </li>    <li><a href="http://murrayon.net/2009/12/anagram-code-kata-part-3-use-common.html" target="_blank">Part 3 – Use Common Sense</a> </li>    <li><a href="http://murrayon.net/2010/01/anagram-code-kata-part-4-will-it-write.html">Part 4 – Will it Write My Code for Me?</a></li>    <li><a href="http://murrayon.net/2010/02/anagram-code-kata-part-5-domain-objects.html">Part 5 – Domain Objects Over Language Primitives</a>&#160;</li> </ul>  <p><strong><u>UPDATE (07/18/10)</u></strong>:&#160; I was asked where the source code to this post series could be found.&#160; I decided to host it at BitBucket.org using Mercurial for the source control:&#160; <a href="http://bitbucket.org/murrayondotnet/anagramkata/">http://bitbucket.org/murrayondotnet/anagramkata/</a></p></div>
+<h2>Comments</h2>
+<div class='comments'>
+<div class='comment'>
+<div class='author'>David</div>
+<div class='content'>
+Looking forward to it. :)<br /><br />For the record, I can either stop by *or* be helpful, not both. ;) :P</div>
+</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -213,44 +259,6 @@ public int ScoreDice(int[] selectedDice)
 	<div class="entry-content">
 		<div class='post'>
 <p>In a previous post I talked about <a href="http://murrayon.net/2008/01/windows-forms-ui-threading.html">Windows Forms UI Threading</a> using delegates.&#160; Recently I needed to replicate what I had learned, and I happened to do so without reviewing my notes in the former blog post.&#160; Apparently I didn’t remember everything I had learned and became confused over thread invocation techniques, introducing a bug into my thread messaging.&#160; The UI thread was blocking while the background worker thread was processing.</p>  <p>The cause was related to figuring out which <font face="Courier New">BeginInvoke</font> method to call when kicking off the worker thread, the <font face="Courier New">BeginInvoke</font> of the <font face="Courier New">Form</font> object or the <font face="Courier New">BeginInvoke</font> of the delegate.&#160; The answer is the <font face="Courier New">BeginInvoke</font> method of the delegate.&#160; All of the examples linked to in the previous post had it right, but I got it mixed up with making <font face="Courier New">Invoke</font> or <font face="Courier New">BeginInvoke</font> calls from the background thread using the <font face="Courier New">Form</font> object’s version of these methods.&#160; If you don’t care whether your messaging from the background thread is synchronous or asynchronous, then you can use either methods and you can use the ones from the <font face="Courier New">Form</font> object.</p>  <p>The problem is using these <font face="Courier New">Form</font> object methods in order to kick off your background worker thread.&#160; The description of the <font face="Courier New">BeginInvoke</font> method on the <font face="Courier New">Form</font> object states that it <font face="Courier New">“executes the specified delegate asynchronously on the thread that the control’s underlying handle was created on.”</font>&#160; I translate this to mean that calling your <font face="Courier New">Form</font> object’s <font face="Courier New">BeginInvoke</font> will process on your UI thread.&#160; Apparently the delegate <font face="Courier New">BeginInvoke</font> method has no such wording in its description.</p> <span class='fullpost'> <p>Rereading <a title="Safe, Simple Multithreading in Windows Forms, Part 1" href="http://msdn.microsoft.com/en-us/library/ms951089.aspx">this MSDN article</a> from the former post and reading the <font face="Courier New">Form</font> object’s <font face="Courier New">BeginInvoke</font> method description which I quoted above set me straight and got rid of my blocking UI problem (again).</p>  <p>During this research session, I came across another informative resource when trying to figure out what was meant by potential resource leaks when using <font face="Courier New">BeginInvoke</font> with out later calling <font face="Courier New">EndInvoke</font>.&#160; From reading the article, I gather you can substitute the <font face="Courier New">EndInvoke</font> call with the <a title="OneWayAttribute Class" href="http://msdn.microsoft.com/en-us/library/system.runtime.remoting.messaging.onewayattribute.aspx"><font face="Courier New">OneWay</font> attribute</a><font face="Courier New"><font color="#333333"><font face="Verdana"></font></font></font> on the method being invoked, as long as it has a <font face="Courier New">void</font> return signature and no <font face="Courier New">ref</font> nor <font face="Courier New">out</font> parameters.&#160; Please let me know if my interpretation is wrong.&#160; I added the attribute to my code in the applicable spots and have seen no side effects of doing so.&#160; Here is the article on read mentioning this attribute:</p>  <p><a href="http://weblogs.asp.net/rosherove/pages/DefensiveEventPublishing.aspx">Defensive Event Publishing in .NET – Part I</a></p> </span>  </div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2009/03/24/powershell-1-0-for-windows-xp/">PowerShell 1.0 for Windows XP</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-03-24T14:08:00-06:00" pubdate data-updated="true">Mar 24<span>th</span>, 2009</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>, <a class='category' href='/blog/categories/powershell/'>PowerShell</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2009/03/24/powershell-1-0-for-windows-xp/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p>I just noticed in today&#8217;s Tuesday round of Microsoft Updates that there is an optional software download for PowerShell 1.0 on Windows XP.&#160; PowerShell has been one of those things that I really want to learn, but just haven&#8217;t devoted the time.&#160; I desperately would like to replace my use of the Command Prompt with Windows PowerShell.</p>  <p>PowerShell really is more than just your regular <a href="http://en.wikipedia.org/wiki/Command_line_interpreter">Command Line Interpreter</a> that you have been used to, especially compared to the <a href="http://en.wikipedia.org/wiki/Command_Prompt_(Windows)">Windows Command Prompt</a>.&#160; You get the power of the command line shells that you may have tried out in Linux environments, but it really does go beyond those as well.&#160; PowerShell is (from Wikipedia) <font face="Courier New">&quot;Microsoft&#8217;s new extensible command line shell and task-based scripting technology.&quot;</font>&#160; Here is a quote from an MSDN document that better explains the advantages PowerShell brings:</p> <span class='fullpost'> <blockquote>   <p>&quot;Unlike most shells, which accept and return text, Windows PowerShell is built on top of the .NET common language runtime (CLR) and the .NET Framework, and accepts and returns .NET objects. This fundamental change in the environment brings entirely new tools and methods to the management and configuration of Windows.</p>   <p>&quot;Windows PowerShell introduces the concept of a cmdlet (pronounced &quot;command-let&quot;), a simple, single-function command-line tool built into the shell. You can use each cmdlet separately, but their power is realized when you use these simple tools in combination to perform complex tasks. Windows PowerShell includes more than one hundred basic core cmdlets, and you can write your own cmdlets and share them with other users.</p>   <p>&quot;Like many shells, Windows PowerShell gives you access to the file system on the computer. In addition, Windows PowerShell providers enable you to access other data stores, such as the registry and the digital signature certificate stores, as easily as you access the file system.&quot;</p> </blockquote>  <p>If you want to know more about PowerShell, I would suggest the following readings:</p>  <ul>   <li><a href="http://en.wikipedia.org/wiki/Windows_PowerShell">Wikipedia - Windows PowerShell</a></li>    <li><a href="http://msdn.microsoft.com/en-us/library/aa973757(VS.85).aspx">MSDN - Windows PowerShell Getting Started Guide</a></li> </ul>  <p>Also, <a href="http://codebetter.com/members/james.kovacs.aspx">James Kovacs</a> from <a href="http://codebetter.com/">CodeBetter.com</a> has been doing <a href="http://codebetter.com/blogs/james.kovacs/archive/tags/PowerShell/default.aspx">a series of posts on the basics of PowerShell</a> that is a great light introduction to how a developer would find the tool most useful.&#160; Here are two of the starting posts from that series:</p>  <ul>   <li><a href="http://codebetter.com/blogs/james.kovacs/archive/2009/02/01/getting-started-with-powershell-developer-edition.aspx">Getting Started with PowerShell - Developer Edition</a></li>    <li><a href="http://codebetter.com/blogs/james.kovacs/archive/2009/02/07/powershell-processes-and-piping.aspx">PowerShell, Processes, and Piping</a></li> </ul> </span>  </div>
 
 		
 		

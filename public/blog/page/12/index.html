@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="I ran into a problem with trying to spawn off a process to launch an MSIExec.exe command from C#.&#160; I wanted to launch the process and then wait &hellip;">
+	<meta name="description" content="One of my co-workers, in trying to find the install location of Microsoft Word, found a cool little registry tree.&#160; Here is the key: &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -46,6 +46,44 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/06/12/finding-microsoft-office-s-install-location/">Finding Microsoft Office&#8217;s Install Location</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-06-12T13:59:00-06:00" pubdate data-updated="true">Jun 12<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/deployment-and-installers/'>Deployment and Installers</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/office/'>Office</a>, <a class='category' href='/blog/categories/registry/'>Registry</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/06/12/finding-microsoft-office-s-install-location/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>One of my co-workers, in trying to find the install location of <font face="Courier New">Microsoft Word</font>, found a cool little registry tree.&#160; Here is the key:</p>  <p><font face="Courier New">HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Applications</font></p>  <p>Underneath this key, there are keys named <font face="Courier New">Winword.exe</font>, <font face="Courier New">EXCEL.EXE</font>, <font face="Courier New">Outlook.EXE</font>, <font face="Courier New">MSACCESS.EXE</font>, <font face="Courier New">POWERPNT.EXE</font>, <font face="Courier New">explorer.exe</font>, <font face="Courier New">iexplore.exe</font>, <font face="Courier New">AcroRD32.exe</font>, <font face="Courier New">iTunes.exe</font>, <font face="Courier New">javaw.exe</font>, and so on.&#160; It appears many of the big companies use this area to put information about how to do certain commands for a product from a shell (like open, edit, print, etc.).</p>  <p>My next post will be about another section under <font face="Courier New">SOFTWARE\Classes</font> that I discovered.</p>  </div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -252,44 +290,6 @@ Hi michael, thanks for your post is very interesting.<BR/><BR/>I´m trying relea
 	<div class="entry-content">
 		<div class='post'>
 <p>So I got a &quot;<font face="Courier New">Catastrophic Failure</font>&quot; in the Silverlight 2 beta 1 designer in VS 2008 this morning.&#160; Have no clue what it means, but it seemed temporary (I was in the middle of typing in the XAML view and the designer didn&#8217;t like something I did).&#160; Here is a screenshot, it&#8217;s pretty amusing:</p> <span class='fullpost'> <p><a href="http://lh4.ggpht.com/charliebrown928/SFqfdiP7PEI/AAAAAAAAABU/vG6KlZ5yB0c/s1600-h/screenshot7.jpg"><img style="border-top-width: 0px; border-left-width: 0px; border-bottom-width: 0px; border-right-width: 0px" height="407" alt="screenshot" src="http://lh3.ggpht.com/charliebrown928/SFqfeTgD8eI/AAAAAAAAABc/CZxSdmcnaCY/screenshot_thumb5.jpg?imgmax=800" width="784" border="0" /></a></p> </span>  </div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2008/02/28/silverlight-tips-tricks-and-best-practices/">Silverlight Tips, Tricks and Best Practices</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-02-28T16:02:00-07:00" pubdate data-updated="true">Feb 28<span>th</span>, 2008</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>, <a class='category' href='/blog/categories/silverlight/'>Silverlight</a>, <a class='category' href='/blog/categories/ui/'>UI</a>, <a class='category' href='/blog/categories/web/'>Web</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2008/02/28/silverlight-tips-tricks-and-best-practices/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p>Here is a great MSDN article on some Silverlight tips, tricks, and best practices:&#160; <a title="http://msdn.microsoft.com/msdnmag/issues/08/LA/WickedCode/default.aspx" href="http://msdn.microsoft.com/msdnmag/issues/08/LA/WickedCode/default.aspx">http://msdn.microsoft.com/msdnmag/issues/08/LA/WickedCode/default.aspx</a></p>  </div>
 
 		
 		

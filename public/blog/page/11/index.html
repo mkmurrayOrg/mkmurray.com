@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="Before I went on vacation last week, I was able to successfully add a Red Hat Enterprise Server (version 3) box to our Windows 2003 Active Directory &hellip;">
+	<meta name="description" content="VMWare provides a free utility that can clone physical machines into a VMWare virtual machine; it can also convert other vendors&#8217; VM formats &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -46,6 +46,44 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/07/22/virtual-machine-converter-tool/">Virtual Machine Converter Tool</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-07-22T16:02:00-06:00" pubdate data-updated="true">Jul 22<span>nd</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/error/'>Error</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>, <a class='category' href='/blog/categories/vmware/'>VMWare</a>, <a class='category' href='/blog/categories/virtual-machine/'>Virtual Machine</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/07/22/virtual-machine-converter-tool/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p><a href="http://www.vmware.com/">VMWare</a> provides a free utility that can clone physical machines into a VMWare virtual machine; it can also convert other vendors&#8217; VM formats into the VMWare format.&#160; I can think of so many uses for this very handy tool.&#160; It has a very simple and easy user interface that walks you through the steps.&#160; Here is a link to the product:</p>  <p><a title="http://www.vmware.com/products/converter/" href="http://www.vmware.com/products/converter/">http://www.vmware.com/products/converter/</a></p>  <p><u>One important note</u>:&#160; When you are specifying the name and destination of the resultant VM image, the location must be in UNC format (i.e., <font face="Courier New">&#92;machinename\share</font>).&#160; The thing that got me, though, was that it will give you an uninformative error if you leave a trailing backslash (&#8216;&#39;) at the end of the UNC path, saying something like it couldn&#8217;t connect to the share for some reason.&#160; Just remove the last slash and you&#8217;ll be good to go.</p>  </div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -242,44 +280,6 @@ I was running into the same &#8216;Unrecoverable build error&#8217; when trying 
 	<div class="entry-content">
 		<div class='post'>
 <p>I was trying to rename a product&#8217;s display name found in its ARP (Add/Remove Programs) entry.&#160; There is a registry key that lists just about every product installed on your machine:</p>  <p><font face="Courier New">HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall</font></p>  <p>Most (if not all) MSI-installed products have an entry under this key that is the <font face="Courier New">ProductCode</font> GUID.&#160; Every product under this key seems to have a <font face="Courier New">DisplayName</font> value, some of which you can modify and it will show the change in ARP.&#160; However, it appeared any product installed via MSI did not work this way.&#160; So I went registry hunting for any other entries the MSI installers might create.&#160; I found the following location:</p>  <p><font face="Courier New">HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Installer</font></p>  <p>This key has many helpful sub-keys (including <font face="Courier New">Assemblies</font>, <font face="Courier New">Components</font>, <font face="Courier New">Features</font>, <font face="Courier New">Patches</font>, <font face="Courier New">Products</font>, and <font face="Courier New">UpgradeCodes</font>); the <font face="Courier New">Products</font> sub-key is the most important to me at the moment.&#160; Under this sub-key there are many entries (not as many as the first location I mentioned; these appear to MSI only products) that appear to be GUIDs without hyphens and braces.&#160; However, the key that represented the product I was interested in didn&#8217;t match the <font face="Courier New">ProductCode</font> I had.&#160; But in one of the values, there was a <font face="Courier New">PackageCode</font> that was indeed the correct package GUID (different than <font face="Courier New">ProductCode</font>) and the <font face="Courier New">ProductName</font> matched as well.&#160; Turns out for MSI-installed products I could change this <font face="Courier New">ProductName</font> value and it would make the change to its ARP entry.</p> <span class='fullpost'> <p>But I was puzzled how I would know which entry to pick for any given product under this <font face="Courier New">Products</font> sub-key.&#160; I ended up coming across this blog post that explained what these different GUIDs are (called <font face="Courier New">Compressed GUIDs</font>); focus on the &quot;<strong>UPDATE</strong>&quot; section by John Walker:</p>  <p><a title="http://www.hanselman.com/blog/BATCHFILEVOODOODetermineIfMultipleAndWhichVersionsOfAnMSIinstalledProductAreInstalledUsingUpgradeCode.aspx" href="http://www.hanselman.com/blog/BATCHFILEVOODOODetermineIfMultipleAndWhichVersionsOfAnMSIinstalledProductAreInstalledUsingUpgradeCode.aspx">http://www.hanselman.com/blog/BATCHFILEVOODOODeterm&#8230;..UsingUpgradeCode.aspx</a></p>  <p>And then John Walker&#8217;s update mentions this link that explains how to convert back and forth between regular and Compressed GUIDs:</p>  <p><a title="http://www.appdeploy.com/messageboards/tm.asp?m=11996&amp;mpage=1⼅" href="http://www.appdeploy.com/messageboards/tm.asp?m=11996&amp;mpage=1⼅">http://www.appdeploy.com/messageboards/tm.asp?m=11996&amp;mpage=1&amp;#12037</a></p>  <p>Basically you break up the GUID into groupings and reverse them.&#160; See below:</p>  <ul>   <li><u>Original GUID</u>:&#160; {abcdefgh-ijkl-mnop-qrst-uvwxyz123456} </li>    <li><u>Groupings</u>:&#160; abcdefgh ijkl mnop qr st uv wx yz 12 34 56 </li>    <li><u>Reversed Groupings</u>:&#160; hgfedcba lkji ponm rq ts vu xw zy 21 43 65 </li>    <li><u>Compressed GUID</u>:&#160; hgfedcbalkjiponmrqtsvuxwzy214365 </li> </ul>  <p>Don&#8217;t know why Microsoft chose to butcher up GUIDs like this, but it&#8217;s nice to know.</p> </span>  </div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2008/06/12/finding-microsoft-office-s-install-location/">Finding Microsoft Office&#8217;s Install Location</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-06-12T13:59:00-06:00" pubdate data-updated="true">Jun 12<span>th</span>, 2008</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/deployment-and-installers/'>Deployment and Installers</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/office/'>Office</a>, <a class='category' href='/blog/categories/registry/'>Registry</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2008/06/12/finding-microsoft-office-s-install-location/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p>One of my co-workers, in trying to find the install location of <font face="Courier New">Microsoft Word</font>, found a cool little registry tree.&#160; Here is the key:</p>  <p><font face="Courier New">HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Applications</font></p>  <p>Underneath this key, there are keys named <font face="Courier New">Winword.exe</font>, <font face="Courier New">EXCEL.EXE</font>, <font face="Courier New">Outlook.EXE</font>, <font face="Courier New">MSACCESS.EXE</font>, <font face="Courier New">POWERPNT.EXE</font>, <font face="Courier New">explorer.exe</font>, <font face="Courier New">iexplore.exe</font>, <font face="Courier New">AcroRD32.exe</font>, <font face="Courier New">iTunes.exe</font>, <font face="Courier New">javaw.exe</font>, and so on.&#160; It appears many of the big companies use this area to put information about how to do certain commands for a product from a shell (like open, edit, print, etc.).</p>  <p>My next post will be about another section under <font face="Courier New">SOFTWARE\Classes</font> that I discovered.</p>  </div>
 
 		
 		

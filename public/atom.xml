@@ -4,7 +4,7 @@
   <title><![CDATA[Mike Murray]]></title>
   <link href="http://mkmurray.com/atom.xml" rel="self"/>
   <link href="http://mkmurray.com/"/>
-  <updated>2012-11-18T20:59:16-07:00</updated>
+  <updated>2012-12-01T22:38:47-07:00</updated>
   <id>http://mkmurray.com/</id>
   <author>
     <name><![CDATA[Mike Murray]]></name>
@@ -12,6 +12,86 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Async lambda expressions and anonymous delegates]]></title>
+    <link href="http://mkmurray.com/blog/2012/12/01/async-lambda-expressions-and-anonymous-delegates/"/>
+    <updated>2012-12-01T22:34:00-07:00</updated>
+    <id>http://mkmurray.com/blog/2012/12/01/async-lambda-expressions-and-anonymous-delegates</id>
+    <content type="html"><![CDATA[<p>I&#8217;ve known about the new <code>async</code> and <code>await</code> keywords in C# 5 for a while now,
+but I saw a use of it I hadn&#8217;t anticipated. I saw Jon Skeet create an
+asyncronous lambda expression and was caught a bit off guard. After thinking
+about it, it really isn&#8217;t that amazing, but I thought I would spread the word
+anyway because I think it could be a really handy feature.</p>
+
+<p>Anonymous functions are declared without a method name and can be passed around
+and invoked at will. Lambda expression syntax creates anonymous functions that
+can be used as delegates or expression trees. In C# 5, you can adorn functions
+with the <code>async</code> keyword which signifies that the function will return a <code>Task</code>
+object from the Task Parallel Library as a return value. You will also find
+somewhere in the method body the keyword <code>await</code> next to a statement that could
+take a while to process and be a blocking operation. Now your method can resume
+operation after the asyncronous operation has completed and has its result.</p>
+
+<p>Here is a simple example:</p>
+
+<pre class="brush: csharp">
+    public void ButtonClick()
+    {
+        ProcessFiles();
+    }
+
+    private async void ProcessFiles()
+    {
+        var files = new string[] { "file1.txt", "file2.txt", "file3.txt" };
+
+        foreach (var file in files)
+        {
+            var fileContents = await ReadTextAsync(file);
+            // likely do something with file contents
+        }
+    }
+
+    private async Task&lt;string&gt; ReadTextAsync(string filePath)
+    {
+        // Some text reading implementation that supports the TPL
+    }
+</pre>
+
+
+<p>The button click handler method would return at the first sign of a blocking
+operation and callback delegates are set up under the covers by the compiler to
+finish executing the rest of the code after the blocking process finishes.</p>
+
+<p>Here is the same example but using an async lambda expression:</p>
+
+<pre class="brush: csharp">
+    public void ButtonClick()
+    {
+        var files = new string[] { "file1.txt", "file2.txt", "file3.txt" };
+
+        files.ForEach(async file => await ReadTextAsync(file));
+    }
+
+    private async Task&lt;string&gt; ReadTextAsync(string filePath)
+    {
+        // Some text reading implementation that supports the TPL
+    }
+</pre>
+
+
+<p>Please overlook my disregard of single responsibility and encapsulation, and so
+on so forth. This is an overly simplified example intended solely to show what
+the syntax looks like. Either way, I could see this lighter weight syntax coming
+in handy in the future.</p>
+
+<p>In the same example where I saw async lambda syntax used, I also saw Jon Skeet
+show off a really clever extension method that took an enumerable collection of
+<code>Task</code> objects and reordered them so they could be enumerated and handled in the
+order that they complete their asynchronous operations. Perhaps I will show that
+piece of code next time.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Well-Rounded Developers]]></title>
@@ -1314,24 +1394,6 @@ Hi Mike,<br /><br />Like you, I&#39;m a bit wary of that first spec you&#39;ve w
     <id>http://mkmurray.com/blog/2009/11/11/custom-setup-bootstrappers</id>
     <content type="html"><![CDATA[<div class='post'>
 <p>At work, we have a line of desktop products for one of clients installed on the user’s Windows machine via MSI installers.&#160; We use Visual Studio Setup Projects to create the MSI installers.&#160; Visual Studio also provides the ability to create setup bootstrappers to make sure the user has all the prerequisites needed for the MSI install technology and any dependencies required by your desktop product.&#160; These bootstrappers are unmanaged code, because you can’t always depend on the .NET framework already being there (at least not until everyone is off of XP and lower).&#160; I have developed a solution that has worked for the last year or more, but has felt clumsy and slapped together.&#160; Recently I found the <a href="http://dotnetinstaller.codeplex.com/">open source project called dotNetInstaller</a> which has better provided me with the control and flexibility I need for custom logic during bootstrap and install time.&#160; I’ll first introduce you to my “hack” solution.</p> <span class="fullpost">   <p>It has been difficult for me to find ways to tie into the bootstrapper logic workflow to add in custom logic during installs, and Visual Studio is very rigid in its flexibility and basic in its configuration options in this regard.&#160; Until recently, I had settled on writing managed, C# code for this custom logic meant to run before or after the MSI installer, and then creating another unmanaged <font face="Courier New">setup.exe</font> bootstrapper to ensure the .NET framework was installed just so that executable could run.&#160; So the user would run this new unmanaged <font face="Courier New">setup.exe</font> bootstrapper (making sure .NET framework was installed), which would then call my managed custom logic executable, which would then call the MSI installer’s unmanaged, Visual Studio-generated <font face="Courier New">setup.exe</font> bootstrapper (ensuring more prerequisites were installed), which would then finally install the MSI, and which would then lastly return to my managed custom logic executable for any post-install, clean up logic.&#160; I describe this solution in full (and how to generate the same bootstrappers that Visual Studio creates using MSBuild outside the IDE) in a StackOverflow.com answer that I submitted:</p>    <p><a title="http://stackoverflow.com/questions/1106768/how-can-i-reverse-engineer-an-installer-that-was-written-with-ghost-installer/1121846#1121846" href="http://stackoverflow.com/questions/1106768/how-can-i-reverse-engineer-an-installer-that-was-written-with-ghost-installer/1121846#1121846">http://stackoverflow.com/questions/1106768/how-can-i-reverse-engineer-an-installer-that-was-written-with-ghost-installer/1121846#1121846</a></p>    <p>Well, recently I found the <a href="http://dotnetinstaller.codeplex.com/">dotNetInstaller project on CodePlex.com</a> and have found it to be the control and flexibility I need for custom logic when bootstrapping installers.&#160; Not only does it give you great control over prerequisite install order, it also gives you the ability to run code after MSI install and to also filter on CPU architecture types, OS versions, and other registry or file system conditions.&#160; I have currently setup branching scenarios for the prerequisites based on if the user has a 32-bit (x86) or 64-bit (x64) OS.&#160; This utility will even let you brand the bootstrapper with a banner and icon, which is a change of pace from the plain and unlabeled bootstrapper that Visual Studio and MSBuild produce.</p>    <p>If you have custom bootstrapping needs, I have to highly recommend you give dotNetInstaller a look.&#160; Hopefully it will prove as flexible and powerful for your needs as it has for mine.</p> </span>  </div>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Anagram Code Kata – BDD & MSpec]]></title>
-    <link href="http://mkmurray.com/blog/2009/11/10/anagram-code-kata-bdd-mspec/"/>
-    <updated>2009-11-10T21:32:00-07:00</updated>
-    <id>http://mkmurray.com/blog/2009/11/10/anagram-code-kata-bdd-mspec</id>
-    <content type="html"><![CDATA[<div class='post'>
-<p>Many forms of martial arts utilize the <a href="http://en.wikipedia.org/wiki/Kata" target="_blank">kata</a> as a means for detailed, focused practice and training.&#160; The power of this practice comes from repetition and focus on simple fundamentals, “while attempting to maintain perfect form.”&#160; The principle goal is to “try out different combinations of techniques in a safe, practice environment to ultimately find out how to defeat your opponent”.&#160; In the last few years, this concept has taken hold within the software development world in the form of <a href="http://en.wikipedia.org/wiki/Code_Kata" target="_blank">Code Kata</a>, a phrase coined by <a href="http://pragprog.com/" target="_blank">Pragmatic Programmer</a> <a href="http://pragdave.pragprog.com/" target="_blank">Dave Thomas</a> (and <a href="http://codekata.pragprog.com/" target="_blank">here is his blog dedicated to the Code Kata</a>).</p>  <p>My inspiration for all of this is <a href="http://www.davesquared.net/2009/10/calculators-and-tale-of-two-tdds-pt-1.html" target="_blank">David Tchepak’s Calculator Kata series of posts</a>.&#160; Hopefully he will stop by and provide some helpful guidance and advice.&#160; I have selected the <a href="http://codekata.pragprog.com/2007/01/kata_six_anagra.html" target="_blank">Anagram Kata (code kata number 6)</a> for me to practice.&#160; My goals for this series of posts are:</p>  <ul>   <li>To practice coding and share my learning experience with you, while also soliciting feedback and suggestions. </li>    <li>To more fully understand the concepts driving <a href="http://en.wikipedia.org/wiki/Behavior_Driven_Development" target="_blank">Behavior Driven Development (BDD)</a> via a testing framework designed for such a practice, namely <a href="http://blog.wekeroad.com/blog/make-bdd-your-bff-2/" target="_blank">MSpec</a>. </li>    <li>To keep to the <a href="http://www.davesquared.net/2009/01/introduction-to-solid-principles-of-oo.html" target="_blank">SOLID principles of Object-Oriented Design</a>, especially <a href="http://www.davesquared.net/2009/11/favour-test-driving-logic-over-data.html" target="_blank">in favor of test driving logic over just testing data</a>. </li> </ul>  <p>Below I will keep an updated list of blog posts in this series.&#160; Hope you enjoy it!</p>  <ul>   <li><a href="http://murrayon.net/2009/11/anagram-code-kata-part-1-getting.html">Part 1 – Getting Started</a> </li>    <li><a href="http://murrayon.net/2009/11/anagram-code-kata-part-2-mocking-and.html" target="_blank">Part 2 – Mocking and SRP (Single Responsibility Principle)</a> </li>    <li><a href="http://murrayon.net/2009/12/anagram-code-kata-part-3-use-common.html" target="_blank">Part 3 – Use Common Sense</a> </li>    <li><a href="http://murrayon.net/2010/01/anagram-code-kata-part-4-will-it-write.html">Part 4 – Will it Write My Code for Me?</a></li>    <li><a href="http://murrayon.net/2010/02/anagram-code-kata-part-5-domain-objects.html">Part 5 – Domain Objects Over Language Primitives</a>&#160;</li> </ul>  <p><strong><u>UPDATE (07/18/10)</u></strong>:&#160; I was asked where the source code to this post series could be found.&#160; I decided to host it at BitBucket.org using Mercurial for the source control:&#160; <a href="http://bitbucket.org/murrayondotnet/anagramkata/">http://bitbucket.org/murrayondotnet/anagramkata/</a></p></div>
-<h2>Comments</h2>
-<div class='comments'>
-<div class='comment'>
-<div class='author'>David</div>
-<div class='content'>
-Looking forward to it. :)<br /><br />For the record, I can either stop by *or* be helpful, not both. ;) :P</div>
-</div>
-</div>
 ]]></content>
   </entry>
   

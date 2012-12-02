@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="If you&#8217;ve ever kicked off a way long build on accident in Visual Studio, I&#8217;m sure you&#8217;ve considered doing an End Task on it (or &hellip;">
+	<meta name="description" content="Here is a site with a pretty thorough list of tools that help in creating and modifying MSI files:&#160; http://www.installsite.org/pages/en/msi/ &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -46,6 +46,44 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/02/11/windows-installer-tools/">Windows Installer Tools</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-02-11T15:58:00-07:00" pubdate data-updated="true">Feb 11<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/deployment-and-installers/'>Deployment and Installers</a>, <a class='category' href='/blog/categories/msi/'>MSI</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/02/11/windows-installer-tools/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>Here is a site with a pretty thorough list of tools that help in creating and modifying MSI files:&#160; <a title="http://www.installsite.org/pages/en/msi/authoring.htm" href="http://www.installsite.org/pages/en/msi/authoring.htm">http://www.installsite.org/pages/en/msi/authoring.htm</a></p>  </div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -192,44 +230,6 @@
 	<div class="entry-content">
 		<div class='post'>
 <p>So I&#8217;m really excited to start using Visual Studio 2008 and LINQ.&#160; A few of the guys here at work are learning it and will hopefully be giving us a little presentation in the next few weeks about how they used it in one of our projects.&#160; They have been learning it with the help of the following tutorial, which I hope to read through in the next few days:&#160; <a title="http://weblogs.asp.net/scottgu/archive/2007/05/19/using-linq-to-sql-part-1.aspx" href="http://weblogs.asp.net/scottgu/archive/2007/05/19/using-linq-to-sql-part-1.aspx">http://weblogs.asp.net/scottgu/archive/2007/05/19/using-linq-to-sql-part-1.aspx</a></p>  <p>By the way, it&#8217;s a 9-part series of blog posts (if you care to get that into it).</p>  </div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2008/01/18/windows-forms-ui-threading/">Windows Forms UI Threading</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-01-18T16:34:00-07:00" pubdate data-updated="true">Jan 18<span>th</span>, 2008</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/delegates/'>Delegates</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/threading/'>Threading</a>, <a class='category' href='/blog/categories/ui/'>UI</a>, <a class='category' href='/blog/categories/windows-forms/'>Windows Forms</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2008/01/18/windows-forms-ui-threading/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p>I fixed a UI issue we were having where some work was being done and it was updating a progress bar, but it wasn&#8217;t correctly painting the rest of the labels and other static UI elements.&#160; It&#8217;s best to let the UI do it&#8217;s thing on the main thread, and then spawn off a worker thread in the background, allowing them to communicate with each other through delegates.</p> <span class='fullpost'> <p>Here is a very nicely done, informative article about delegates that I should have read (I probably would have gotten to my solution quicker and surpassed my trial and error issues):&#160; <a title="http://www.ondotnet.com/pub/a/dotnet/2002/11/04/delegates.htm" href="http://www.ondotnet.com/pub/a/dotnet/2002/11/04/delegates.htm">http://www.ondotnet.com/pub/a/dotnet/2002/11/04/delegates.htm</a></p>  <p>I used the following two articles as a basis for my fix:</p>  <ul>   <li><a title="http://msdn2.microsoft.com/en-us/library/ms951089.aspx" href="http://msdn2.microsoft.com/en-us/library/ms951089.aspx">http://msdn2.microsoft.com/en-us/library/ms951089.aspx</a> </li>    <li><a title="http://www.ondotnet.com/pub/a/dotnet/2003/02/24/asyncdelegates.html?page=1" href="http://www.ondotnet.com/pub/a/dotnet/2003/02/24/asyncdelegates.html?page=1">http://www.ondotnet.com/pub/a/dotnet/2003/02/24/asyncdelegates.html?page=1</a> </li> </ul>  <p>However, I didn&#8217;t end up using the <font face="Courier New">MulticastDelegate</font> class at all in my solution.&#160; It&#8217;s not really necessary, and I couldn&#8217;t get it to work when I tried to extend or inherit from it.&#160; The following article says you can&#8217;t anyway, unless you are a compiler or some similar tool:&#160; <a title="http://msdn2.microsoft.com/en-us/library/system.multicastdelegate.aspx" href="http://msdn2.microsoft.com/en-us/library/system.multicastdelegate.aspx">http://msdn2.microsoft.com/en-us/library/system.multicastdelegate.aspx</a></p>  <p>This link has a cool helper class for asynchronous delegates, though I didn&#8217;t use it:&#160; <a title="http://peach.ease.lsoft.com/scripts/wa.exe?A2=ind0302B&amp;L=ADVANCED-DOTNET&amp;T=0&amp;F=&amp;S=&amp;P=31992" href="http://peach.ease.lsoft.com/scripts/wa.exe?A2=ind0302B&amp;L=ADVANCED-DOTNET&amp;T=0&amp;F=&amp;S=&amp;P=31992">http://peach.ease.lsoft.com/scripts/wa.exe?A2=ind0302B&amp;L=ADVANCED-DOTNET&amp;T=0&amp;F=&amp;S=&amp;P=31992</a></p>  <p>Good luck.</p>  <p><strong><u>FOLLOWUP (05/21/09)</u>:&#160; </strong>I have some further clarifications about how to properly invoke delegates to a new background thread in this post:</p>  <p><a href="http://murrayon.net/2009/05/begininvoke-methods-and-oneway.html">BeginInvoke Methods and OneWay Attribute</a></p> </span>  </div>
 
 		
 		
