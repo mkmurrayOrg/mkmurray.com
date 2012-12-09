@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="I just noticed in today&#8217;s Tuesday round of Microsoft Updates that there is an optional software download for PowerShell 1.0 on Windows XP.&# &hellip;">
+	<meta name="description" content="In a previous post I talked about Windows Forms UI Threading using delegates.&#160; Recently I needed to replicate what I had learned, and I &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -46,6 +46,44 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2009/05/21/begininvoke-methods-and-oneway-attribute/">BeginInvoke Methods and OneWay Attribute</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-05-21T16:29:00-06:00" pubdate data-updated="true">May 21<span>st</span>, 2009</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/delegates/'>Delegates</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/threading/'>Threading</a>, <a class='category' href='/blog/categories/ui/'>UI</a>, <a class='category' href='/blog/categories/windows-forms/'>Windows Forms</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2009/05/21/begininvoke-methods-and-oneway-attribute/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>In a previous post I talked about <a href="http://murrayon.net/2008/01/windows-forms-ui-threading.html">Windows Forms UI Threading</a> using delegates.&#160; Recently I needed to replicate what I had learned, and I happened to do so without reviewing my notes in the former blog post.&#160; Apparently I didn’t remember everything I had learned and became confused over thread invocation techniques, introducing a bug into my thread messaging.&#160; The UI thread was blocking while the background worker thread was processing.</p>  <p>The cause was related to figuring out which <font face="Courier New">BeginInvoke</font> method to call when kicking off the worker thread, the <font face="Courier New">BeginInvoke</font> of the <font face="Courier New">Form</font> object or the <font face="Courier New">BeginInvoke</font> of the delegate.&#160; The answer is the <font face="Courier New">BeginInvoke</font> method of the delegate.&#160; All of the examples linked to in the previous post had it right, but I got it mixed up with making <font face="Courier New">Invoke</font> or <font face="Courier New">BeginInvoke</font> calls from the background thread using the <font face="Courier New">Form</font> object’s version of these methods.&#160; If you don’t care whether your messaging from the background thread is synchronous or asynchronous, then you can use either methods and you can use the ones from the <font face="Courier New">Form</font> object.</p>  <p>The problem is using these <font face="Courier New">Form</font> object methods in order to kick off your background worker thread.&#160; The description of the <font face="Courier New">BeginInvoke</font> method on the <font face="Courier New">Form</font> object states that it <font face="Courier New">“executes the specified delegate asynchronously on the thread that the control’s underlying handle was created on.”</font>&#160; I translate this to mean that calling your <font face="Courier New">Form</font> object’s <font face="Courier New">BeginInvoke</font> will process on your UI thread.&#160; Apparently the delegate <font face="Courier New">BeginInvoke</font> method has no such wording in its description.</p> <span class='fullpost'> <p>Rereading <a title="Safe, Simple Multithreading in Windows Forms, Part 1" href="http://msdn.microsoft.com/en-us/library/ms951089.aspx">this MSDN article</a> from the former post and reading the <font face="Courier New">Form</font> object’s <font face="Courier New">BeginInvoke</font> method description which I quoted above set me straight and got rid of my blocking UI problem (again).</p>  <p>During this research session, I came across another informative resource when trying to figure out what was meant by potential resource leaks when using <font face="Courier New">BeginInvoke</font> with out later calling <font face="Courier New">EndInvoke</font>.&#160; From reading the article, I gather you can substitute the <font face="Courier New">EndInvoke</font> call with the <a title="OneWayAttribute Class" href="http://msdn.microsoft.com/en-us/library/system.runtime.remoting.messaging.onewayattribute.aspx"><font face="Courier New">OneWay</font> attribute</a><font face="Courier New"><font color="#333333"><font face="Verdana"></font></font></font> on the method being invoked, as long as it has a <font face="Courier New">void</font> return signature and no <font face="Courier New">ref</font> nor <font face="Courier New">out</font> parameters.&#160; Please let me know if my interpretation is wrong.&#160; I added the attribute to my code in the applicable spots and have seen no side effects of doing so.&#160; Here is the article on read mentioning this attribute:</p>  <p><a href="http://weblogs.asp.net/rosherove/pages/DefensiveEventPublishing.aspx">Defensive Event Publishing in .NET – Part I</a></p> </span>  </div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -216,52 +254,6 @@ Prefect article and thanks for the video links. It helped me understand this who
 <div class='author'>Radek</div>
 <div class='content'>
 Thanks. This post helped me resolved serious issue with IIS7</div>
-</div>
-</div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2009/02/11/asp-net-profile-and-web-application-projects/">ASP.NET Profile and Web Application Projects</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-02-11T15:08:00-07:00" pubdate data-updated="true">Feb 11<span>th</span>, 2009</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/asp-net/'>ASP.NET</a>, <a class='category' href='/blog/categories/asp-net-providers-series/'>ASP.NET Providers Series</a>, <a class='category' href='/blog/categories/build/'>Build</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/msbuild/'>MSBuild</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>, <a class='category' href='/blog/categories/web/'>Web</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2009/02/11/asp-net-profile-and-web-application-projects/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p>I talked at length about the ASP.NET <a href="http://en.wikipedia.org/wiki/Provider_model">Provider Model pattern</a> and the ease of implementing several built-in services you can have for free with ASP.NET 2.0 in <a title="ASP.NET Providers - Membership, Role, and Profile" href="http://murrayon.net/2009/01/aspnet-providers-membership-role-and.html">my previous series of posts</a>.&#160; In this post, I will be discussing a few issues I ran into using the Profile system with the <font face="Courier New">Web Application</font> project template instead of the <font face="Courier New">Web Site</font> project template as found in Visual Studio&#8217;s list of default project templates.</p>  <p>The crux of the issue is that Visual Studio doesn&#8217;t automatically generate the <font face="Courier New">Profile</font> proxy class object when using the <font face="Courier New">Web Application</font> project template, like it does with the <font face="Courier New">Web Site</font> project template.&#160; This proxy class can be used to obtain access to strongly-typed properties representing the custom Profile fields you specified in your <font face="Courier New">Web.config</font>.&#160; This is a very convenient way to access a user&#8217;s Profile data, both for authenticated and for anonymous users.</p>  <p>Let&#8217;s discuss the issue a little further and then I will present a workaround that I found and have successfully implemented in my own project.</p> <span class='fullpost'> <h3>VS Project Templates:&#160; Web Site vs. Web Application</h3>  <p>It appears that Microsoft has tried to differentiate these two project templates as much as possible in Visual Studio 2008.&#160; In 2005, you would go to the <font face="Courier New">New Project</font> dialog window and you would see these two <font face="Courier New">Web</font> project templates side-by-side, wondering what difference it would make if you chose one over the other.&#160; However, in Visual Studio 2008, it appears they reworked this whole dialog and menu system for starting a new project so that you would never see these two project templates side-by-side.&#160; In 2008, you have more than one option in the <font face="Courier New">File</font> menu for starting a project; those options are <font face="Courier New">File | New | Project</font> and <font face="Courier New">File | New | Web Site</font>.&#160; The first option is the one that will get you to the <font face="Courier New">ASP.NET Web Application</font> template, while the second takes you to the <font face="Courier New">ASP.NET Web Site</font> project template.</p>  <p>Now as for the differences between these two templates, I&#8217;ll outline a few of the main differences and give a little bit of history of how these two templates came to coexist.&#160; The history in a nutshell is that Visual Studio 2005 came out with the <font face="Courier New">Web Site</font> project template to replace the old, but proven project configuration used by ASP.NET 1.x.&#160; In the opinion of many, the old template better encouraged Object-Oriented design practices.&#160; The new template had no project file for explicitly delineating what files where included in the project and namespacing was quite cumbersome, as the only painless design was to let everything pile up into one big default namespace.&#160; A few other changes involved taking ASP.NET back to compiling on the fly at the web server and also drastically changing the organization of UI template and code-behind files.&#160; It appears the intention was to closely mimic the configuration and deployment practices of popular agile languages like PHP and Ruby on Rails.</p>  <p>In the Service Pack 1 of Visual Studio 2005, Microsoft decided to resurrect the older project template under the name of <font face="Courier New">Web Application</font>.&#160; There is evidence to suggest that Microsoft considers this latter project template an &quot;enterprise&quot; project type, as compared to the casual <font face="Courier New">Web Site</font> project template.&#160; With the advent of Visual Studio 2008, it is apparent that Microsoft is committed to supporting both project types for at least a little while.&#160; For a more detailed discussion of the history and differences of these two project templates, I suggest the following blog post by <a href="http://reddnet.net/code/">Stephen M. Redd</a>:</p>  <ul>   <li><a href="http://reddnet.net/code/aspnet-web-site-vs-web-application/">ASP.NET - Web Site vs. Web Application</a></li> </ul>  <h3>Web Profile Builder by Joe Wrobel</h3>  <p>The ability to retrieve and update your custom Profile fields at design time via strongly-typed properties on the <font face="Courier New">Profile</font> proxy class is extremely convenient.&#160; Unfortunately, you get no such compiler and intellisense love if you are using the <font face="Courier New">Web Application</font> project template for your site.</p>  <p>In trying to find a workaround, I came across a <a title="Web Profile Builder for Web Application Projects" href="http://weblogs.asp.net/joewrobel/archive/2008/02/03/web-profile-builder-for-web-application-projects.aspx">blog post by Joe Wrobel introducing a project he worked on to solve this issue</a>.&#160; It&#8217;s called the <font face="Courier New">Web Profile Builder</font> (here&#8217;s a <a title="Web Profile Builder" href="http://code.msdn.microsoft.com/WebProfileBuilder/Release/ProjectReleases.aspx">link to it&#8217;s project page on MSDN Code Gallery</a>) and it was based on a project called the <a href="http://www.codeplex.com/WebProfile">Web Profile Generator</a>, which was a Visual Studio 2005 Add-In project found on <a href="http://www.codeplex.com/">CodePlex</a>.&#160; The latter project seems to have not been worked on in over a year and a half, nor does it seem to be compatible with Visual Studio 2008.&#160; Hence, Joe feeling the need to start up on his own project, with a few improvements on the side of course.</p>  <p>In Joe&#8217;s introductory post to the project, he mentions he changed the Visual Studio integration from being a plug-in to being an MSBuild Build Task.&#160; The method for incorporating the Build Task into your project is to add a line into your project file (the one with file extension <font face="Courier New">.csproj</font>).&#160; In case you weren&#8217;t aware, Visual Studio project files are just <a href="http://en.wikipedia.org/wiki/MSBuild">MSBuild</a> build scripts.&#160; For details about where to put this line in the file (and about a message Visual Studio pops up when it detects you&#8217;ve mucked with the project file), be sure to check out <a title="Web Profile Builder for Web Application Projects" href="http://weblogs.asp.net/joewrobel/archive/2008/02/03/web-profile-builder-for-web-application-projects.aspx">Joe&#8217;s post on the Web Profile Builder project</a>.</p>  <p>There are a couple of other things I need to point out about using the Build Task that weren&#8217;t entirely clear to me beforehand.&#160; The build task actually generates a C# code file that is intended to be included into your project; once it&#8217;s generated, you need to go to the <font face="Courier New">Solution Explorer</font> and explicitly add it as a file in your project (one way is through the <font face="Courier New">Add | Existing Item</font> menu option).&#160; One of the main things that helped me decide to use this solution and how to configure it was reading two blog posts from <a href="http://www.codersbarn.com/">Anthony Grace</a>; the second post below has a great excerpt apparently from the <font face="Courier New">Web Profile Builder</font> documentation that explains the process I outlined above in a bit more detail:</p>  <ul>   <li><a href="http://www.codersbarn.com/post/2008/06/ASPNET-Web-Site-versus-Web-Application-Project.aspx">ASP.NET: Web Site versus Web Application Project</a></li>    <li><a href="http://www.codersbarn.com/post/2008/07/10/ASPNET-PayPal-Subscriptions-IPN.aspx">ASP.NET PayPal Subscription IPN</a></li> </ul>  <p>Also, it is not necessary to do the steps in the <font face="Courier New">Extended Usage</font> section of Joe&#8217;s blog post.&#160; They are optional configuration points in the <font face="Courier New">Web.config</font> where you control the <font face="Courier New">className</font>, <font face="Courier New">nameSpace</font>, <font face="Courier New">directory</font>, and <font face="Courier New">fileName</font> of the auto-generated code file.&#160; Most of the defaults are fine, but in my case I wanted the generated file to end up in an <font face="Courier New">App_Code</font> directory instead of in the root of the project folder.&#160; If you decide to add in this custom configuration, you need to be aware that you must add the following XML namespace to the <font face="Courier New">configuration</font> root element of your <font face="Courier New">Web.config</font>:</p>  <p><font face="Courier New">xmlns=&quot;http://schemas.microsoft.com/.NetConfiguration/v2.0&quot;</font></p>  <p>Finally, it should be noted that if the website you are building is under source control, you will likely want to always keep this auto-generated code file checked out in order to prevent the file from having its <font face="Courier New">Read-Only</font> attribute set when it&#8217;s checked in.&#160; If you don&#8217;t have it checked out, the build will throw out a warning and the generated code file will not be regenerated if changes in your <font face="Courier New">Web.config</font> need to be propagated to it.</p>  <h3>Conclusion</h3>  <p>With all of this in place, you should be able to use the Profile proxy class object in your ASPX code-behind files, just as I gave examples of in my <a href="http://murrayon.net/2009/02/aspnet-providers-profile.html">previous post about the ASP.NET Profile system</a>.&#160; Although in my case, I mostly used the static method <font face="Courier New">GetProfile</font> from the auto-generated <font face="Courier New">WebProfile</font><font face="Verdana"> class (the name the Visual Studio Build Task selects by default).</font></p>  <p>As I mentioned when <a title="ASP.NET Providers - Membership, Role, and Profile" href="http://murrayon.net/2009/01/aspnet-providers-membership-role-and.html">I first started the ASP.NET Provider Series of posts</a>, my next blog post will be about some advantages of using this Provider system on IIS 7 and a few issues when your ASP.NET website contains non-ASP.NET content:</p>  <ul>   <li><a href="http://murrayon.net/2009/02/iis-7-and-aspnet-providers-membership.html">IIS 7 and ASP.NET Providers (Membership, Roles, and Profile)</a> </li> </ul> </span>  </div>
-<h2>Comments</h2>
-<div class='comments'>
-<div class='comment'>
-<div class='author'>Martena Gaines</div>
-<div class='content'>
-Web sites are dynamically compiled and source is distributed with them. Web Applications can be compiled into a single DLL and deployed. You cannot use the app_code folder in WAP projects, but you can with WSP.</div>
 </div>
 </div>
 

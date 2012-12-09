@@ -49,6 +49,103 @@
 
 
     <article class="post">
+	<h1 class="title"><a href="/blog/2010/02/20/anagram-code-kata-part-5-domain-objects-over-language-primitives/">Anagram Code Kata Part 5 – Domain Objects Over Language Primitives</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-02-20T17:55:00-07:00" pubdate data-updated="true">Feb 20<span>th</span>, 2010</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/anagram-code-kata-series/'>Anagram Code Kata Series</a>, <a class='category' href='/blog/categories/bdd/'>BDD</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/code-organization/'>Code Organization</a>, <a class='category' href='/blog/categories/mspec/'>MSpec</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/mocking/'>Mocking</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>, <a class='category' href='/blog/categories/solid/'>SOLID</a>, <a class='category' href='/blog/categories/testing/'>Testing</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2010/02/20/anagram-code-kata-part-5-domain-objects-over-language-primitives/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>This post is part of a <a href="http://murrayon.net/2009/11/anagram-code-kata-bdd-mspec.html">series on coding Kata, BDD, MSpec, and SOLID principles</a>.&#160; Feel free to visit the above link which points to the introductory post, also containing an index of all posts in the series.</p>  <p>In this post, we will discuss some reasons why you might want to avoid using language primitives directly in place of domain objects.&#160; Specifically, I have been using <font face="Courier New">String</font> variables and objects to represent words up to this point.&#160; <a href="http://adotnetdude.blogspot.com/">Esteban</a> suggested I create a <font face="Courier New">Word</font> class for a few good reasons which I’ll layout for you.&#160; Out of sheer luck and good timing, <a href="http://codebetter.com/blogs/dru.sellers/default.aspx">Dru Sellers</a> of <a href="http://codebetter.com/">CodeBetter.com</a> also wrote on this subject shortly afterward and confirmed Esteban’s reasoning.</p> <span class="fullpost">   <h3>Use <font face="Courier New">String</font> Class or Create <font face="Courier New">Word</font> Domain Object?</h3>    <p>I mentioned in the previous post that Esteban had suggested creating a <font face="Courier New">Word</font> class instead of just passing around strings everywhere through my application.&#160; One good reason is that we don’t own the <font face="Courier New">String</font> class and so further modification to our string-based implementation is difficult because the logic is scattered throughout the application, instead of centralized under the responsibility and definition of one domain class.&#160; It is much more difficult to refactor the word-specific logic with its behaviors and attributes spread throughout the code.&#160; Even if your <font face="Courier New">Word</font> class doesn’t grow any more beyond a seemingly unnecessary wrapper of the <font face="Courier New">String</font> class, the code is more cohesive and ready for change should the need arise.</p>    <p>But more importantly, you designed the code thinking in a true object-oriented mindset.&#160; You have to keep in mind that the <font face="Courier New">String</font> class is someone else’s implementation, and is hardly ever sufficient in and of itself as a domain object within your solution.&#160; Think about it, the behaviors that a string object performs are so generic and multipurpose that you likely don’t need two-thirds of the class as defined (and there’s likely a few behaviors you really need that aren’t there).&#160; Of course nearly every application on earth makes use of the <font face="Courier New">String</font> class; but because of this fact, it has no meaning in and of itself within any given application.&#160; You would have to look at how the stings are actually used within the code in order to understand its unique application within the app’s context.&#160; Of course that task of research is much easier for everyone (including the original author of the code) if it’s all encapsulated within a dedicated domain object class.&#160; True object-orientation means describing in code form the properties, behaviors, and interactions/relationships of real world objects within your problem domain.</p>    <p>Esteban gave me a great example to illustrate these points.&#160; He said that you can always represent money as a decimal (and even when you use a domain object, it’s got to have a decimal language primitive underneath the covers).&#160; However, what happens when you need to attach metadata to the amount (like currency denomination), or if you need to change decimal precision?&#160; You would have to go through all of the code and make sure your use of decimal language primitives is modified uniformly in order to retain consistency.&#160; Also, mathematic operations involving money are hardly ever the same as their counterparts involving standard decimals, because currency deals with discrete values to a certain decimal precision.&#160; Typically when the behaviors and properties within our system begin to get complex, we are cognizant enough to create domain objects in order to bring it all under one class.&#160; We definitely don’t want to over-architect features and interactions before we need them, but I think there is power in this principle of abstracting away language primitives and instead encapsulating their use within domain objects located in just one place in your codebase.&#160; I believe it is one thing we can keep in mind to help guide us to better object-oriented thinking, and avoid language-oriented coding.</p>    <p>As mentioned above, Esteban’s thoughts were confirmed nearly verbatim by <a href="http://codebetter.com/blogs/dru.sellers/default.aspx">Dru Sellers</a> of <a href="http://codebetter.com/">CodeBetter.com</a> in his blog post that he wrote just a few days after I had the conversation with Esteban.&#160; A great coincidence no doubt, and worth a read; here’s the link:</p>    <p><a href="http://codebetter.com/blogs/dru.sellers/archive/2010/01/27/business-primitives-1-2.aspx">Business Primitives (1/2)</a>&#160;</p>    <h3><font face="Courier New">Word</font> Class Implementation</h3>    <p>So basically I created the following class implementation and then replaced string with a reference to this new class, <font face="Courier new">Word</font>:</p>    <pre class="brush: csharp">public class Word
+{
+    private string wordStr = string.Empty;
+
+    public Word(string wordStr)
+    {
+        this.wordStr = wordStr;
+    }
+
+    public override string ToString()
+    {
+        return wordStr;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return wordStr == ((Word)obj).ToString();
+    }
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
+
+    public int GetCanonicalHashCode()
+    {
+        char[] letters = wordStr.ToCharArray();
+        Array.Sort&lt;char&gt;(letters);
+        return new string(letters).GetHashCode();
+    }
+}</pre>
+
+  <p>I have defined an overridden implementation for <font face="Courier New">Equals(object)</font> (so that the test assertions and other <font face="Courier New">IEnumerable.Contains()</font> queries work) and <font face="Courier New">GetHashCode()</font> (solely to satisfy a compiler warning).&#160; I also moved the <font face="Courier New">GetCanoncialHashCode()</font> method from <font face="Courier New">AnagramGrouper</font>, in order to better encapsulate it as a behavior a Word knows how to do innately.</p>
+
+  <p>One other change I had to make was to convert strings into <font face="Courier New">Word</font> objects in our <font face="Courier New">NewlineFileParser</font>, which I accomplished by using an <font face="Courier New">IEnumberable.Select()</font> call as shown below:</p>
+
+  <pre class="brush: csharp">return File.ReadAllLines(filePath).Select&lt;string, Word&gt;(x =&gt; new Word(x));</pre>
+
+  <p></p>
+
+  <h3>Let’s Revisit <font face="Courier New">AssertWasCalled</font> One More Time</h3>
+
+  <p>Trust me, I am groaning with you, even as I wrote that heading text.&#160; The last thing we need is for me to rehash the topic again and flip flop my stance yet another time.&#160; Yes, that’s right I’ve changed my mind again.&#160; First I couldn’t understand what utility asserting methods were called would have under normal test scenarios.&#160; Then I changed my mind that perhaps using it would help my test specifications have clearer intent of what I am asserting.&#160; After an email conversation with <a href="http://www.davesquared.net/">David Tchepak</a>, I think I’m now back to my original stance.&#160; Here is what Dave said that had me reconsidering, and I think it’s pretty sound reasoning (emphasis added by me):</p>
+
+  <blockquote>
+    <p>…</p>
+
+    <p>“But seeing as you asked for it, here goes. :)</p>
+
+    <p>“I try and avoid <font face="Courier New">AssertWasCalled</font> like the plague. Generally I don&#8217;t care that some method was called, I care that my class does the work it needs to. If that involves calling a dependency then great, but that is not my class&#8217; reason for existence.</p>
+
+    <p>“I prefer your original approach of stubbing out everything in the setup and having that tested indirectly. One reason I prefer this is I find it makes it easier to refactor: the assertions in my test don&#8217;t change, the class still does the same thing. However I can add or change dependencies by changing some wiring in the setup, and then make sure I haven&#8217;t stuffed anything up as my assertions still pass. <strong>I prefer that my tests specify what I want, not how it does it.</strong> To me, <font face="Courier New">AssertWasCalled</font> reeks of over-specification. The one exception is where I hit the external boundaries of my code, so where I want to send an email or something without side effects that I can test. Then the core of the behaviour is the call itself, so I&#8217;m happy to assert on that then.”</p>
+  </blockquote>
+
+  <p>And with that I’ll promise to never bring this up again…unless of course I get swayed by someone else. :)&#160; In all seriousness, I think this is an interesting discussion and so if you have insight, please share via comment below.</p>
+
+  <h3>Summary</h3>
+
+  <p>Please leave your thoughts in the comments below in regard to creating domain objects over using language primitives (or heaven forbid, the <font face="Courier New">AssertWasCalled</font> debate).&#160; As far as this coding kata exercise, I need to take a high-level look at where this should go next.&#160; Perhaps the next post will tie up loose ends and see how our code performs on large text files as input.&#160; It may be that we will need to refactor our architecture to achieve better runtimes.&#160; If not, maybe we can still discuss where would could have headed if it had been necessary.</p>
+</span>  </div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post">
 	<h1 class="title"><a href="/blog/2010/01/26/anagram-code-kata-part-4-will-it-write-my-code-for-me/">Anagram Code Kata Part 4 – Will It Write My Code for Me?</a></h1>
 	<div class="meta">
 		<div class="date">
@@ -544,44 +641,6 @@ Yes, thank you.  You&#39;ve given me some clairty now and some great ideas that 
 Hi Mike,<br /><br />Like you, I&#39;m a bit wary of that first spec you&#39;ve written (that doesn&#39;t mean it&#39;s wrong obviously &#8211; I&#39;m new to this too :)). <br /><br />You&#39;re right that you are testing data &#8211; loading the wordslist.txt file and checking for the right number of anagram combinations. By the way, this is probably a good example of an integration test for when you are done! :)<br /><br />Whenever I have a hard problem like this that I am having trouble solving, I try and cheat. If you keep this class simple, but push the tricky bits lower down the heirarchy then that may help you start.<br /><br />Here&#39;s how I would update the current spec to help implement your test (this won&#39;t be a spoiler because I&#39;d change the test. I&#39;ll go into that later). <br /><br />In this case I can think of two responsibilities: getting the words from our file, and then counting the number of anagrams found in those words. So maybe your spec&#39;s context could stub out a IFileReader or similar which will return an IEnumerable&lt;string&gt; (filled with some fake data) when asked to get the lines in wordslist.txt. You could then give these words to an IAnagramCounter, which will return 2530.<br /><br />Your test and because can remain the same &#8211; only the context will change (which is what I love about this style of writing specs).<br /><br />Of course this isn&#39;t specifying what your AnagramFinder should actually do&#8230; the kata aim is to print all the anagram combinations to the screen. So you may be better off trying this approach of pushing down logic but rewrite the spec to match the exact problem you are trying to solve.<br /><br />I&#39;m not sure if this will help or lead you down a dead end, but it is the approach I would take.<br /><br />Hope it helps!<br />David</div>
 </div>
 </div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2009/11/11/custom-setup-bootstrappers/">Custom Setup Bootstrappers</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-11-11T15:03:00-07:00" pubdate data-updated="true">Nov 11<span>th</span>, 2009</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/bootstrapper/'>Bootstrapper</a>, <a class='category' href='/blog/categories/build/'>Build</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/c-c-/'>C/C++</a>, <a class='category' href='/blog/categories/deployment-and-installers/'>Deployment and Installers</a>, <a class='category' href='/blog/categories/launch-condition/'>Launch Condition</a>, <a class='category' href='/blog/categories/msbuild/'>MSBuild</a>, <a class='category' href='/blog/categories/msi/'>MSI</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/prerequisites/'>Prerequisites</a>, <a class='category' href='/blog/categories/registry/'>Registry</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2009/11/11/custom-setup-bootstrappers/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p>At work, we have a line of desktop products for one of clients installed on the user’s Windows machine via MSI installers.&#160; We use Visual Studio Setup Projects to create the MSI installers.&#160; Visual Studio also provides the ability to create setup bootstrappers to make sure the user has all the prerequisites needed for the MSI install technology and any dependencies required by your desktop product.&#160; These bootstrappers are unmanaged code, because you can’t always depend on the .NET framework already being there (at least not until everyone is off of XP and lower).&#160; I have developed a solution that has worked for the last year or more, but has felt clumsy and slapped together.&#160; Recently I found the <a href="http://dotnetinstaller.codeplex.com/">open source project called dotNetInstaller</a> which has better provided me with the control and flexibility I need for custom logic during bootstrap and install time.&#160; I’ll first introduce you to my “hack” solution.</p> <span class="fullpost">   <p>It has been difficult for me to find ways to tie into the bootstrapper logic workflow to add in custom logic during installs, and Visual Studio is very rigid in its flexibility and basic in its configuration options in this regard.&#160; Until recently, I had settled on writing managed, C# code for this custom logic meant to run before or after the MSI installer, and then creating another unmanaged <font face="Courier New">setup.exe</font> bootstrapper to ensure the .NET framework was installed just so that executable could run.&#160; So the user would run this new unmanaged <font face="Courier New">setup.exe</font> bootstrapper (making sure .NET framework was installed), which would then call my managed custom logic executable, which would then call the MSI installer’s unmanaged, Visual Studio-generated <font face="Courier New">setup.exe</font> bootstrapper (ensuring more prerequisites were installed), which would then finally install the MSI, and which would then lastly return to my managed custom logic executable for any post-install, clean up logic.&#160; I describe this solution in full (and how to generate the same bootstrappers that Visual Studio creates using MSBuild outside the IDE) in a StackOverflow.com answer that I submitted:</p>    <p><a title="http://stackoverflow.com/questions/1106768/how-can-i-reverse-engineer-an-installer-that-was-written-with-ghost-installer/1121846#1121846" href="http://stackoverflow.com/questions/1106768/how-can-i-reverse-engineer-an-installer-that-was-written-with-ghost-installer/1121846#1121846">http://stackoverflow.com/questions/1106768/how-can-i-reverse-engineer-an-installer-that-was-written-with-ghost-installer/1121846#1121846</a></p>    <p>Well, recently I found the <a href="http://dotnetinstaller.codeplex.com/">dotNetInstaller project on CodePlex.com</a> and have found it to be the control and flexibility I need for custom logic when bootstrapping installers.&#160; Not only does it give you great control over prerequisite install order, it also gives you the ability to run code after MSI install and to also filter on CPU architecture types, OS versions, and other registry or file system conditions.&#160; I have currently setup branching scenarios for the prerequisites based on if the user has a 32-bit (x86) or 64-bit (x64) OS.&#160; This utility will even let you brand the bootstrapper with a banner and icon, which is a change of pace from the plain and unlabeled bootstrapper that Visual Studio and MSBuild produce.</p>    <p>If you have custom bootstrapping needs, I have to highly recommend you give dotNetInstaller a look.&#160; Hopefully it will prove as flexible and powerful for your needs as it has for mine.</p> </span>  </div>
 
 		
 		

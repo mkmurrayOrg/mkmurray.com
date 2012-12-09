@@ -344,11 +344,15 @@
         <loc>
             http://mkmurray.com/blog/2012/12/01/async-lambda-expressions-and-anonymous-delegates/
         </loc>
-        <lastmod>2012-12-01T22:38:03-07:00</lastmod>
+        <lastmod>2012-12-08T21:18:38-07:00</lastmod>
+    </url>
+    <url>
+        <loc>http://mkmurray.com/blog/2012/12/08/testing-trade-offs/</loc>
+        <lastmod>2012-12-08T21:11:45-07:00</lastmod>
     </url>
     <url>
         <loc>http://mkmurray.com/blog/archives/</loc>
-        <lastmod>2012-12-01T22:38:03-07:00</lastmod>
+        <lastmod>2012-12-08T21:18:38-07:00</lastmod>
     </url>
     <url>
         <loc>http://mkmurray.com/blog/categories/</loc>
@@ -356,6 +360,6 @@
     </url>
     <url>
         <loc>http://mkmurray.com/</loc>
-        <lastmod>2012-12-01T22:38:03-07:00</lastmod>
+        <lastmod>2012-12-08T21:18:38-07:00</lastmod>
     </url>
 </urlset>

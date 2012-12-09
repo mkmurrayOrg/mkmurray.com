@@ -3,12 +3,14 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Async lambda expressions and anonymous delegates - Mike Murray</title>
+	<title>Testing Trade-offs - Mike Murray</title>
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="I&#8217;ve known about the new async and await keywords in C# 5 for a while now,
-but I saw a use of it I hadn&#8217;t anticipated. I saw Jon Skeet &hellip;">
+	<meta name="description" content="Last week our dev team at Extend Health watched a RubyConf 2012 video of a talk
+entitled Boundaries by Gary
+Bernhardt of Destroy All
+Software (or &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -47,7 +49,7 @@ but I saw a use of it I hadn&#8217;t anticipated. I saw Jon Skeet &hellip;">
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner"><article class="post">
-	<h1 class="title">Async Lambda Expressions and Anonymous Delegates</h1>
+	<h1 class="title">Testing Trade-offs</h1>
 	<div class="meta">
 		<div class="date">
 
@@ -61,11 +63,11 @@ but I saw a use of it I hadn&#8217;t anticipated. I saw Jon Skeet &hellip;">
   
 
 
-<time datetime="2012-12-01T22:34:00-07:00" pubdate data-updated="true">Dec 1<span>st</span>, 2012</time></div>
+<time datetime="2012-12-08T21:11:00-07:00" pubdate data-updated="true">Dec 8<span>th</span>, 2012</time></div>
 		<div class="tags">
 
 
-	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/delegates/'>Delegates</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>, <a class='category' href='/blog/categories/threading/'>Threading</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
+	<a class='category' href='/blog/categories/code-organization/'>Code Organization</a>, <a class='category' href='/blog/categories/mocking/'>Mocking</a>, <a class='category' href='/blog/categories/ruby/'>Ruby</a>, <a class='category' href='/blog/categories/testing/'>Testing</a>
 
 
 </div>
@@ -73,78 +75,69 @@ but I saw a use of it I hadn&#8217;t anticipated. I saw Jon Skeet &hellip;">
 			<span class="comments"><a href="#disqus_thread">Comments</a></span>
 		
 	</div>
-	<div class="entry-content"><p>I&#8217;ve known about the new <code>async</code> and <code>await</code> keywords in C# 5 for a while now,
-but I saw a use of it I hadn&#8217;t anticipated. I saw Jon Skeet create an
-asyncronous lambda expression and was caught a bit off guard. After thinking
-about it, it really isn&#8217;t that amazing, but I thought I would spread the word
-anyway because I think it could be a really handy feature.</p>
+	<div class="entry-content"><p>Last week our dev team at Extend Health watched a <a href="http://www.youtube.com/watch?v=yTkzNHF6rMs">RubyConf 2012 video of a talk
+entitled Boundaries</a> by <a href="https://twitter.com/garybernhardt">Gary
+Bernhardt</a> of <a href="https://www.destroyallsoftware.com/screencasts">Destroy All
+Software</a> (or perhaps even
+better known for the infamous <a href="https://www.destroyallsoftware.com/talks/wat">WAT lightning talk at CodeMash
+2012</a>). Gary proposes a very
+interesting code architecture that marries the individual benefits of
+immutability &amp; mutability, functional programming &amp; imperative object-oriented
+programming, isolated unit testing &amp; integration testing. He discusses the pros
+&amp; cons of each code design &amp; testing decision and the trade-offs that we end up
+dealing with. He suggests a potential solution that makes virtually no trade-off
+and attempts to harness the advantages of each of these methodologies that
+appear to be at odds with one another. I feel the idea has a lot of merit and I
+highly encourage everyone to watch his presentation to get the full context and
+a better logical progression of his proposal than what I can provide.</p>
 
-<p>Anonymous functions are declared without a method name and can be passed around
-and invoked at will. Lambda expression syntax creates anonymous functions that
-can be used as delegates or expression trees. In C# 5, you can adorn functions
-with the <code>async</code> keyword which signifies that the function will return a <code>Task</code>
-object from the Task Parallel Library as a return value. You will also find
-somewhere in the method body the keyword <code>await</code> next to a statement that could
-take a while to process and be a blocking operation. Now your method can resume
-operation after the asyncronous operation has completed and has its result.</p>
+<h2>Isolated Unit Testing vs. Integration Testing</h2>
 
-<p>Here is a simple example:</p>
+<p>A common practice in unit testing classes and objects is to isolate the targeted
+class from its dependencies so that you can focus solely on its responsibilities
+and domain logic independent of any implementation details of the dependencies.
+This is typically accomplished by the use of stubs and mocks, which attempt to
+control and monitor the interactions with and data return from dependencies.
+There are a ton of gains afforded by this style of testing as Gary points out,
+but one very large criticism of this testing methodology is that it doesn&#8217;t
+exercise the code in the same way it would run in production. It is not exactly
+rare to have these isolated unit tests successfully pass and yet still have
+problems in production.</p>
 
-<pre class="brush: csharp">
-    public void ButtonClick()
-    {
-        ProcessFiles();
-    }
+<p>Integration testing tends to better emulate production because it maintains the
+interaction relationships between objects in addition to acquiring and passing
+the data around the system in the same way. The criticism Gary puts forth of an
+integrated testing strategy is that it is very slow as you begin to attempt to
+cover all the code paths through the system. Consider trying to cover all
+logical branches through the system, including all branches of
+try/catch/finally, conditional, and looping structures. Gary suggests the growth
+in code to cover these scenarios is 2<sup>n<sup>,</sup></sup> where <code>n</code> is the number of branches.</p>
 
-    private async void ProcessFiles()
-    {
-        var files = new string[] { "file1.txt", "file2.txt", "file3.txt" };
+<p>Many try to get the benefits of both types of testing in order to compensate for
+each strategy&#8217;s shortcomings. However, they still write code that doesn&#8217;t play
+to each testing methodolgy&#8217;s strengths. The strength of isolated unit testing is
+verifying that given certain inputs the expected output is always returned. The
+strength of integration testing is coordinating dependencies, making sure they
+utilize and interact with the API of other objects correctly. If you design your
+classes to be a mix of dependencies and logic, it becomes difficult to
+effectively test cover them without writing both sets of tests for all classes
+in your codebase.</p>
 
-        foreach (var file in files)
-        {
-            var fileContents = await ReadTextAsync(file);
-            // likely do something with file contents
-        }
-    }
+<h2>So What?</h2>
 
-    private async Task&lt;string&gt; ReadTextAsync(string filePath)
-    {
-        // Some text reading implementation that supports the TPL
-    }
-</pre>
+<p>OK, so you are probably wondering what the point is then. This sounds like a
+good plan to just be more disciplined in your test coverage, right? Well, let&#8217;s
+explore a way to better segregate dependency orchestration from actual logic and
+behavior. This could allow us to use the right testing methodology depending on
+which type of responsibility the object is meant to encapsulate: dependencies or
+decisions? Gary also asserts that it will lead us down a path that could yield a
+codebase with better modularity, scalability, and potentially even concurrency.
+I believe you can also add better maintainability and extensibility to that
+list.</p>
 
-
-<p>The button click handler method would return at the first sign of a blocking
-operation and callback delegates are set up under the covers by the compiler to
-finish executing the rest of the code after the blocking process finishes.</p>
-
-<p>Here is the same example but using an async lambda expression:</p>
-
-<pre class="brush: csharp">
-    public void ButtonClick()
-    {
-        var files = new string[] { "file1.txt", "file2.txt", "file3.txt" };
-
-        files.ForEach(async file => await ReadTextAsync(file));
-    }
-
-    private async Task&lt;string&gt; ReadTextAsync(string filePath)
-    {
-        // Some text reading implementation that supports the TPL
-    }
-</pre>
-
-
-<p>Please overlook my disregard of single responsibility and encapsulation, and so
-on so forth. This is an overly simplified example intended solely to show what
-the syntax looks like. Either way, I could see this lighter weight syntax coming
-in handy in the future.</p>
-
-<p>In the same example where I saw async lambda syntax used, I also saw Jon Skeet
-show off a really clever extension method that took an enumerable collection of
-<code>Task</code> objects and reordered them so they could be enumerated and handled in the
-order that they complete their asynchronous operations. Perhaps I will show that
-piece of code next time.</p>
+<p>Next week I will dive into how Gary suggests we can better seperate these
+concerns of dependencies and decisions. Stay tuned (or go watch the video and
+spoil the surprise).</p>
 </div>
 
 </article>
@@ -195,8 +188,8 @@ Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Sha
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://mkmurray.com/blog/2012/12/01/async-lambda-expressions-and-anonymous-delegates/';
-        var disqus_url = 'http://mkmurray.com/blog/2012/12/01/async-lambda-expressions-and-anonymous-delegates/';
+        var disqus_identifier = 'http://mkmurray.com/blog/2012/12/08/testing-trade-offs/';
+        var disqus_url = 'http://mkmurray.com/blog/2012/12/08/testing-trade-offs/';
         var disqus_script = 'embed.js';
       
     (function () {

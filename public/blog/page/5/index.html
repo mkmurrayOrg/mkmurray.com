@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="Many forms of martial arts utilize the kata as a means for detailed, focused practice and training.&#160; The power of this practice comes from &hellip;">
+	<meta name="description" content="At work, we have a line of desktop products for one of clients installed on the user’s Windows machine via MSI installers.&#160; We use Visual &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -46,6 +46,44 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2009/11/11/custom-setup-bootstrappers/">Custom Setup Bootstrappers</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-11-11T15:03:00-07:00" pubdate data-updated="true">Nov 11<span>th</span>, 2009</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/bootstrapper/'>Bootstrapper</a>, <a class='category' href='/blog/categories/build/'>Build</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/c-c-/'>C/C++</a>, <a class='category' href='/blog/categories/deployment-and-installers/'>Deployment and Installers</a>, <a class='category' href='/blog/categories/launch-condition/'>Launch Condition</a>, <a class='category' href='/blog/categories/msbuild/'>MSBuild</a>, <a class='category' href='/blog/categories/msi/'>MSI</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/prerequisites/'>Prerequisites</a>, <a class='category' href='/blog/categories/registry/'>Registry</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2009/11/11/custom-setup-bootstrappers/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>At work, we have a line of desktop products for one of clients installed on the user’s Windows machine via MSI installers.&#160; We use Visual Studio Setup Projects to create the MSI installers.&#160; Visual Studio also provides the ability to create setup bootstrappers to make sure the user has all the prerequisites needed for the MSI install technology and any dependencies required by your desktop product.&#160; These bootstrappers are unmanaged code, because you can’t always depend on the .NET framework already being there (at least not until everyone is off of XP and lower).&#160; I have developed a solution that has worked for the last year or more, but has felt clumsy and slapped together.&#160; Recently I found the <a href="http://dotnetinstaller.codeplex.com/">open source project called dotNetInstaller</a> which has better provided me with the control and flexibility I need for custom logic during bootstrap and install time.&#160; I’ll first introduce you to my “hack” solution.</p> <span class="fullpost">   <p>It has been difficult for me to find ways to tie into the bootstrapper logic workflow to add in custom logic during installs, and Visual Studio is very rigid in its flexibility and basic in its configuration options in this regard.&#160; Until recently, I had settled on writing managed, C# code for this custom logic meant to run before or after the MSI installer, and then creating another unmanaged <font face="Courier New">setup.exe</font> bootstrapper to ensure the .NET framework was installed just so that executable could run.&#160; So the user would run this new unmanaged <font face="Courier New">setup.exe</font> bootstrapper (making sure .NET framework was installed), which would then call my managed custom logic executable, which would then call the MSI installer’s unmanaged, Visual Studio-generated <font face="Courier New">setup.exe</font> bootstrapper (ensuring more prerequisites were installed), which would then finally install the MSI, and which would then lastly return to my managed custom logic executable for any post-install, clean up logic.&#160; I describe this solution in full (and how to generate the same bootstrappers that Visual Studio creates using MSBuild outside the IDE) in a StackOverflow.com answer that I submitted:</p>    <p><a title="http://stackoverflow.com/questions/1106768/how-can-i-reverse-engineer-an-installer-that-was-written-with-ghost-installer/1121846#1121846" href="http://stackoverflow.com/questions/1106768/how-can-i-reverse-engineer-an-installer-that-was-written-with-ghost-installer/1121846#1121846">http://stackoverflow.com/questions/1106768/how-can-i-reverse-engineer-an-installer-that-was-written-with-ghost-installer/1121846#1121846</a></p>    <p>Well, recently I found the <a href="http://dotnetinstaller.codeplex.com/">dotNetInstaller project on CodePlex.com</a> and have found it to be the control and flexibility I need for custom logic when bootstrapping installers.&#160; Not only does it give you great control over prerequisite install order, it also gives you the ability to run code after MSI install and to also filter on CPU architecture types, OS versions, and other registry or file system conditions.&#160; I have currently setup branching scenarios for the prerequisites based on if the user has a 32-bit (x86) or 64-bit (x64) OS.&#160; This utility will even let you brand the bootstrapper with a banner and icon, which is a change of pace from the plain and unlabeled bootstrapper that Visual Studio and MSBuild produce.</p>    <p>If you have custom bootstrapping needs, I have to highly recommend you give dotNetInstaller a look.&#160; Hopefully it will prove as flexible and powerful for your needs as it has for mine.</p> </span>  </div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -221,44 +259,6 @@ public int ScoreDice(int[] selectedDice)
 	<div class="entry-content">
 		<div class='post'>
 <p>I came across a surprising restriction on variable declarations that I thought I would share.</p>  <p>My own investigation into C# was prompted by <a title="Declaring variables inside a switch statement - Stack Overflow" href="http://stackoverflow.com/questions/1231198/declaring-variables-inside-a-switch-statement/1231209#1231209">an answer given to a Stack Overflow question regarding an odd Objective-C compiler error</a>.&#160; The answer seemed to allude to a language specification somewhere that doesn’t allow variable declarations in one-liner embedded statements of control structures (loops, <font face="Courier New">switch</font> statements, <font face="Courier New">if-else</font> statements, etc.).&#160; Not only that, Objective-C wasn’t unique in this restriction; it appears Java and even C itself have had this restriction for quite a while as well.</p>  <p>Naturally this got my curiosity going and I decided to see if C# had also carried over such a restriction.&#160; The answer is yes; it appears that Java, C#, and Objective-C have all kept this language restriction from their common ancestor C.&#160; Let’s get right to what it looks like:</p> <span class='fullpost'> <p><a href="http://lh5.ggpht.com/_rps657FzHZ0/SrqdKFwyBLI/AAAAAAAAADA/8fajE6RTF0o/s1600-h/code_screenshot%5B6%5D.png"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="code_screenshot" border="0" alt="code_screenshot" src="http://lh3.ggpht.com/_rps657FzHZ0/SrqdKaU74uI/AAAAAAAAADE/HGin3AOsrsM/code_screenshot_thumb%5B4%5D.png?imgmax=800" width="416" height="712" /></a> </p>  <p>The red-underlined errors read “<font face="Courier New">embedded statement cannot be a declaration or labeled statement</font>” and the green-underlined warnings read “<font face="Courier New">the variable ‘i’ is assigned but its value is never used</font>.”&#160; You’ve probably seen the warning quite a few times before, but the compiler error really caught me by surprise.&#160; I mean it makes sense that declaring a variable in the one-line body of a control structure is pointless, as it would immediately go out of scope (and usefulness) after declared.&#160; But I thought it odd for the compiler to actually deny such a program statement, as if it put the compiler in an invalid state or maybe it was somehow dangerous.</p>  <p>One thing I do want to point out that appears to be different from the other languages (or at the very least Objective-C) is that the variable declaration is allowed in the <font face="Courier New">switch</font> statement, as illustrated in the image above.</p>  <p>To figure out why this isn’t allowed, I decided to actually look into the <a href="http://msdn.microsoft.com/en-us/vcsharp/aa336809.aspx">C# 3.0 Language Specification</a> to see if there were any comments or explanations regarding this issue.&#160; I ended up finding the C# language grammar in Appendix B.&#160; I was able to parse through the grammar and find this restriction in the grammar itself.&#160; Take a look:</p>  <p><strong>B.2.5 </strong><a name="_Toc174237894"><strong>Statements</strong></a></p>  <div><em>statement: </em></div>  <div style="margin-left: 40px"><em>labeled-statement      <br />declaration-statement       <br />embedded-statement</em></div>  <p></p>  <div><em>embedded-statement: </em></div>  <div style="margin-left: 40px"><em>block      <br />empty-statement       <br />expression-statement       <br />selection-statement       <br />iteration-statement       <br />jump-statement       <br />try-statement       <br />checked-statement       <br />unchecked-statement       <br />lock-statement       <br />using-statement       <br />yield-statement</em></div>  <p></p>  <div><em>block: </em></div>  <div style="margin-left: 40px">{<em> statement-list<sub>optional</sub></em> }</div>  <p></p>  <div><em>statement-list: </em></div>  <div style="margin-left: 40px"><em>statement      <br />statement-list statement</em></div>  <p>&#8230;</p>  <div><em>selection-statement: </em></div>  <div style="margin-left: 40px"><em>if-statement      <br />switch-statement</em></div>  <p></p>  <div><em>if-statement: </em></div>  <div style="margin-left: 40px">if ( <em>boolean-expression</em> ) <em>embedded-statement</em>     <br />if ( <em>boolean-expression</em> ) <em>embedded-statement</em> else <em>embedded-statement</em></div>  <p></p>  <div><em>switch-statement: </em></div>  <div style="margin-left: 40px">switch ( <em>expression</em> ) <em>switch-block</em></div>  <p></p>  <div><em>switch-block: </em></div>  <div style="margin-left: 40px">{ <em>switch-sections<sub>optional</sub></em> }</div>  <p></p>  <div><em>switch-sections: </em></div>  <div style="margin-left: 40px"><em>switch-section      <br />switch-sections switch-section</em></div>  <p></p>  <div><em>switch-section: </em></div>  <div style="margin-left: 40px"><em>switch-labels statement-list</em></div>  <p></p>  <div><em>switch-labels: </em></div>  <div style="margin-left: 40px"><em>switch-label      <br />switch-labels switch-label</em></div>  <p></p>  <div><em>switch-label: </em></div>  <div style="margin-left: 40px">case <em>constant-expression</em> :     <br />default :</div>  <p>&#8230;</p>  <p>You’ll notice that there is the concept of a <font face="Courier New">statement</font> and an <font face="Courier New">embedded-statement</font>; also note that <font face="Courier New">statement</font> is a superset of <font face="Courier New">embedded-statement</font>, adding two other types of statements: <font face="Courier New">labeled-statement</font> and <font face="Courier New">declaration-statement</font>.&#160; If a particular grammar rule requires an <font face="Courier New">embedded-statement</font>, then those two latter types of statements are not allowed in that context.&#160; If we wanted to allow those two statement types, our grammar rule should specify the generic <font face="Courier New">statement</font> category instead.</p>  <p>Also noteworthy is that an <font face="Courier New">embedded-statement</font> can resolve to a <font face="Courier New">block</font>, which includes braces around a <font face="Courier New">statement-list</font>.&#160; A <font face="Courier New">statement-list</font> is one or more <font face="Courier New">statement</font> entities, which would now allow us to use the two statement types excluded from <font face="Courier New">embedded-statement</font>.</p>  <p>Something interesting that is not included in the grammar snippet above, the following statement constructs (and language keywords) require the <font face="Courier New">block</font> statement construct, bypassing the option of a grammar resolution to <font face="Courier New">embedded-statement</font> directly and allowing you to leave off surrounding braces: <font face="Courier New">try</font>, <font face="Courier New">catch</font>, <font face="Courier New">finally</font>, <font face="Courier New">checked</font>, and <font face="Courier New">unchecked</font>.</p>  <p>Almost all of the other statement constructs allow you the option of a one-liner <font face="Courier New">embedded-statement</font> (or which can be resolved into a <font face="Courier New">block</font>), including <font face="Courier New">if</font>, <font face="Courier New">if-else</font>, <font face="Courier New">while</font>, <font face="Courier New">do-while</font>, <font face="Courier New">for</font>, and <font face="Courier New">foreach</font>.&#160; The one surprising exception is the <font face="Courier New">switch</font> construct, which allows for a <font face="Courier New">statement-list</font> after each <font face="Courier New">switch-label</font>.&#160; As a side note, this allows you to put useless braces (via <font face="Courier New">block</font>) around your <font face="Courier New">statement-list</font> (or anywhere inside it) after any of your <font face="Courier New">switch-label</font> statements if you wanted.&#160; But back to the point, these facts explain the existence of (and in one case, lack of) compiler errors regarding embedded statements in the code screenshot near the top.</p>  <p>Now you will know exactly what the compiler means when it gives you the error that an “<font face="Courier New">embedded statement cannot be a declaration or labeled statement.</font>”</p> </span>  </div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2009/05/21/begininvoke-methods-and-oneway-attribute/">BeginInvoke Methods and OneWay Attribute</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-05-21T16:29:00-06:00" pubdate data-updated="true">May 21<span>st</span>, 2009</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/delegates/'>Delegates</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/threading/'>Threading</a>, <a class='category' href='/blog/categories/ui/'>UI</a>, <a class='category' href='/blog/categories/windows-forms/'>Windows Forms</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2009/05/21/begininvoke-methods-and-oneway-attribute/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p>In a previous post I talked about <a href="http://murrayon.net/2008/01/windows-forms-ui-threading.html">Windows Forms UI Threading</a> using delegates.&#160; Recently I needed to replicate what I had learned, and I happened to do so without reviewing my notes in the former blog post.&#160; Apparently I didn’t remember everything I had learned and became confused over thread invocation techniques, introducing a bug into my thread messaging.&#160; The UI thread was blocking while the background worker thread was processing.</p>  <p>The cause was related to figuring out which <font face="Courier New">BeginInvoke</font> method to call when kicking off the worker thread, the <font face="Courier New">BeginInvoke</font> of the <font face="Courier New">Form</font> object or the <font face="Courier New">BeginInvoke</font> of the delegate.&#160; The answer is the <font face="Courier New">BeginInvoke</font> method of the delegate.&#160; All of the examples linked to in the previous post had it right, but I got it mixed up with making <font face="Courier New">Invoke</font> or <font face="Courier New">BeginInvoke</font> calls from the background thread using the <font face="Courier New">Form</font> object’s version of these methods.&#160; If you don’t care whether your messaging from the background thread is synchronous or asynchronous, then you can use either methods and you can use the ones from the <font face="Courier New">Form</font> object.</p>  <p>The problem is using these <font face="Courier New">Form</font> object methods in order to kick off your background worker thread.&#160; The description of the <font face="Courier New">BeginInvoke</font> method on the <font face="Courier New">Form</font> object states that it <font face="Courier New">“executes the specified delegate asynchronously on the thread that the control’s underlying handle was created on.”</font>&#160; I translate this to mean that calling your <font face="Courier New">Form</font> object’s <font face="Courier New">BeginInvoke</font> will process on your UI thread.&#160; Apparently the delegate <font face="Courier New">BeginInvoke</font> method has no such wording in its description.</p> <span class='fullpost'> <p>Rereading <a title="Safe, Simple Multithreading in Windows Forms, Part 1" href="http://msdn.microsoft.com/en-us/library/ms951089.aspx">this MSDN article</a> from the former post and reading the <font face="Courier New">Form</font> object’s <font face="Courier New">BeginInvoke</font> method description which I quoted above set me straight and got rid of my blocking UI problem (again).</p>  <p>During this research session, I came across another informative resource when trying to figure out what was meant by potential resource leaks when using <font face="Courier New">BeginInvoke</font> with out later calling <font face="Courier New">EndInvoke</font>.&#160; From reading the article, I gather you can substitute the <font face="Courier New">EndInvoke</font> call with the <a title="OneWayAttribute Class" href="http://msdn.microsoft.com/en-us/library/system.runtime.remoting.messaging.onewayattribute.aspx"><font face="Courier New">OneWay</font> attribute</a><font face="Courier New"><font color="#333333"><font face="Verdana"></font></font></font> on the method being invoked, as long as it has a <font face="Courier New">void</font> return signature and no <font face="Courier New">ref</font> nor <font face="Courier New">out</font> parameters.&#160; Please let me know if my interpretation is wrong.&#160; I added the attribute to my code in the applicable spots and have seen no side effects of doing so.&#160; Here is the article on read mentioning this attribute:</p>  <p><a href="http://weblogs.asp.net/rosherove/pages/DefensiveEventPublishing.aspx">Defensive Event Publishing in .NET – Part I</a></p> </span>  </div>
 
 		
 		

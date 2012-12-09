@@ -4,7 +4,7 @@
   <title><![CDATA[Mike Murray]]></title>
   <link href="http://mkmurray.com/atom.xml" rel="self"/>
   <link href="http://mkmurray.com/"/>
-  <updated>2012-12-01T22:38:47-07:00</updated>
+  <updated>2012-12-08T21:27:17-07:00</updated>
   <id>http://mkmurray.com/</id>
   <author>
     <name><![CDATA[Mike Murray]]></name>
@@ -12,6 +12,77 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Testing Trade-offs]]></title>
+    <link href="http://mkmurray.com/blog/2012/12/08/testing-trade-offs/"/>
+    <updated>2012-12-08T21:11:00-07:00</updated>
+    <id>http://mkmurray.com/blog/2012/12/08/testing-trade-offs</id>
+    <content type="html"><![CDATA[<p>Last week our dev team at Extend Health watched a <a href="http://www.youtube.com/watch?v=yTkzNHF6rMs">RubyConf 2012 video of a talk
+entitled Boundaries</a> by <a href="https://twitter.com/garybernhardt">Gary
+Bernhardt</a> of <a href="https://www.destroyallsoftware.com/screencasts">Destroy All
+Software</a> (or perhaps even
+better known for the infamous <a href="https://www.destroyallsoftware.com/talks/wat">WAT lightning talk at CodeMash
+2012</a>). Gary proposes a very
+interesting code architecture that marries the individual benefits of
+immutability &amp; mutability, functional programming &amp; imperative object-oriented
+programming, isolated unit testing &amp; integration testing. He discusses the pros
+&amp; cons of each code design &amp; testing decision and the trade-offs that we end up
+dealing with. He suggests a potential solution that makes virtually no trade-off
+and attempts to harness the advantages of each of these methodologies that
+appear to be at odds with one another. I feel the idea has a lot of merit and I
+highly encourage everyone to watch his presentation to get the full context and
+a better logical progression of his proposal than what I can provide.</p>
+
+<h2>Isolated Unit Testing vs. Integration Testing</h2>
+
+<p>A common practice in unit testing classes and objects is to isolate the targeted
+class from its dependencies so that you can focus solely on its responsibilities
+and domain logic independent of any implementation details of the dependencies.
+This is typically accomplished by the use of stubs and mocks, which attempt to
+control and monitor the interactions with and data return from dependencies.
+There are a ton of gains afforded by this style of testing as Gary points out,
+but one very large criticism of this testing methodology is that it doesn&#8217;t
+exercise the code in the same way it would run in production. It is not exactly
+rare to have these isolated unit tests successfully pass and yet still have
+problems in production.</p>
+
+<p>Integration testing tends to better emulate production because it maintains the
+interaction relationships between objects in addition to acquiring and passing
+the data around the system in the same way. The criticism Gary puts forth of an
+integrated testing strategy is that it is very slow as you begin to attempt to
+cover all the code paths through the system. Consider trying to cover all
+logical branches through the system, including all branches of
+try/catch/finally, conditional, and looping structures. Gary suggests the growth
+in code to cover these scenarios is 2<sup>n<sup>,</sup></sup> where <code>n</code> is the number of branches.</p>
+
+<p>Many try to get the benefits of both types of testing in order to compensate for
+each strategy&#8217;s shortcomings. However, they still write code that doesn&#8217;t play
+to each testing methodolgy&#8217;s strengths. The strength of isolated unit testing is
+verifying that given certain inputs the expected output is always returned. The
+strength of integration testing is coordinating dependencies, making sure they
+utilize and interact with the API of other objects correctly. If you design your
+classes to be a mix of dependencies and logic, it becomes difficult to
+effectively test cover them without writing both sets of tests for all classes
+in your codebase.</p>
+
+<h2>So What?</h2>
+
+<p>OK, so you are probably wondering what the point is then. This sounds like a
+good plan to just be more disciplined in your test coverage, right? Well, let&#8217;s
+explore a way to better segregate dependency orchestration from actual logic and
+behavior. This could allow us to use the right testing methodology depending on
+which type of responsibility the object is meant to encapsulate: dependencies or
+decisions? Gary also asserts that it will lead us down a path that could yield a
+codebase with better modularity, scalability, and potentially even concurrency.
+I believe you can also add better maintainability and extensibility to that
+list.</p>
+
+<p>Next week I will dive into how Gary suggests we can better seperate these
+concerns of dependencies and decisions. Stay tuned (or go watch the video and
+spoil the surprise).</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Async lambda expressions and anonymous delegates]]></title>
@@ -1384,16 +1455,6 @@ Yes, thank you.  You&#39;ve given me some clairty now and some great ideas that 
 Hi Mike,<br /><br />Like you, I&#39;m a bit wary of that first spec you&#39;ve written (that doesn&#39;t mean it&#39;s wrong obviously &#8211; I&#39;m new to this too :)). <br /><br />You&#39;re right that you are testing data &#8211; loading the wordslist.txt file and checking for the right number of anagram combinations. By the way, this is probably a good example of an integration test for when you are done! :)<br /><br />Whenever I have a hard problem like this that I am having trouble solving, I try and cheat. If you keep this class simple, but push the tricky bits lower down the heirarchy then that may help you start.<br /><br />Here&#39;s how I would update the current spec to help implement your test (this won&#39;t be a spoiler because I&#39;d change the test. I&#39;ll go into that later). <br /><br />In this case I can think of two responsibilities: getting the words from our file, and then counting the number of anagrams found in those words. So maybe your spec&#39;s context could stub out a IFileReader or similar which will return an IEnumerable&lt;string&gt; (filled with some fake data) when asked to get the lines in wordslist.txt. You could then give these words to an IAnagramCounter, which will return 2530.<br /><br />Your test and because can remain the same &#8211; only the context will change (which is what I love about this style of writing specs).<br /><br />Of course this isn&#39;t specifying what your AnagramFinder should actually do&#8230; the kata aim is to print all the anagram combinations to the screen. So you may be better off trying this approach of pushing down logic but rewrite the spec to match the exact problem you are trying to solve.<br /><br />I&#39;m not sure if this will help or lead you down a dead end, but it is the approach I would take.<br /><br />Hope it helps!<br />David</div>
 </div>
 </div>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Custom Setup Bootstrappers]]></title>
-    <link href="http://mkmurray.com/blog/2009/11/11/custom-setup-bootstrappers/"/>
-    <updated>2009-11-11T15:03:00-07:00</updated>
-    <id>http://mkmurray.com/blog/2009/11/11/custom-setup-bootstrappers</id>
-    <content type="html"><![CDATA[<div class='post'>
-<p>At work, we have a line of desktop products for one of clients installed on the user’s Windows machine via MSI installers.&#160; We use Visual Studio Setup Projects to create the MSI installers.&#160; Visual Studio also provides the ability to create setup bootstrappers to make sure the user has all the prerequisites needed for the MSI install technology and any dependencies required by your desktop product.&#160; These bootstrappers are unmanaged code, because you can’t always depend on the .NET framework already being there (at least not until everyone is off of XP and lower).&#160; I have developed a solution that has worked for the last year or more, but has felt clumsy and slapped together.&#160; Recently I found the <a href="http://dotnetinstaller.codeplex.com/">open source project called dotNetInstaller</a> which has better provided me with the control and flexibility I need for custom logic during bootstrap and install time.&#160; I’ll first introduce you to my “hack” solution.</p> <span class="fullpost">   <p>It has been difficult for me to find ways to tie into the bootstrapper logic workflow to add in custom logic during installs, and Visual Studio is very rigid in its flexibility and basic in its configuration options in this regard.&#160; Until recently, I had settled on writing managed, C# code for this custom logic meant to run before or after the MSI installer, and then creating another unmanaged <font face="Courier New">setup.exe</font> bootstrapper to ensure the .NET framework was installed just so that executable could run.&#160; So the user would run this new unmanaged <font face="Courier New">setup.exe</font> bootstrapper (making sure .NET framework was installed), which would then call my managed custom logic executable, which would then call the MSI installer’s unmanaged, Visual Studio-generated <font face="Courier New">setup.exe</font> bootstrapper (ensuring more prerequisites were installed), which would then finally install the MSI, and which would then lastly return to my managed custom logic executable for any post-install, clean up logic.&#160; I describe this solution in full (and how to generate the same bootstrappers that Visual Studio creates using MSBuild outside the IDE) in a StackOverflow.com answer that I submitted:</p>    <p><a title="http://stackoverflow.com/questions/1106768/how-can-i-reverse-engineer-an-installer-that-was-written-with-ghost-installer/1121846#1121846" href="http://stackoverflow.com/questions/1106768/how-can-i-reverse-engineer-an-installer-that-was-written-with-ghost-installer/1121846#1121846">http://stackoverflow.com/questions/1106768/how-can-i-reverse-engineer-an-installer-that-was-written-with-ghost-installer/1121846#1121846</a></p>    <p>Well, recently I found the <a href="http://dotnetinstaller.codeplex.com/">dotNetInstaller project on CodePlex.com</a> and have found it to be the control and flexibility I need for custom logic when bootstrapping installers.&#160; Not only does it give you great control over prerequisite install order, it also gives you the ability to run code after MSI install and to also filter on CPU architecture types, OS versions, and other registry or file system conditions.&#160; I have currently setup branching scenarios for the prerequisites based on if the user has a 32-bit (x86) or 64-bit (x64) OS.&#160; This utility will even let you brand the bootstrapper with a banner and icon, which is a change of pace from the plain and unlabeled bootstrapper that Visual Studio and MSBuild produce.</p>    <p>If you have custom bootstrapping needs, I have to highly recommend you give dotNetInstaller a look.&#160; Hopefully it will prove as flexible and powerful for your needs as it has for mine.</p> </span>  </div>
 ]]></content>
   </entry>
   

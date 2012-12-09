@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="I saw this quote on a message board in someone&#8217;s signature and thought it was just hilarious: &quot;In order to understand recursion, one must &hellip;">
+	<meta name="description" content="Many .NET developers are aware of the idea of partial Classes, as they have existed since .NET 2.0.&#160; The primary purpose is to allow you the &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -46,6 +46,44 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/10/24/c-partial-classes-can-enhance-code-organization/">C# Partial Classes Can Enhance Code Organization</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-10-24T14:23:00-06:00" pubdate data-updated="true">Oct 24<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/code-organization/'>Code Organization</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/threading/'>Threading</a>, <a class='category' href='/blog/categories/ui/'>UI</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/10/24/c-partial-classes-can-enhance-code-organization/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>Many .NET developers are aware of the idea of partial Classes, as they have existed since .NET 2.0.&#160; The primary purpose is to allow you the developer to share claim on a C# Class with Visual Studio&#8217;s automated code generators (mainly used by the many designers included in Visual Studio), without the automated code generator stomping all over your code additions every time it runs.&#160; For instance, in a Windows Forms application, you get a code-behind Class where you can put your logic, properties, methods, and event handlers; it is a partial Class of the one Visual Studio&#8217;s Windows Form designer creates and manages for all the UI objects you dragged around in the designer.&#160; A good summarization of this feature is given by <a title="Bart De Smet&#39;s Blog" href="http://community.bartdesmet.net/blogs/bart/default.aspx">Bart De Smet</a>:</p>  <blockquote>   <p>&quot;In short, partial classes allow you to split the definition of a class across multiple files, or alternatively you could think about it as a code compilation unit separated over multiple files.&quot;</p> </blockquote>  <p>As another practical application of this feature, I have occasionally implemented a practice using partial Classes that I learned from a previous coworker.&#160; Occasionally you find yourself with a Class that is inescapably large.&#160; Perhaps it is a web service that has been in use for a while by customers or other groups within your company, and you can&#8217;t just deprecate the service very easily; so you just keep extending it and adding more web methods to it for additional, similar functionality.&#160; Another potential situation could be that you began designing a simple application all in one file but it grew to be a little bigger than expected, but it doesn&#8217;t quite merit a whole major redesign into appropriate classes.&#160; I know how this all sounds, but these scenarios aren&#8217;t exactly uncommon in real-world practice, where there are other factors in consideration.&#160; I suppose many would resort to <a href="http://msdn.microsoft.com/en-us/library/9a1ybwek.aspx">C# <font face="Courier New">regions</font></a>, but I&#8217;m not a fan of them as it really only gives the illusion that your code file is better grouped and somehow shorter.</p> <span class='fullpost'> <p>So if you need some decent semblance of organization in a messy class file with little effort, the partial Class feature can come to your rescue.&#160; You can basically create a partial Class file for each grouping of code that you would probably be putting in a C# <font face="Courier New">region</font>.&#160; For instance, a relatively small Windows Form application could be broken up into the following sub-files (all partial Classes of the same <font face="Courier New">MainForm</font> class):</p>  <ul>   <li><strong>MainForm.cs</strong> = contains the constructor and a few rare global enumerations, properties, or sub-classes </li>    <li><strong>MainForm.UI.cs</strong> = contains the event handlers and other supporting methods that interact directly with the UI </li>    <li><strong>MainForm.Processing.cs</strong> = contains the application logic designed to be spun off in a separate worker thread in order to keep the UI thread from blocking while waiting </li>    <li><strong>MainForm.Designer.cs</strong> = the auto-generated UI file from the Windows Form designer </li> </ul>  <p>Obviously you should try to architect your code better from the get-go, but perhaps what you are looking at is legacy code you have inherited from previous developers and the deadline is fast approaching.&#160; There are reasonable circumstances I can think of (and have encountered) where this quick &amp; dirty organization lets you keep an ounce of sanity, so that you can keep moving forward.</p> </span>  </div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -214,62 +252,6 @@ Hi, A similar visualizer for L2E is available at http://visualstudiogallery.msdn
 <div class='author'>Anonymous</div>
 <div class='content'>
 The 2007 Nobel Peace Prize was shared.</div>
-</div>
-</div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2008/08/04/cannot-set-a-value-on-node-type-element/">Cannot Set a Value on Node Type &#8216;Element&#8217;</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-08-04T13:05:00-06:00" pubdate data-updated="true">Aug 4<span>th</span>, 2008</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/error/'>Error</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>, <a class='category' href='/blog/categories/xml/'>XML</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2008/08/04/cannot-set-a-value-on-node-type-element/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p>You will receive an <font face="Courier New">InvalidOperationException</font> with this error message if you try to use the <font face="Courier New">Value</font> property of an <font face="Courier New">XmlNode</font> to set the node&#8217;s value.&#160; You need to set the value using the <font face="Courier New">InnerText</font> property instead.</p>  <p>Thank you to this blog post for documenting the issue and its fix:&#160; <a title="http://www.neilpullinger.co.uk/2008/03/cannot-set-value-on-node-type-element.html" href="http://www.neilpullinger.co.uk/2008/03/cannot-set-value-on-node-type-element.html">http://www.neilpullinger.co.uk/2008/03/cannot-set-value-on-node-type-element.html</a></p>  </div>
-<h2>Comments</h2>
-<div class='comments'>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>
-TKSSSSSSSSSSSSSSSSSSS</div>
-</div>
-<div class='comment'>
-<div class='author'>Sandeepya</div>
-<div class='content'>
-Thanks !</div>
-</div>
-<div class='comment'>
-<div class='author'>Anonymous</div>
-<div class='content'>
-This helped me a lot - a huge Thanks from Germany!</div>
 </div>
 </div>
 

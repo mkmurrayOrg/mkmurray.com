@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="One of my co-workers, in trying to find the install location of Microsoft Word, found a cool little registry tree.&#160; Here is the key: &hellip;">
+	<meta name="description" content="I was trying to rename a product&#8217;s display name found in its ARP (Add/Remove Programs) entry.&#160; There is a registry key that lists just &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -46,6 +46,44 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2008/06/12/display-name-in-add-remove-programs-msi-installed-products-and-compressed-guids/">Display Name in Add/Remove Programs, MSI-Installed Products, and Compressed GUIDs</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-06-12T15:52:00-06:00" pubdate data-updated="true">Jun 12<span>th</span>, 2008</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/add-remove-programs/'>Add/Remove Programs</a>, <a class='category' href='/blog/categories/deployment-and-installers/'>Deployment and Installers</a>, <a class='category' href='/blog/categories/guid/'>GUID</a>, <a class='category' href='/blog/categories/msi/'>MSI</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/patching-updating/'>Patching/Updating</a>, <a class='category' href='/blog/categories/registry/'>Registry</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2008/06/12/display-name-in-add-remove-programs-msi-installed-products-and-compressed-guids/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>I was trying to rename a product&#8217;s display name found in its ARP (Add/Remove Programs) entry.&#160; There is a registry key that lists just about every product installed on your machine:</p>  <p><font face="Courier New">HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall</font></p>  <p>Most (if not all) MSI-installed products have an entry under this key that is the <font face="Courier New">ProductCode</font> GUID.&#160; Every product under this key seems to have a <font face="Courier New">DisplayName</font> value, some of which you can modify and it will show the change in ARP.&#160; However, it appeared any product installed via MSI did not work this way.&#160; So I went registry hunting for any other entries the MSI installers might create.&#160; I found the following location:</p>  <p><font face="Courier New">HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Installer</font></p>  <p>This key has many helpful sub-keys (including <font face="Courier New">Assemblies</font>, <font face="Courier New">Components</font>, <font face="Courier New">Features</font>, <font face="Courier New">Patches</font>, <font face="Courier New">Products</font>, and <font face="Courier New">UpgradeCodes</font>); the <font face="Courier New">Products</font> sub-key is the most important to me at the moment.&#160; Under this sub-key there are many entries (not as many as the first location I mentioned; these appear to MSI only products) that appear to be GUIDs without hyphens and braces.&#160; However, the key that represented the product I was interested in didn&#8217;t match the <font face="Courier New">ProductCode</font> I had.&#160; But in one of the values, there was a <font face="Courier New">PackageCode</font> that was indeed the correct package GUID (different than <font face="Courier New">ProductCode</font>) and the <font face="Courier New">ProductName</font> matched as well.&#160; Turns out for MSI-installed products I could change this <font face="Courier New">ProductName</font> value and it would make the change to its ARP entry.</p> <span class='fullpost'> <p>But I was puzzled how I would know which entry to pick for any given product under this <font face="Courier New">Products</font> sub-key.&#160; I ended up coming across this blog post that explained what these different GUIDs are (called <font face="Courier New">Compressed GUIDs</font>); focus on the &quot;<strong>UPDATE</strong>&quot; section by John Walker:</p>  <p><a title="http://www.hanselman.com/blog/BATCHFILEVOODOODetermineIfMultipleAndWhichVersionsOfAnMSIinstalledProductAreInstalledUsingUpgradeCode.aspx" href="http://www.hanselman.com/blog/BATCHFILEVOODOODetermineIfMultipleAndWhichVersionsOfAnMSIinstalledProductAreInstalledUsingUpgradeCode.aspx">http://www.hanselman.com/blog/BATCHFILEVOODOODeterm&#8230;..UsingUpgradeCode.aspx</a></p>  <p>And then John Walker&#8217;s update mentions this link that explains how to convert back and forth between regular and Compressed GUIDs:</p>  <p><a title="http://www.appdeploy.com/messageboards/tm.asp?m=11996&amp;mpage=1⼅" href="http://www.appdeploy.com/messageboards/tm.asp?m=11996&amp;mpage=1⼅">http://www.appdeploy.com/messageboards/tm.asp?m=11996&amp;mpage=1&amp;#12037</a></p>  <p>Basically you break up the GUID into groupings and reverse them.&#160; See below:</p>  <ul>   <li><u>Original GUID</u>:&#160; {abcdefgh-ijkl-mnop-qrst-uvwxyz123456} </li>    <li><u>Groupings</u>:&#160; abcdefgh ijkl mnop qr st uv wx yz 12 34 56 </li>    <li><u>Reversed Groupings</u>:&#160; hgfedcba lkji ponm rq ts vu xw zy 21 43 65 </li>    <li><u>Compressed GUID</u>:&#160; hgfedcbalkjiponmrqtsvuxwzy214365 </li> </ul>  <p>Don&#8217;t know why Microsoft chose to butcher up GUIDs like this, but it&#8217;s nice to know.</p> </span>  </div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -252,44 +290,6 @@ I think you will find the following link helpful:<BR/><BR/><A HREF="http://forum
 Hi michael, thanks for your post is very interesting.<BR/><BR/>I´m trying release step to step, but my problem is the next:<BR/><BR/>***** Log starting: 2008-10-29 10:24:54 *****<BR/><BR/>Input-PCP path                     = &#8216;patch.pcp&#8217;<BR/>Patch-MSP path                     = &#8216;Patch\patch.msp&#8217;<BR/>Temp Folder                        = &#8216;C:\VSTemp\Tmp&#39;<BR/>Patch GUID                         = &#8216;{91FF215B-112C-42B9-8862-FEE08663EC9C}&#8217;<BR/>ListOfPatchGUIDsToReplace          = &#8220;none&#8221;<BR/>ListOfTargetProductCodes           = &#8216;*&#8217;<BR/>PatchSourceList                    = &#8216;PatchSourceList&#8217;<BR/>AllowProductCodeMismatches         = &#8216;1&#8217;<BR/>AllowProductVersionMajorMismatches = &#8216;1&#8217;<BR/>OptimizePatchSizeForLargeFiles     = &#8216;blank&#8217;<BR/>ApiPatchingSymbolFlags             = &#8216;0x00000000&#8217;<BR/>MsiFileToUseToCreatePatchTables    = &#8216;blank&#8217;<BR/>SqlCmdToCreatePatchTable           = &#8216;blank&#8217;<BR/>SqlCmdToCreatePatchPackageTable    = &#8216;blank&#8217;<BR/>SqlCmdToCreateMsiPatchHeadersTable = &#8216;blank&#8217;<BR/>DontRemoveTempFolderWhenFinished   = &#8216;1&#8217;<BR/>IncludeWholeFilesOnly              = &#8216;0&#8217;<BR/>MinimumRequiredMsiVersion          = &#8216;200&#8217;<BR/>SEQUENCE_DATA_GENERATION_DISABLED  = &#8216;blank&#8217;<BR/>AllowRemoval                       = &#8216;blank&#8217;<BR/><BR/>Using internal SQL cmd to create &#8216;Patch&#8217; table.<BR/>Using internal SQL cmd to create &#8216;PatchPackage&#8217; table.<BR/>Using internal SQL cmd to create &#8216;MsiPatchHeaders&#8217; table.<BR/><BR/>     Files differ: &#8216;C:\VSTemp\UpgradedImage&#46;\AlbumFotos.dll&#8217;,<BR/>                   &#8216;C:\VSTemp\TargetImage&#46;\AlbumFotos.dll&#8217;.<BR/>  Patch file created: FTK=_0E2D0A15B23B989808E6FD64A243497B; temp location=fam1\00002.HDR.<BR/>     Files differ: &#8216;C:\VSTemp\UpgradedImage&#46;\PruebasPictureBox.dll&#8217;,<BR/>                   &#8216;C:\VSTemp\TargetImage&#46;\PruebasPictureBox.dll&#8217;.<BR/>  Patch file created: FTK=_24E4033462F0482C9B569672F8337663; temp location=fam1\00003.HDR.<BR/>     Files differ: &#8216;C:\VSTemp\UpgradedImage&#46;\DermaDatos.dll&#8217;,<BR/>                   &#8216;C:\VSTemp\TargetImage&#46;\DermaDatos.dll&#8217;.<BR/>  Patch file created: FTK=_294ABD0349756E66C6CB0D11001752CE; temp location=fam1\00004.HDR.<BR/>     Files differ: &#8216;C:\VSTemp\UpgradedImage&#46;\CapturaImagenesPruebas.dll&#8217;,<BR/>                   &#8216;C:\VSTemp\TargetImage&#46;\CapturaImagenesPruebas.dll&#8217;.<BR/>  Patch file created: FTK=_5E58F544E2DC940F4F3139031A15DE72; temp location=fam1\00005.HDR.<BR/>     Files differ: &#8216;C:\VSTemp\UpgradedImage&#46;\PruebasInforme.exe&#8217;,<BR/>                   &#8216;C:\VSTemp\TargetImage&#46;\PruebasInforme.exe&#8217;.<BR/>  Patch file created: FTK=_7328B00680B1965AF0370EF0DE389DBE; temp location=fam1\00006.HDR.<BR/>     Files differ: &#8216;C:\VSTemp\UpgradedImage&#46;\MotorAlertas.dll&#8217;,<BR/>                   &#8216;C:\VSTemp\TargetImage&#46;\MotorAlertas.dll&#8217;.<BR/>  Patch file created: FTK=_7FBC6D05562B82F2CDC2F1BDBE476432; temp location=fam1\00007.HDR.<BR/>     Files differ: &#8216;C:\VSTemp\UpgradedImage&#46;\ModoDiapositiva.dll&#8217;,<BR/>                   &#8216;C:\VSTemp\TargetImage&#46;\ModoDiapositiva.dll&#8217;.<BR/>  Patch file created: FTK=_8FEA4D552741B28293ABC797812149CD; temp location=fam1\00008.HDR.<BR/>     Files differ: &#8216;C:\VSTemp\UpgradedImage&#46;\Derma.exe&#8217;,<BR/>                   &#8216;C:\VSTemp\TargetImage&#46;\Derma.exe&#8217;.<BR/>  Patch file created: FTK=_5260684262CA164CEF0A33F5A94CAC55; temp location=fam1\00009.HDR.<BR/>  ERROR: Since MSI 3.0 will block installation of major upgrade patches with sequencing information, creation of such patches is blocked.<BR/><BR/>***** Log finishing: 2008-10-29 10:25:05 *****<BR/><BR/>What is my problem?? Can you help me, please???<BR/><BR/>Thank you very much</div>
 </div>
 </div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2008/03/07/catastrophic-failure/">Catastrophic Failure</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-03-07T10:04:00-07:00" pubdate data-updated="true">Mar 7<span>th</span>, 2008</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/error/'>Error</a>, <a class='category' href='/blog/categories/humor/'>Humor</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/silverlight/'>Silverlight</a>, <a class='category' href='/blog/categories/ui/'>UI</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>, <a class='category' href='/blog/categories/web/'>Web</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2008/03/07/catastrophic-failure/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p>So I got a &quot;<font face="Courier New">Catastrophic Failure</font>&quot; in the Silverlight 2 beta 1 designer in VS 2008 this morning.&#160; Have no clue what it means, but it seemed temporary (I was in the middle of typing in the XAML view and the designer didn&#8217;t like something I did).&#160; Here is a screenshot, it&#8217;s pretty amusing:</p> <span class='fullpost'> <p><a href="http://lh4.ggpht.com/charliebrown928/SFqfdiP7PEI/AAAAAAAAABU/vG6KlZ5yB0c/s1600-h/screenshot7.jpg"><img style="border-top-width: 0px; border-left-width: 0px; border-bottom-width: 0px; border-right-width: 0px" height="407" alt="screenshot" src="http://lh3.ggpht.com/charliebrown928/SFqfeTgD8eI/AAAAAAAAABc/CZxSdmcnaCY/screenshot_thumb5.jpg?imgmax=800" width="784" border="0" /></a></p> </span>  </div>
 
 		
 		

@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content=" This is hilarious and really creative: http://www.aegisub.net/2008/12/if-programming-languages-were-religions.html ">
+	<meta name="description" content="Seems like any website you start nowadays involves creating the same common features we see all over the web.&#160; These include creating user &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -46,6 +46,44 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2009/01/30/asp-net-providers-membership-role-and-profile/">ASP.NET Providers - Membership, Role, and Profile</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-01-30T14:18:00-07:00" pubdate data-updated="true">Jan 30<span>th</span>, 2009</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/asp-net/'>ASP.NET</a>, <a class='category' href='/blog/categories/asp-net-providers-series/'>ASP.NET Providers Series</a>, <a class='category' href='/blog/categories/iis/'>IIS</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/security/'>Security</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>, <a class='category' href='/blog/categories/web/'>Web</a>, <a class='category' href='/blog/categories/windows/'>Windows</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2009/01/30/asp-net-providers-membership-role-and-profile/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>Seems like any website you start nowadays involves creating the same common features we see all over the web.&#160; These include creating user account functionality, storing profile information, implementing role-based access to content and features, instantiating SQL tables and data access repositories, and so on, so forth.&#160; In most cases it would be a complete waste of time and money to roll your own implementation every time.</p>  <p>There are plenty of frameworks out there that tackle this problem for you and abstract out details you shouldn&#8217;t have to worry about.&#160; If you are in the .NET world, there are a set of these services available to you that are baked right into the .NET 2.0 Framework.&#160; I&#8217;m going to show you a personal example of how easy it is to add some of this functionality to an existing site, even one with an antique and cumbersome architecture.&#160; Implementing these features using the ASP.NET 2.0 Provider Model on said architecture has convinced me that it couldn&#8217;t be easier to add such functionality to a website, no matter what beast of a site you are dealing with.</p> <span class='fullpost'> <h3>ASP.NET 2.0 Provider Model</h3> <p>With the advent of ASP.NET 2.0, Microsoft introduced a set of configuration-driven services that adhere to the <a href="http://en.wikipedia.org/wiki/Provider_model">Provider Model pattern</a>.&#160; These services focus on storing application state of a website using a very flexible and extensible data access strategy.&#160; The available features that can be added to your website include Membership (which includes authentication and authorization), Role Management, Profile, Session State, Web Parts Personalization, and Site Map navigation.&#160; The whole idea is to be able to secure and enhance an existing site by dropping in a few lines into the <font face="Courier New">Web.config</font>, using a Microsoft utility to automatically create database tables (most likely your chosen storage medium), and then dropping, configuring, and skinning a few controls into your existing pages.&#160; To read a more thorough introduction to the Provider Model and these ASP.NET 2.0 Provider services (including a few helpful diagrams), check out the following link:</p>  <ul>   <li><a href="http://msdn.microsoft.com/en-us/library/aa479030.aspx">ASP.NET 2.0 Provider Model: Introduction to the Provider Model</a> </li> </ul>  <h3>Personal Example</h3>  <p>We currently maintain a series of desktop products that we have been entrusted with.&#160; Under the covers, these &quot;desktop&quot; products were originally written in Java as locally-hosted websites using Apache&#8217;s web server.&#160; In order to be compatible with Windows Vista, we have since ported these products to .NET 2.0 and currently use <a href="http://www.ultidev.com/products/Cassini/index.htm">UltiDev&#8217;s free, light-weight, and redistributable web server named Cassini</a> (essentially the same thing as the development web server found in Visual Studio and a great alternative to <a title="Internet Information Services" href="http://en.wikipedia.org/wiki/Internet_Information_Services">IIS</a>).&#160; Many of the features are implemented in JavaScript and the content is almost entirely static HTML pages.&#160; There were only a few Java Servlets that we ported to .NET HTTP Handlers and any database storage has been done using Microsoft Access databases.&#160; This set of products also has other interaction requirements like the ability to view content from another product while staying in the context of the currently open product.&#160; Finally, the installers for a few of these desktop products are getting to be nearly 600 MB in size, which has perpetuated the need for distributing the products to the users offline.</p>  <p>We are in the process right now of exploring the cost benefits and customer experience improvements in moving this set of offerings to an online suite of websites.&#160; The first step we are taking is to build an online version of one of the products where users can obtain a user account to view the content.&#160; Building new applications is one thing, but upgrading and maintaining existing applications (especially ones you have inherited) is a whole different development experience.&#160; This is where my appreciation for the ease and flexibility of what Microsoft is offering comes into play.</p>  <h3>Read On!</h3>  <p>The rest of the blog posts in this series can be found at the following links:</p>  <ul>   <li><a href="http://murrayon.net/2009/01/aspnet-providers-getting-started.html">ASP.NET Providers - Getting Started</a> </li>    <li><a href="http://murrayon.net/2009/01/aspnet-providers-membership.html">ASP.NET Providers - Membership</a> </li>    <li><a href="http://murrayon.net/2009/02/aspnet-providers-role-management.html">ASP.NET Providers - Role Management</a> </li>    <li><a href="http://murrayon.net/2009/02/aspnet-providers-profile.html">ASP.NET Providers - Profile</a> </li> </ul>  <p>In addition, I came across an issue when using the Profile system with the <font face="Courier New">Web Application</font> project template instead of the <font face="Courier New">Web Site</font> project template as found in Visual Studio&#8217;s default set of project templates.&#160; It has to do with the <font face="Courier New">Profile</font> proxy class object not being auto-generated by Visual Studio when using the <font face="Courier New">Web Application</font> project template.&#160; Read the following blog post for a discussion of the problem and it&#8217;s solution:</p>  <ul>   <li><a href="http://murrayon.net/2009/02/aspnet-profile-and-web-application.html">ASP.NET Profile and Web Application Projects</a> </li> </ul>  <p>Also, I have another post discussing the advantages of using the ASP.NET Provider system under IIS 7 found in Windows Vista and Server 2008; it will also include some issues with using this system if some of your content is static HTML instead of ASPX pages.&#160; You can find all of this goodness by following the link below:</p>  <ul>   <li><a href="http://murrayon.net/2009/02/iis-7-and-aspnet-providers-membership.html">IIS 7 and ASP.NET Providers (Membership, Roles, and Profile)</a> </li> </ul>  <p>Finally, I based my implementation on a 13-part tutorial series by <a href="http://www.4guysfromrolla.com/ScottMitchell.shtml">Scott Mitchell</a> on <a href="http://www.4guysfromrolla.com/">4GuysFromRolla.com</a>, starting at this link:</p>  <ul>   <li><a href="http://aspnet.4guysfromrolla.com/articles/120705-1.aspx">Examining ASP.NET 2.0&#8217;s Membership, Roles, and Profile - Part 1</a> </li> </ul>  <p>Enjoy!</p> </span>  </div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -200,44 +238,6 @@
 No it isn&#39;t, that is a missunderstanding. Linq to sql for SQL Server will always be there just like there are ado.net classes for SQL Server directly tied into the .NET framework libraries.</div>
 </div>
 </div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2008/10/31/pdc-2008-watch-any-session-free/">PDC 2008: Watch Any Session Free</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-10-31T13:55:00-06:00" pubdate data-updated="true">Oct 31<span>st</span>, 2008</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/conferences/'>Conferences</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2008/10/31/pdc-2008-watch-any-session-free/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p><a href="http://microsoftpdc.com/Default.aspx">Microsoft&#8217;s PDC 2008 Conference</a> was held this week.&#160; You can go to the following link and watch any session absolutely free on just about any Microsoft development technology or environment that you can think of:</p>  <p><a title="https://sessions.microsoftpdc.com/public/timeline.aspx" href="https://sessions.microsoftpdc.com/public/timeline.aspx">https://sessions.microsoftpdc.com/public/timeline.aspx</a></p>  </div>
 
 		
 		

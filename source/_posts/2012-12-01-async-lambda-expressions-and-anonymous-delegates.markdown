@@ -4,13 +4,13 @@ title: "Async lambda expressions and anonymous delegates"
 date: 2012-12-01 22:34
 comments: true
 categories:
- - .net
+ - .NET
  - C#
  - Delegates
  - Microsoft
- - New technology
+ - New Technology
  - Threading
- - Visual studio
+ - Visual Studio
 ---
 
 I've known about the new `async` and `await` keywords in C# 5 for a while now,

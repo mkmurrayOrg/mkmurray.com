@@ -7,7 +7,7 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="For the last several months at work, we have been gradually migrating our production website to use the .NET open source FubuMVC web framework. &hellip;">
+	<meta name="description" content="I just gave a webinar yesterday for JP Boodhoo’s Develop With Passion® webinar series on Compositional and Convention-based Web Development with &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -46,6 +46,44 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2011/07/21/fubumvc-webinar-compositional-and-convention-based-web-development/">FubuMVC Webinar - Compositional and Convention-based Web Development</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-07-21T12:44:00-06:00" pubdate data-updated="true">Jul 21<span>st</span>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/asp-net/'>ASP.NET</a>, <a class='category' href='/blog/categories/behavior-chains/'>Behavior Chains</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/develop-with-passion/'>Develop With Passion</a>, <a class='category' href='/blog/categories/fubumvc/'>FubuMVC</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>, <a class='category' href='/blog/categories/web/'>Web</a>, <a class='category' href='/blog/categories/webinar-screencast/'>Webinar/Screencast</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2011/07/21/fubumvc-webinar-compositional-and-convention-based-web-development/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<div class='post'>
+<p>I just gave a webinar yesterday for <a href="http://www.jpboodhoo.com/">JP Boodhoo’s</a> <a href="http://webinars.developwithpassion.com/">Develop With Passion® webinar series</a> on Compositional and Convention-based Web Development with <a href="http://fubumvc.com/">FubuMVC</a>. The recorded session is now posted online with a slew of referenced and related links. I apologize for the sound quality and will make corrections if I get another chance to do another webinar/screencast. Here is the link to the recording:</p>  <p><a href="http://webinars.developwithpassion.com/webinars/3">http://webinars.developwithpassion.com/webinars/3</a></p>  <p>I didn’t mention this in the screencast but before we began switching our company’s production website to FubuMVC, we first devised a way to get the benefit of <a href="http://murrayon.net/2011/06/fubumvc-behavior-chains-bmvc-pattern.html">FubuMVC Behavior Chains</a> while still on the ASP.NET MVC framework. Please feel free to read more about that successful venture at <a href="http://paceyourself.net/">Bob Pace’s</a> <a href="http://paceyourself.net/2011/06/11/mvctofubu---transition-your-website-from-aspnet-mvc-to-fubumvc-part-1/">blog post on the MvcToFubu project</a>.</p>  </div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -310,88 +348,6 @@ public static IEnumerable&lt;TResult&gt; Join&lt;TOuter,TInner,TKey,TResult&gt;(
 
   <p>Thanks, I hope this proves helpful to someone, as it was certainly eye-opening to me.</p>
 </span></div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2010/09/30/maybe-monad-extensions/">Maybe Monad Extensions</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-09-30T17:35:00-06:00" pubdate data-updated="true">Sep 30<span>th</span>, 2010</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/-net/'>.NET</a>, <a class='category' href='/blog/categories/algorithms/'>Algorithms</a>, <a class='category' href='/blog/categories/c-/'>C#</a>, <a class='category' href='/blog/categories/code-organization/'>Code Organization</a>, <a class='category' href='/blog/categories/functional-programming/'>Functional Programming</a>, <a class='category' href='/blog/categories/maybe-monad/'>Maybe Monad</a>, <a class='category' href='/blog/categories/microsoft/'>Microsoft</a>, <a class='category' href='/blog/categories/monads/'>Monads</a>, <a class='category' href='/blog/categories/new-technology/'>New Technology</a>, <a class='category' href='/blog/categories/visual-studio/'>Visual Studio</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2010/09/30/maybe-monad-extensions/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<div class='post'>
-<p>I learned a lot from <a href="http://murrayon.net/2010/09/maybe-from-murray-monads.html" target="_blank">my last foray into implementing my own Maybe Monad</a>.&#160; Apparently, it got noticed by and was actually useful to <a href="http://www.lostechies.com/members/derick.bailey/default.aspx" target="_blank">Derick Bailey</a>, as it was one of the resources he used in <a href="http://www.lostechies.com/blogs/derickbailey/archive/2010/09/29/monads-in-c-which-part-is-the-monad.aspx" target="_blank">his own personal exploration into Monads</a>.&#160; Of course, Derick did the topic a bit more justice, as he has a propensity to do.</p>  <p>Nonetheless, I have done as I said I would and reworked my Murray Monads into a cleaner, more concise implementation using extension methods, much like the implementation I introduced from Dmitri Nesteruk in the last post.&#160; So without further ado, I’d like to introduce you to the MaybeMonadExtensions.</p> <span class="fullpost">   <h4>Monads 2.0 - <a href="http://www.youtube.com/watch?v=ll7rWiY5obI&amp;t=1m19s" target="_blank">“These Go To Eleven”</a></h4>    <p>If you want to get an introduction to what Monads are and how I got to where I am today with this little library, then you really should check out <a href="http://murrayon.net/2010/09/maybe-from-murray-monads.html" target="_blank">the previous post on this topic</a>.&#160; I will however give a few brief code samples to show you what it can do to tidy up all those null checks using the Maybe Monad.</p>    <p>Here is code we tend to write all the time:</p>    <pre class="brush: csharp">string postCode;
-if (person != null)
-{
-  if (HasMedicalRecord(person) &amp;&amp; person.Address != null)
-  {
-    CheckAddress(person.Address);
-    if (person.Address.PostCode != null)
-      postCode = person.Address.PostCode.ToString();
-    else
-      postCode = &quot;UNKNOWN&quot;;
-  }
-}</pre>
-
-  <p>It can look like this with some Maybe Monad love:</p>
-
-  <pre class="brush: csharp">string postalCode = person.If(HasMedicalRecord)
-  .Access(p =&gt; p.Address)
-  .Apply(CheckAddress)
-  .Access(a =&gt; a.PostCode)
-  .Convert(pc =&gt; pc.ToString(), &quot;UNKNOWN&quot;);</pre>
-
-  <p>I know!&#160; Groovy, huh?!</p>
-
-  <p>The source can be found here:&#160; <a href="http://bitbucket.org/murrayondotnet/maybemonadextensions/">http://bitbucket.org/murrayondotnet/maybemonadextensions/</a></p>
-
-  <p>Let me know if you put this to good use!</p>
-</span>  </div>
-<h2>Comments</h2>
-<div class='comments'>
-<div class='comment'>
-<div class='author'>Omer Mor</div>
-<div class='content'>
-I see your point.<br />However, even Rx is sharing many LINQ operators with its IObservable &amp; IQbservable monads.<br />So we already have 4 different monads (IEnumerable, IQueryable, IObservable, IQbservable) using those operators. I don&#39;t think any more would hurt :-)</div>
-</div>
-<div class='comment'>
-<div class='author'>Mike Murray</div>
-<div class='content'>
-Great question. I suppose I could have used those names and it would likely be a familiar vernacular for .NET developers. I guess my only hesitation would be that I wouldn&#39;t necessarily want to confuse others who read the code into thinking that they are LINQ extension methods. My first thought when I saw your code was that somehow person was an IQueryable or IEnumerable, just because of those familiar method names.<br /><br />Great point though, and it does make me second guess my chosen names a bit. I did like Derick&#39;s method names too (especially just plain old &quot;Get&quot;). Thanks for posting!</div>
-</div>
-<div class='comment'>
-<div class='author'>Omer Mor</div>
-<div class='content'>
-Nice.<br /><br />Why didn&#39;t you choose the Linq terminology here?<br />I&#39;d write your example as this (Linq + Rx&#39;s Do operator):<br /><br /><br />string postalCode = person.Where(HasMedicalRecord)<br />  .Select(p =&gt; p.Address)<br />  .Do(CheckAddress)<br />  .Select(a =&gt; a.PostCode)<br />  .Select(pc =&gt; pc.ToString(), &quot;UNKNOWN&quot;);</div>
-</div>
-</div>
 
 		
 		
