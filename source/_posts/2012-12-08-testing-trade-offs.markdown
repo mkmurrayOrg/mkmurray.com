@@ -75,3 +75,5 @@ list.
 Next week I will dive into how Gary suggests we can better seperate these
 concerns of dependencies and decisions. Stay tuned (or go watch the video and
 spoil the surprise).
+
+Next post: [The Value is the Boundary](/blog/2012/12/15/the-value-is-the-boundary/)

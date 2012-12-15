@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Testing | Mike Murray]]></title>
   <link href="http://mkmurray.com/blog/categories/testing/atom.xml" rel="self"/>
   <link href="http://mkmurray.com/"/>
-  <updated>2012-12-08T21:27:17-07:00</updated>
+  <updated>2012-12-15T15:41:41-07:00</updated>
   <id>http://mkmurray.com/</id>
   <author>
     <name><![CDATA[Mike Murray]]></name>
@@ -12,6 +12,82 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[The Value is the Boundary]]></title>
+    <link href="http://mkmurray.com/blog/2012/12/15/the-value-is-the-boundary/"/>
+    <updated>2012-12-15T15:31:00-07:00</updated>
+    <id>http://mkmurray.com/blog/2012/12/15/the-value-is-the-boundary</id>
+    <content type="html"><![CDATA[<p><em>Author's Note: I do not take credit for the phrase used as the title of this
+blog post. It comes from Gary's Ruby Conf 12 video recording entitled
+<u>Boundaries</u> mentioned below and in the previous blog post.</em></p>
+
+<p>In the last blog post <a href="/blog/2012/12/08/testing-trade-offs/">Testing
+Trade-offs</a>, I talked about the
+difficulties of verifying the decisions and dependencies of our classes with the
+current mainstream testing methodologies. Based on a recorded conference talk by
+<a href="https://twitter.com/garybernhardt">Gary Bernhardt</a>, the focus was on
+effectively testing the logic a class contains and the dependent collobrators it
+takes in for coordinating with other classes and objects to perform its
+responsibilities. Mixing the two concerns in the same object definition requires
+utilizing both isolated unit testing and integration/integrated testing in order
+to adequately test cover the class. However, code designed this way seems to
+play to the weaknesses of each testing strategy just as much as it plays to
+their strengths (please see the previous blog post if you would like more
+details on that discussion).</p>
+
+<p>Today let's go one step further and talk about ways that we could more cleanly
+separate the concerns of decisions and dependencies, with the hope that we can
+create objects that better lend themselves to one type of testing over the
+other. Gary proposes that a such a codebase could have better modularity,
+scalability, and even concurrency. I assert that your code will also be more
+maintainable and extensible as well. Most of today's content will take a lesson
+from the functional programming paradigm, including practices they have espoused
+for decades.</p>
+
+<h2>Frictionless Isolated Unit Testing</h2>
+
+<p>If you wanted to test the mathematical addition operator (i.e., the plus sign
+<code>+</code>), what frameworks, tools, and/or coding tricks do you have to employ to
+sufficiently isolate it from all other concerns and objects? Absolutely nothing!
+There are no dependencies to mock or stub; it isolates for free. Why is that?
+Gary cautions against assuming it is because the addition operator is simple and
+lacks complexity. He digs deeper in order to identify two properities the
+implementation of plus sign exhibits that allows it to be naturally isolated.</p>
+
+<p>The first property is that the operator takes values as arguments and returns
+new values as output without any mutation. The second property is that the
+operator requires no dependencies in order to perform its computation and logic.
+Thus there is nothing to mock or stub when testing it, which was the major
+weakness of isolated unit testing. Also because of the lack of dependencies, no
+integrated tests are required in order to better test how the operator will
+behave in a production environment where there are no mocks and stubs. To test
+the addition operator we merely need to write simple pass-values-in,
+assert-value-out tests with no extra setup required.</p>
+
+<p>As Gary applies these concepts to existing code, we notice a few changes. Pieces
+of domain logic and pieces of code that coordinate dependencies are separated
+from each other, broken out into new objects created for a single purpose and
+responsibility. The nature of the communication between objects also changed,
+with values (inputs and outputs) becoming the boundary between objects instead
+of the emphasis being on several synchronous method calls. Value objects focused
+on data (and not behavior) become the new contract between collaborating
+classes.</p>
+
+<h2>To Be Continued...</h2>
+
+<p>You may notice that many of these concepts have a functional programming
+influence. The properties of immutability and focus on data at the boundaries
+allow us to write code that isolates very easily and lends itself very well to
+isolated unit testing that is simple and not brittle. It is very good at
+verifying the domain logic and decision paths of our objects. Of course, we
+can't write the entirety of our codebase in this manner with no dependencies
+ever. Next time I will discuss a code architecture that Gary proposes which can
+utilize this style of code married with some more imperative glue code that
+coordinates the dependencies in the system. We will also discuss testing those
+portions of code as well.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Testing Trade-offs]]></title>
@@ -81,6 +157,8 @@ list.</p>
 <p>Next week I will dive into how Gary suggests we can better seperate these
 concerns of dependencies and decisions. Stay tuned (or go watch the video and
 spoil the surprise).</p>
+
+<p>Next post: <a href="/blog/2012/12/15/the-value-is-the-boundary/">The Value is the Boundary</a></p>
 ]]></content>
   </entry>
   
@@ -445,53 +523,6 @@ return results.Values.Where(x =&gt; x.Count &gt; 1);</pre>
 
   <p>Thanks for sticking with me thus far.</p>
 </span>  </div>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Anagram Code Kata Part 3 – Use Common Sense]]></title>
-    <link href="http://mkmurray.com/blog/2009/12/18/anagram-code-kata-part-3-use-common-sense/"/>
-    <updated>2009-12-18T18:10:00-07:00</updated>
-    <id>http://mkmurray.com/blog/2009/12/18/anagram-code-kata-part-3-use-common-sense</id>
-    <content type="html"><![CDATA[<div class='post'>
-<p>This post is part of a <a href="http://murrayon.net/2009/11/anagram-code-kata-bdd-mspec.html">series on coding Kata, BDD, MSpec, and SOLID principles</a>.&#160; Feel free to visit the above link which points to the introductory post, also containing an index of all posts in the series.</p>  <p>In this post, we will discuss how far to take the idea of creating mockable contracts via interfaces for testing purposes and to keep responsibilities modular.&#160; As I solicited feedback from commenters, I was getting hung up on applying this concept to every object and dependency.&#160; We’ll talk about how I’m now thinking that overly strict adherence to the practice can drive you nuts and decrease productivity.&#160; It is meant to help guide your design process along rather than hinder it.&#160; We’ll finish this post off with one of our two dependencies implemented in an extremely simple manner.</p> <span class="fullpost">   <h3><font face="Courier New">IFileParser</font> Dependency</h3>    <p>When we left off last time, we had defined two separate responsibilities that <font face="Courier New">AnagramsFinder</font> was going to push down into its dependencies.&#160; As I started to write a specification test for the newly created <font face="Courier New">NewlineFileParser</font>, I realized it would be difficult to stub based on providing a file path to a text file as the only parameter.&#160; I began having thoughts that maybe I could break up another pair of dependencies for file parsing, namely obtaining a file stream (or file contents string) from a path and then parsing the file contents into a list of multiple lines.&#160; But then again, my first of the two dependencies is still dependent on the physical file system and I cannot get away from this unless I somehow mock up an in-memory file system.&#160; This began to feel silly to me as I was hoping I would just use the built-in .NET APIs for file systems and string parsing.</p>    <p>After emailing <a href="http://www.davesquared.net/" target="_blank">Dave</a> and <a href="http://adotnetdude.blogspot.com/" target="_blank">Esteban</a> asking for guidance, the revelation I received via these two fine gentlemen is that file parsing is not an essential purpose of this application nor exercise (at least not yet; we won’t be focusing on performance unless it appears to be grossly deficient as we go along).&#160; What we could do is write integration tests instead, where we have a set of simple test files sitting in a folder that we run our <font face="Courier New">NewlineFileParser</font> against to ensure it working as we expect.&#160; But I don’t think I’m even going to do this at this point.&#160; I really do want to get to the core of the application.&#160; Plus, I feel certain that I can trust the implementation of <font face="Courier New">File.ReadAllLines()</font> from the .NET Framework.</p>    <p>Unless it needs to be changed further down the road, the following code implementation will likely be sufficient for the remainder of this coding exercise:</p>    <pre class="brush: csharp">public class NewlineFileParser : IFileParser
-{
-    public IEnumerable&lt;string&gt; ExtractWordListFromFile(string filePath)
-    {
-        return File.ReadAllLines(filePath);
-    }
-}</pre>
-
-  <p>I feel great about this because I haven’t gone insane trying to mock and test everything in sight, nor have I broken up every single responsibility in such small chunks that it becomes tedious.&#160; Instead, I have broken up the two core responsibilities of <font face="Courier New">AnagramsFinder</font> which means I can change and test the two dependencies independent of each other and from their manager class.&#160; Even though I haven’t written a ton of code yet, I feel the tests specs have driven my design into a cohesive, decoupled design that should prove flexible if requirements change or if I encounter friction later on and need to rethink my design.&#160; A flexible architecture for the application is being flushed out based on a “top-to-bottom” design view of the requirements.</p>
-
-  <h3>Create Stubs or Assert Methods were Called</h3>
-
-  <p><a href="http://papamufflon.blogspot.com/">Tobias Walter</a> left <a href="http://murrayon.net/2009/11/anagram-code-kata-part-2-mocking-and.html#comments">a comment on my last post</a> with some suggestions that I would like to get clarification on and discuss further with my growing audience of three now.&#160; He compared some of my implementation to <a href="http://www.davesquared.net/2009/11/favour-test-driving-logic-over-data.html">Dave’s implementation on his Favour test driving logic over data post</a>, but the comparison was lost on me.&#160; It seemed Tobias was saying that I had gone too far breaking up the responsibilities into such small dependencies.&#160; I am unsure what his argument was, but as far as I could tell both Dave and I broke up a managing class into two separate responsibilities so that the more crucial of the two could be tested independently.&#160; Also in doing so, we both created stubs that were given specific dummy responses to method calls using Rhino.Mocks.&#160; One more comment I would like to say is that I broke the file parsing responsibility away into its own dependency more because of the need to isolate the anagrams grouping than because file parsing is of itself a difficult task.&#160; If Tobias or anyone else could try to clarify his argument, that would really help me understand the merits of his suggestions.</p>
-
-  <p>Another suggestion that Tobias brought up that I would like to petition feedback on is to use the mocking feature of testing whether a method was called instead of creating a stub programmed with a dummy response.&#160; I have to admit, I’m not sure when to use one method over another.&#160; I guess I’ve felt in the past that testing whether a method was called seems silly, since it seems odd to have your test know the implementation and inner method calls of the subject under test.&#160; But I am now realizing that my stubs appear to be doing the same thing, but with dummy input and output programmed in.&#160; If you have an opinion or experience on this subject, please leave some feedback in the comments of this post.</p>
-
-  <h3>What’s Next?</h3>
-
-  <p>In my next post I hope to summarize this mocking debate brought up above regarding two differing methods of verifying my manager class is correctly managing its dependencies.&#160; I also hope to begin driving out the design and implementation of the <font face="Courier New">AnagramGrouper</font> dependency via behavior specification tests.&#160; Thanks and any feedback is greatly appreciated.</p>
-</span>  </div>
-
-
-<h2>Comments</h2>
-
-
-<div class='comments'>
-<div class='comment'>
-<div class='author'>David</div>
-<div class='content'>
-Hi Mike,<br /><br />In terms of the stubbing vs. asserting a method was called, the team I&#39;m on has found we rarely AssertWasCalled any more. Doing so explicitly couples our tests/specs to the implementation, whereas just stubbing calls in a SetUp seems easier to change without altering the fundamental assertions in our tests. <br /><br />The only time we use AssertWasCalled is for void methods to a service or similar where there is no observable side-effect from a unit perspective.<br /><br />YMMV. :)<br /><br />Regards,<br />David</div>
-</div>
-<div class='comment'>
-<div class='author'>Tobias Walter</div>
-<div class='content'>
-Hi Mike,<br /><br />great you continued this series.<br /><br />I think I messed things up and wrote incorrect things. In the meantime I managed to do this kata again and now I agree with you. Just forget my advice to mock it - this was wrong.<br /><br />However, I and my coworkers question if it&#39;s worth to write 30 lines of code to test a 2-lines-method? I think for this kata it will be enough to do some acceptance tests here.</div>
-</div>
-</div>
 
 ]]></content>
   </entry>

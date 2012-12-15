@@ -3,14 +3,12 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Testing Trade-offs - Mike Murray</title>
+	<title>The Value is the Boundary - Mike Murray</title>
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="Last week our dev team at Extend Health watched a RubyConf 2012 video of a talk
-entitled Boundaries by Gary
-Bernhardt of Destroy All
-Software (or &hellip;">
+	<meta name="description" content="Author&#8217;s Note: I do not take credit for the phrase used as the title of this
+blog post. It comes from Gary&#8217;s Ruby Conf 12 video recording &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -49,7 +47,7 @@ Software (or &hellip;">
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner"><article class="post">
-	<h1 class="title">Testing Trade-offs</h1>
+	<h1 class="title">The Value Is the Boundary</h1>
 	<div class="meta">
 		<div class="date">
 
@@ -63,11 +61,11 @@ Software (or &hellip;">
   
 
 
-<time datetime="2012-12-08T21:11:00-07:00" pubdate data-updated="true">Dec 8<span>th</span>, 2012</time></div>
+<time datetime="2012-12-15T15:31:00-07:00" pubdate data-updated="true">Dec 15<span>th</span>, 2012</time></div>
 		<div class="tags">
 
 
-	<a class='category' href='/blog/categories/code-organization/'>Code Organization</a>, <a class='category' href='/blog/categories/mocking/'>Mocking</a>, <a class='category' href='/blog/categories/ruby/'>Ruby</a>, <a class='category' href='/blog/categories/testing/'>Testing</a>
+	<a class='category' href='/blog/categories/code-organization/'>Code Organization</a>, <a class='category' href='/blog/categories/functional-programming/'>Functional Programming</a>, <a class='category' href='/blog/categories/mocking/'>Mocking</a>, <a class='category' href='/blog/categories/ruby/'>Ruby</a>, <a class='category' href='/blog/categories/testing/'>Testing</a>
 
 
 </div>
@@ -75,71 +73,74 @@ Software (or &hellip;">
 			<span class="comments"><a href="#disqus_thread">Comments</a></span>
 		
 	</div>
-	<div class="entry-content"><p>Last week our dev team at Extend Health watched a <a href="http://www.youtube.com/watch?v=yTkzNHF6rMs">RubyConf 2012 video of a talk
-entitled Boundaries</a> by <a href="https://twitter.com/garybernhardt">Gary
-Bernhardt</a> of <a href="https://www.destroyallsoftware.com/screencasts">Destroy All
-Software</a> (or perhaps even
-better known for the infamous <a href="https://www.destroyallsoftware.com/talks/wat">WAT lightning talk at CodeMash
-2012</a>). Gary proposes a very
-interesting code architecture that marries the individual benefits of
-immutability &amp; mutability, functional programming &amp; imperative object-oriented
-programming, isolated unit testing &amp; integration testing. He discusses the pros
-&amp; cons of each code design &amp; testing decision and the trade-offs that we end up
-dealing with. He suggests a potential solution that makes virtually no trade-off
-and attempts to harness the advantages of each of these methodologies that
-appear to be at odds with one another. I feel the idea has a lot of merit and I
-highly encourage everyone to watch his presentation to get the full context and
-a better logical progression of his proposal than what I can provide.</p>
+	<div class="entry-content"><p><em>Author&#8217;s Note: I do not take credit for the phrase used as the title of this
+blog post. It comes from Gary&#8217;s Ruby Conf 12 video recording entitled
+<u>Boundaries</u> mentioned below and in the previous blog post.</em></p>
 
-<h2>Isolated Unit Testing vs. Integration Testing</h2>
+<p>In the last blog post <a href="/blog/2012/12/08/testing-trade-offs/">Testing
+Trade-offs</a>, I talked about the
+difficulties of verifying the decisions and dependencies of our classes with the
+current mainstream testing methodologies. Based on a recorded conference talk by
+<a href="https://twitter.com/garybernhardt">Gary Bernhardt</a>, the focus was on
+effectively testing the logic a class contains and the dependent collobrators it
+takes in for coordinating with other classes and objects to perform its
+responsibilities. Mixing the two concerns in the same object definition requires
+utilizing both isolated unit testing and integration/integrated testing in order
+to adequately test cover the class. However, code designed this way seems to
+play to the weaknesses of each testing strategy just as much as it plays to
+their strengths (please see the previous blog post if you would like more
+details on that discussion).</p>
 
-<p>A common practice in unit testing classes and objects is to isolate the targeted
-class from its dependencies so that you can focus solely on its responsibilities
-and domain logic independent of any implementation details of the dependencies.
-This is typically accomplished by the use of stubs and mocks, which attempt to
-control and monitor the interactions with and data return from dependencies.
-There are a ton of gains afforded by this style of testing as Gary points out,
-but one very large criticism of this testing methodology is that it doesn&#8217;t
-exercise the code in the same way it would run in production. It is not exactly
-rare to have these isolated unit tests successfully pass and yet still have
-problems in production.</p>
+<p>Today let&#8217;s go one step further and talk about ways that we could more cleanly
+separate the concerns of decisions and dependencies, with the hope that we can
+create objects that better lend themselves to one type of testing over the
+other. Gary proposes that a such a codebase could have better modularity,
+scalability, and even concurrency. I assert that your code will also be more
+maintainable and extensible as well. Most of today&#8217;s content will take a lesson
+from the functional programming paradigm, including practices they have espoused
+for decades.</p>
 
-<p>Integration testing tends to better emulate production because it maintains the
-interaction relationships between objects in addition to acquiring and passing
-the data around the system in the same way. The criticism Gary puts forth of an
-integrated testing strategy is that it is very slow as you begin to attempt to
-cover all the code paths through the system. Consider trying to cover all
-logical branches through the system, including all branches of
-try/catch/finally, conditional, and looping structures. Gary suggests the growth
-in code to cover these scenarios is 2<sup>n<sup>,</sup></sup> where <code>n</code> is the number of branches.</p>
+<h2>Frictionless Isolated Unit Testing</h2>
 
-<p>Many try to get the benefits of both types of testing in order to compensate for
-each strategy&#8217;s shortcomings. However, they still write code that doesn&#8217;t play
-to each testing methodolgy&#8217;s strengths. The strength of isolated unit testing is
-verifying that given certain inputs the expected output is always returned. The
-strength of integration testing is coordinating dependencies, making sure they
-utilize and interact with the API of other objects correctly. If you design your
-classes to be a mix of dependencies and logic, it becomes difficult to
-effectively test cover them without writing both sets of tests for all classes
-in your codebase.</p>
+<p>If you wanted to test the mathematical addition operator (i.e., the plus sign
+<code>+</code>), what frameworks, tools, and/or coding tricks do you have to employ to
+sufficiently isolate it from all other concerns and objects? Absolutely nothing!
+There are no dependencies to mock or stub; it isolates for free. Why is that?
+Gary cautions against assuming it is because the addition operator is simple and
+lacks complexity. He digs deeper in order to identify two properities the
+implementation of plus sign exhibits that allows it to be naturally isolated.</p>
 
-<h2>So What?</h2>
+<p>The first property is that the operator takes values as arguments and returns
+new values as output without any mutation. The second property is that the
+operator requires no dependencies in order to perform its computation and logic.
+Thus there is nothing to mock or stub when testing it, which was the major
+weakness of isolated unit testing. Also because of the lack of dependencies, no
+integrated tests are required in order to better test how the operator will
+behave in a production environment where there are no mocks and stubs. To test
+the addition operator we merely need to write simple pass-values-in,
+assert-value-out tests with no extra setup required.</p>
 
-<p>OK, so you are probably wondering what the point is then. This sounds like a
-good plan to just be more disciplined in your test coverage, right? Well, let&#8217;s
-explore a way to better segregate dependency orchestration from actual logic and
-behavior. This could allow us to use the right testing methodology depending on
-which type of responsibility the object is meant to encapsulate: dependencies or
-decisions? Gary also asserts that it will lead us down a path that could yield a
-codebase with better modularity, scalability, and potentially even concurrency.
-I believe you can also add better maintainability and extensibility to that
-list.</p>
+<p>As Gary applies these concepts to existing code, we notice a few changes. Pieces
+of domain logic and pieces of code that coordinate dependencies are separated
+from each other, broken out into new objects created for a single purpose and
+responsibility. The nature of the communication between objects also changed,
+with values (inputs and outputs) becoming the boundary between objects instead
+of the emphasis being on several synchronous method calls. Value objects focused
+on data (and not behavior) become the new contract between collaborating
+classes.</p>
 
-<p>Next week I will dive into how Gary suggests we can better seperate these
-concerns of dependencies and decisions. Stay tuned (or go watch the video and
-spoil the surprise).</p>
+<h2>To Be Continued&#8230;</h2>
 
-<p>Next post: <a href="/blog/2012/12/15/the-value-is-the-boundary/">The Value is the Boundary</a></p>
+<p>You may notice that many of these concepts have a functional programming
+influence. The properties of immutability and focus on data at the boundaries
+allow us to write code that isolates very easily and lends itself very well to
+isolated unit testing that is simple and not brittle. It is very good at
+verifying the domain logic and decision paths of our objects. Of course, we
+can&#8217;t write the entirety of our codebase in this manner with no dependencies
+ever. Next time I will discuss a code architecture that Gary proposes which can
+utilize this style of code married with some more imperative glue code that
+coordinates the dependencies in the system. We will also discuss testing those
+portions of code as well.</p>
 </div>
 
 </article>
@@ -190,8 +191,8 @@ Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Sha
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://mkmurray.com/blog/2012/12/08/testing-trade-offs/';
-        var disqus_url = 'http://mkmurray.com/blog/2012/12/08/testing-trade-offs/';
+        var disqus_identifier = 'http://mkmurray.com/blog/2012/12/15/the-value-is-the-boundary/';
+        var disqus_url = 'http://mkmurray.com/blog/2012/12/15/the-value-is-the-boundary/';
         var disqus_script = 'embed.js';
       
     (function () {

@@ -7,10 +7,8 @@
 	<meta name="author" content="Mike Murray">
 
 	
-	<meta name="description" content="Last week our dev team at Extend Health watched a RubyConf 2012 video of a talk
-entitled Boundaries by Gary
-Bernhardt of Destroy All
-Software (or &hellip;">
+	<meta name="description" content="Author&#8217;s Note: I do not take credit for the phrase used as the title of this
+blog post. It comes from Gary&#8217;s Ruby Conf 12 video &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -49,6 +47,110 @@ Software (or &hellip;">
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/2012/12/15/the-value-is-the-boundary/">The Value Is the Boundary</a></h1>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-15T15:31:00-07:00" pubdate data-updated="true">Dec 15<span>th</span>, 2012</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/code-organization/'>Code Organization</a>, <a class='category' href='/blog/categories/functional-programming/'>Functional Programming</a>, <a class='category' href='/blog/categories/mocking/'>Mocking</a>, <a class='category' href='/blog/categories/ruby/'>Ruby</a>, <a class='category' href='/blog/categories/testing/'>Testing</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2012/12/15/the-value-is-the-boundary/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content">
+		<p><em>Author&#8217;s Note: I do not take credit for the phrase used as the title of this
+blog post. It comes from Gary&#8217;s Ruby Conf 12 video recording entitled
+<u>Boundaries</u> mentioned below and in the previous blog post.</em></p>
+
+<p>In the last blog post <a href="/blog/2012/12/08/testing-trade-offs/">Testing
+Trade-offs</a>, I talked about the
+difficulties of verifying the decisions and dependencies of our classes with the
+current mainstream testing methodologies. Based on a recorded conference talk by
+<a href="https://twitter.com/garybernhardt">Gary Bernhardt</a>, the focus was on
+effectively testing the logic a class contains and the dependent collobrators it
+takes in for coordinating with other classes and objects to perform its
+responsibilities. Mixing the two concerns in the same object definition requires
+utilizing both isolated unit testing and integration/integrated testing in order
+to adequately test cover the class. However, code designed this way seems to
+play to the weaknesses of each testing strategy just as much as it plays to
+their strengths (please see the previous blog post if you would like more
+details on that discussion).</p>
+
+<p>Today let&#8217;s go one step further and talk about ways that we could more cleanly
+separate the concerns of decisions and dependencies, with the hope that we can
+create objects that better lend themselves to one type of testing over the
+other. Gary proposes that a such a codebase could have better modularity,
+scalability, and even concurrency. I assert that your code will also be more
+maintainable and extensible as well. Most of today&#8217;s content will take a lesson
+from the functional programming paradigm, including practices they have espoused
+for decades.</p>
+
+<h2>Frictionless Isolated Unit Testing</h2>
+
+<p>If you wanted to test the mathematical addition operator (i.e., the plus sign
+<code>+</code>), what frameworks, tools, and/or coding tricks do you have to employ to
+sufficiently isolate it from all other concerns and objects? Absolutely nothing!
+There are no dependencies to mock or stub; it isolates for free. Why is that?
+Gary cautions against assuming it is because the addition operator is simple and
+lacks complexity. He digs deeper in order to identify two properities the
+implementation of plus sign exhibits that allows it to be naturally isolated.</p>
+
+<p>The first property is that the operator takes values as arguments and returns
+new values as output without any mutation. The second property is that the
+operator requires no dependencies in order to perform its computation and logic.
+Thus there is nothing to mock or stub when testing it, which was the major
+weakness of isolated unit testing. Also because of the lack of dependencies, no
+integrated tests are required in order to better test how the operator will
+behave in a production environment where there are no mocks and stubs. To test
+the addition operator we merely need to write simple pass-values-in,
+assert-value-out tests with no extra setup required.</p>
+
+<p>As Gary applies these concepts to existing code, we notice a few changes. Pieces
+of domain logic and pieces of code that coordinate dependencies are separated
+from each other, broken out into new objects created for a single purpose and
+responsibility. The nature of the communication between objects also changed,
+with values (inputs and outputs) becoming the boundary between objects instead
+of the emphasis being on several synchronous method calls. Value objects focused
+on data (and not behavior) become the new contract between collaborating
+classes.</p>
+
+<h2>To Be Continued&#8230;</h2>
+
+<p>You may notice that many of these concepts have a functional programming
+influence. The properties of immutability and focus on data at the boundaries
+allow us to write code that isolates very easily and lends itself very well to
+isolated unit testing that is simple and not brittle. It is very good at
+verifying the domain logic and decision paths of our objects. Of course, we
+can&#8217;t write the entirety of our codebase in this manner with no dependencies
+ever. Next time I will discuss a code architecture that Gary proposes which can
+utilize this style of code married with some more imperative glue code that
+coordinates the dependencies in the system. We will also discuss testing those
+portions of code as well.</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post">
@@ -142,6 +244,8 @@ list.</p>
 <p>Next week I will dive into how Gary suggests we can better seperate these
 concerns of dependencies and decisions. Stay tuned (or go watch the video and
 spoil the surprise).</p>
+
+<p>Next post: <a href="/blog/2012/12/15/the-value-is-the-boundary/">The Value is the Boundary</a></p>
 
 		
 		
@@ -525,139 +629,6 @@ legacy codebases before I begin making modifications or additions.</p>
 
 <p>I highly recommend viewing the entire video, as it is only 30 minutes long and
 an entertaining watch.</p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/2012/11/03/using-sql-pivot-and-unpivot/">Using SQL PIVOT and UNPIVOT</a></h1>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-11-03T23:22:00-06:00" pubdate data-updated="true">Nov 3<span>rd</span>, 2012</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/database/'>Database</a>, <a class='category' href='/blog/categories/sql/'>SQL</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2012/11/03/using-sql-pivot-and-unpivot/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content">
-		<p>I learned about a pair of SQL keywords I didn&#8217;t know existed before. I suppose I shouldn&#8217;t have been so surprised
-this ability existed in SQL since I knew it existed within Excel spreadsheets, but it really saved the day this
-last week. I&#8217;m speaking of the <code>PIVOT</code> and <code>UNPIVOT</code> SQL keywords.</p>
-
-<p>This last week I needed to track down some data inconsistencies in our database by joining a few view model tables.
-These tables are populated by event handlers that denormalize the relevant data from events into a view model
-table that serves the needs of a specific part of the UI. In one particular view model table, it made sense to
-arrange the data points specific to each US state as columns on a single row. This allowed for a grid-based UI that
-enables batch operations on many rows at one time. A second view model table was intended for a different use case
-and was designed so that the state-specific data points became a one-to-many relationship across multiple rows and
-only two columns for the key-value pair of the US state and its associated data point value. These were two of the
-tables I needed to join together during my database inquisition.</p>
-
-<p>At this point I figured I was stuck, as I couldn&#8217;t see a sensible way to join two tables designed so contrary to
-each other for the purposes of joining. I tried to think of any ways to dynamically join tables on a column name
-in one table specified by the value in the other table&#8217;s row. I knew I was heading nowhere fast, so I asked our
-DBA for some ideas. He informed me of the <code>PIVOT</code> and <code>UNPIVOT</code> keywords in SQL as one option to solve the problem.
-We reasoned that even though it may not be the most efficient feature, the likelihood of it proving to be a
-performance bottleneck would be essentially non-existent (given that the entire size of the data set was relatively
-small, on the magnitude of hundreds or thousands of rows instead of millions of rows). And so I gave it a go.</p>
-
-<p>I will now describe an example scenario in order to illustrate how I used the <code>UNPIVOT</code> feature to join two tables
-that didn&#8217;t seem at all compatible. The goal will be to join a table representing what US states each product is
-available for sale within to a table representing how many of each product are being sold in each state. We will
-call the first table <code>ProductAvailability</code> and give it an integer identity column named <code>Id</code>, an integer column
-named <code>ProductId</code>, and then 52 <code>bit</code> columns indicating the availability status of the product in each of the 50 US
-states, the District of Columbia, and Puerto Rico. These columns will be named by their two letter abbreviations of
-<code>AK</code> through <code>WY</code>. The second table we will call <code>ProductSales</code> and it will also have an integer identity column
-named <code>Id</code> and an integer column named <code>ProductId</code>. In addition it will have a string column (specifically
-<code>char(2)</code>) named <code>StateCode</code> and an integer column named <code>TotalSales</code>.</p>
-
-<p>The unpivoting of the <code>ProductAvailability</code> table to prepare it for joining can be done like so:</p>
-
-<pre class="brush: sql">
-    SELECT
-      Unpivoted.ProductId,
-      Unpivoted.StateCode,
-      Unpivoted.IsAvailable
-    FROM ProductAvailability
-    UNPIVOT
-    (
-      IsAvailable FOR StateCode
-      IN (AK,AL,AR,AZ,CA,CO,CT,
-          DC,DE,FL,GA,HI,IA,ID,
-          IL,IN,KS,KY,LA,MA,MD,
-          ME,MI,MN,MO,MS,MT,NC,
-          ND,NE,NH,NJ,NM,NV,NY,
-          OH,OK,OR,PA,PR,RI,SC,
-          SD,TN,TX,UT,VA,VT,WA,
-          WI,WV,WY)
-    ) AS Unpivoted
-</pre>
-
-
-<p>The interesting part is obviously the <code>UNPIVOT</code> clause. Here we are declaring a list of column names to unpivot and
-also naming two new columns in which to place the old column&#8217;s name and value (<code>StateCode</code> and <code>IsAvailable</code>
-respectively). The result is that instead of having one row of 54 columns for each product, we now have 52 rows of
-three columns to describe the exact same availability of the product. But with this second schema, we can more
-easily join with the <code>ProductSales</code> table.</p>
-
-<p>Here is an example of such a query where we are trying to find the products which have no sales in a state for
-which it is marked as available for sale:</p>
-
-<pre class="brush: sql">
-    SELECT
-      ProductStateAvailability.ProductId,
-      ProductStateAvailability.StateCode
-    FROM
-    (
-      SELECT
-        Unpivoted.ProductId,
-        Unpivoted.StateCode,
-        Unpivoted.IsAvailable
-      FROM ProductAvailability
-      UNPIVOT
-      (
-        IsAvailable FOR StateCode
-        IN (AK,AL,AR,AZ,CA,CO,CT,
-            DC,DE,FL,GA,HI,IA,ID,
-            IL,IN,KS,KY,LA,MA,MD,
-            ME,MI,MN,MO,MS,MT,NC,
-            ND,NE,NH,NJ,NM,NV,NY,
-            OH,OK,OR,PA,PR,RI,SC,
-            SD,TN,TX,UT,VA,VT,WA,
-            WI,WV,WY)
-      ) AS Unpivoted
-      WHERE Unpivoted.IsAvailable = 1
-    ) AS ProductStateAvailability
-    INNER JOIN ProductSales
-      ON ProductSales.StateCode = ProductStateAvailability.StateCode
-      AND ProductSales.ProductId = ProductStateAvailability.ProductId
-    WHERE ProductSales.TotalSales = 0
-</pre>
-
-
-<p>I hope you find the <code>PIVOT</code> and <code>UNPIVOT</code> SQL keywords just as helpful as I did if you ever find yourself in a bind
-with two tables that are seemingly impossible to join.</p>
 
 		
 		
