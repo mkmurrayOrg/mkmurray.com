@@ -55,7 +55,6 @@ GEM
 
 PLATFORMS
   ruby
-  x86-mingw32
 
 DEPENDENCIES
   RedCloth (~> 4.2.9)
