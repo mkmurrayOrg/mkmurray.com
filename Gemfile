@@ -1,4 +1,5 @@
 source "http://rubygems.org"
+ruby "2.0.0"
 
 group :development do
   gem 'rake', '~> 0.9.2'
@@ -13,6 +14,7 @@ group :development do
   gem 'rb-fsevent', '~> 0.9'
   gem 'stringex', '~> 1.4.0'
   gem 'liquid', '~> 2.3.0'
+  gem 'puma'
 end
 
 gem 'sinatra', '~> 1.3.2'
